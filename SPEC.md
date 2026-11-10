@@ -2,32 +2,53 @@
 
 What loi-moi does, without deciding how.
 
+```mermaid
+flowchart LR
+  subgraph bausteine["bausteine/"]
+    B1["bohrpfahl/finite-elemente<br>about.yml, aufgaben/"]
+    B2["bohrpfahl/konvergenz<br>about.yml, aufgaben/"]
+  end
+  subgraph lernpfad["lernpfad/aufgaben/"]
+    L["loimoi.yml"]
+    subgraph c["c/"]
+      S["01-bohrpfahl-finite-elemente-aufgaben.qmd"]
+      M["01-bohrpfahl-finite-elemente-aufgaben.zip"]
+      R["01-bohrpfahl-finite-elemente-aufgaben-loesung-‹hash›.qmd"]
+    end
+  end
+  B1 & B2 --> LM((loi-moi))
+  L --> LM
+  LM --> S & M & R
+  S & R --> Q((Quarto))
+  Q --> H["HTML, PDF<br>for the students"]
+```
+
 ## Terms
 
-- **Building block:** material on one topic, maintained by the teacher. Every piece of content exists exactly
-  once; the block is named by its content, independent of where it is used.
-- **Product:** a set of related files the students get together, e.g. an exercise sheet with material and
-  solution, slides with their downloads, course notes. Everything that depends on where a product is used
-  (number, title, key, file names) belongs to the product, not to the building blocks.
+- **Library:** all material maintained by the teacher.
+- **Group:** related building blocks.
+- **Building block:** material on one topic, independent of where it is used.
+- **Ingredient:** the part of a building block for one kind of product, e.g. its exercises or its slides.
+- **Learning path:** all products of a course.
+- **Product:** a set of related files, e.g. exercise sheet, work files and solution. Everything that depends on
+  where it is used (number, title, file names) belongs to the product.
+- **Work files:** what the students download to work with a product, e.g. a notebook with scaffolds for exercises,
+  or the project for R slides.
 - **Series:** products of the same kind in a fixed order, numbered. A product is either part of a series or
   stands alone (e.g. course notes).
-- **Learning path:** all products of a course, described in the folder `lernpfad/`.
 - **Exercise:** a single task with a title (e.g. "Bohrpfahl"), with everything that belongs to it: text,
   solution, scaffold, given code, setup. A task with parts (a, b, …) is one exercise.
 - **Exercise sheet:** several exercises, plus text that structures them (e.g. headings of parts, download text).
-  With material and solution, it forms a product.
+  With work files and solution, it forms a product.
 
 ## Scope
 
 The first version produces one series: the exercise sheets. Later, further series (slides) and standalone
 products (course notes, all slides in one document, course slides) are to follow (see ANALYSIS).
 
-## Building blocks
+## Groups and building blocks
 
-A building block provides material for products. One building block can feed several products (e.g. slides, an
-exercise sheet, a chapter of the course notes), and one product can take material from several building blocks.
-
-The building blocks are in the folder `bausteine/`. Three examples of how it can be organized:
+The folder `bausteine/` holds the library. Three examples:
 
 **Flat** (as in Informatik): all building blocks directly in `bausteine/`.
 
@@ -48,9 +69,9 @@ occur in several parts.
 ```
 bausteine/
   01-bohrpfahl/
-    about.yml          e.g. part: Bohrpfahl
+    about.yml          title: Bohrpfahl
     01-grundlagen/
-      about.yml
+      about.yml        title: Grundlagen
       folien/
       aufgaben/
     02-variationsprobleme/
@@ -76,28 +97,28 @@ bausteine/
     einzelne-merkmale/
 ```
 
+Each group is a folder with building blocks, an optional `about.yml` and optional files. Groups are not nested.
+
+- **`about.yml`** (optional): a `title`, e.g. for groups by topic.
+- **Files** (optional): files its building blocks use, e.g. a bibliography.
+
 Each building block is a folder with subfolders for material and an optional `about.yml`:
 
 - **Subfolders** hold the material for one kind of product each: `folien/` for slides, `aufgaben/` for exercise
   sheets, `skript/` for course notes. The `.qmd` files directly in a subfolder are combined into one before any
   further processing, in the order of their names; subfolders (e.g. `src/`, images) are not combined.
-- **`about.yml`** (optional) describes the building block, with English keys. Currently only `title` and `part`
-  (e.g. Bohrpfahl) are used, by products for titles and names. Additional information (e.g. a list of topics)
-  can deliberately be added. Without `about.yml`, the title of the product comes from the learning path
-  (`loimoi.yml`).
+- **`about.yml`** (optional) describes the building block, with English keys. Currently only `title` is used, by
+  products for titles. Additional information (e.g. a list of topics) can deliberately be added. Without
+  `about.yml`, the title of the product comes from the learning path (`loimoi.yml`).
 
 Rules for the folder `bausteine/`:
 
-- A building block is a folder with at least one material subfolder (`folien/`, `aufgaben/`, `skript/`). Folders
-  above it are groups; a group can have an `about.yml`, and its building blocks inherit the content (and can
-  override it).
-- A folder contains either building blocks or groups, not both.
+- A building block is a folder with at least one material subfolder (`folien/`, `aufgaben/`, `skript/`).
+- `bausteine/` contains either building blocks (then it is the group) or groups, not both.
 - Folder names can start with a number (`01-`). It only sorts and is not part of the name.
-- The name of a building block is its path below `bausteine/` without numbers, i.e. including its groups, e.g.
+- The name of a building block is its path below `bausteine/` without numbers, i.e. including its group, e.g.
   `bohrpfahl/grundlagen`. Names must be unique.
 - Folders starting with `_` are ignored (e.g. `_templates/`).
-- Groups (and `bausteine/` itself) can hold files their building blocks use, e.g. setup code or a bibliography.
-
 ## Learning path
 
 The folder `lernpfad/` describes the learning path: one folder per series or standalone product.
@@ -131,7 +152,7 @@ The folder `lernpfad/` describes the learning path: one folder per series or sta
 ```
 lernpfad/
   aufgaben/
-    loimoi.yml         format of the material
+    loimoi.yml         format of the work files
     c/                 generated
   folien/
     c/
@@ -171,9 +192,8 @@ and `_metadata.yml`).
 
 The file names of products in a series are built from:
 
-- `<slug>`: number of the product in the series (two digits), then `part` and `title` from `about.yml` in lower
-  case, umlauts as ae/oe/ue/ss, everything else as `-`; e.g. `02-stabtragwerke-stabendkraefte`. Without `part`
-  only the title (`03-elementare-datentypen`).
+- `<slug>`: number of the product in the series (two digits), then the name of its first building block with `/`
+  as `-`; e.g. `02-bohrpfahl-variationsprobleme`.
 - `<hash>`: the first 8 hex digits of `sha1("87362-" + slug)`, for names that cannot be guessed (e.g. solutions).
 
 Placeholders in the `.qmd` files of the building blocks are replaced:
@@ -188,7 +208,7 @@ Placeholders in the `.qmd` files of the building blocks are replaced:
 Per product (default names as in numPDE and numMat, configurable in `loimoi.yml`):
 
 - **Exercise sheet:** a Quarto document, `<slug>-aufgaben.qmd`.
-- **Material** (if there is a programming exercise): a zip file, `<slug>-aufgaben.zip`.
+- **Work files** (if there is a programming exercise): a zip file, `<slug>-aufgaben.zip`.
 - **Solution** (if there is an `.lm-solution`): a Quarto document or a zip file,
   `<slug>-aufgaben-loesung-<hash>.{qmd,zip}`.
 
@@ -200,7 +220,7 @@ Per product (default names as in numPDE and numMat, configurable in `loimoi.yml`
   (`#exr-…`), scaffold and solutions.
 - **Subfolders** (optional): data, images or source code.
 
-Placeholder in addition to the general ones: `${material}`, the absolute URL of the material.
+Placeholder in addition to the general ones: `${work-files}`, the absolute URL of the work files.
 
 A programming exercise has `.lm-scaffold` or code in `.lm-solution`; other exercises are paper exercises. Only
 one building block of an exercise sheet may have programming exercises.
@@ -239,7 +259,7 @@ Median: 5, Mittelwert: $35/5 = 7$.
 ````markdown
 ## Teil 2: Mit dem Computer
 
-Laden Sie das [Material](${material}) herunter.
+Laden Sie das [Arbeitsmaterial](${work-files}) herunter.
 
 ```{r}
 #| label: setup
@@ -273,8 +293,8 @@ mittelwert <- mean(befragung$entfernung)
 
 `loimoi.yml` specifies:
 
-- the format of the material (required): notebook (`.ipynb`) or `.qmd`
-- the files and folders of `aufgaben/` that go into the material (e.g. `daten/`, a workspace)
+- the format of the work files (required): notebook (`.ipynb`) or `.qmd`
+- the files and folders of `aufgaben/` that go into the work files (e.g. `daten/`, a workspace)
 
 #### Processing
 
@@ -282,7 +302,8 @@ Before further processing:
 
 1. The `.qmd` files are combined.
 2. The `setup` cells are merged into one at the beginning; repeated lines are dropped.
-3. Subtitle: from the first `about.yml`.
+3. Subtitle: the titles of the group and of the first building block, joined with ": " (e.g. "Bohrpfahl:
+   Grundlagen").
 4. Images and other linked files are copied to `c/`.
 
 ##### Exercise sheet
@@ -290,7 +311,7 @@ Before further processing:
 1. Title: "Aufgabenblatt N".
 2. Removed: `.lm-solution`, `.lm-scaffold` and unwrapped code, except the `setup` cell.
 
-##### Material
+##### Work files
 
 1. Title: "Aufgabenblatt N".
 2. Paper exercises are dropped.
@@ -310,7 +331,7 @@ Writing material in a building block:
 
 - The code runs in the editor, in the folder of the file.
 - Rendering a file on its own shows everything, with markers visible (e.g. solution and scaffold).
-- The teacher can view a file as each part of its product (e.g. exercise sheet, material, solution).
+- The teacher can view a file as each part of its product (e.g. exercise sheet, work files, solution).
 
 Generating:
 

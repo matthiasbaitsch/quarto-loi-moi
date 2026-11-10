@@ -4,7 +4,7 @@ Quarto extension that generates the products of a course (exercise sheets, later
 building blocks (*Bausteine*). The name comes from Vietnamese *lối mới* (new way); read without accents it is also
 *lời mời* (invitation).
 
-**Status:** specification. The first version produces exercise sheets with material and solution.
+**Status:** specification. The first version produces exercise sheets with work files and solution.
 
 - `SPEC.md`: what loi-moi does
 - `ANALYSIS.md`: how the four courses make their products today

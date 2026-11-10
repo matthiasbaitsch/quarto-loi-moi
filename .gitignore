@@ -15,3 +15,6 @@ _material/
 
 # Python
 __pycache__/
+
+# Output of the tests
+tests/output/
