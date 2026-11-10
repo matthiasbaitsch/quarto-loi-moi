@@ -1,0 +1,22 @@
+::: {#exr-elementmatrix-waerme}
+## Elementmatrix für die Wärmeleitung
+
+Für die stationäre Wärmeleitung in einem Stab lauten Bilinearform und Linearform der schwachen Form
+$$
+  a(T, \delta T) = \int_0^l k \, T' \delta T' \, dx,
+  \qquad
+  b(\delta T) = \int_0^l q \, \delta T \, dx.
+$$
+
+Berechnen Sie für ein lineares Element der Länge $h$ die Elementmatrix $\mathbf{K}_e$ und den Elementvektor
+$\mathbf{r}_e$.
+
+::: {.lm-solution}
+Mit $N_1' = -1/h$, $N_2' = 1/h$ und $\int_0^h N_i \, d\xi = h/2$:
+$$
+  \mathbf{K}_e = \frac{k}{h} \begin{bmatrix} 1 & -1 \\ -1 & 1 \end{bmatrix},
+  \qquad
+  \mathbf{r}_e = \frac{q h}{2} \begin{bmatrix} 1 \\ 1 \end{bmatrix}.
+$$
+:::
+:::

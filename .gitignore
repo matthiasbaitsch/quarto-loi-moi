@@ -12,3 +12,6 @@ examples/*/_extensions/
 c/
 _material/
 *_files/
+
+# Python
+__pycache__/

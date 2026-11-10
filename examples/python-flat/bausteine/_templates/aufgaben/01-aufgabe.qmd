@@ -1,0 +1,21 @@
+```{python}
+#| label: setup
+#| include: false
+```
+
+::: {#exr-titel}
+## Titel
+
+Aufgabentext.
+
+::: {.lm-scaffold}
+```{python}
+# ...
+```
+:::
+
+::: {.lm-solution}
+```{python}
+```
+:::
+:::

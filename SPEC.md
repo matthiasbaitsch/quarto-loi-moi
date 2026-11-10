@@ -29,7 +29,7 @@ exercise sheet, a chapter of the course notes), and one product can take materia
 
 The building blocks are in the folder `bausteine/`. Three examples of how it can be organized:
 
-**Simple** (as in Informatik): all building blocks directly in `bausteine/`.
+**Flat** (as in Informatik): all building blocks directly in `bausteine/`.
 
 ```
 bausteine/

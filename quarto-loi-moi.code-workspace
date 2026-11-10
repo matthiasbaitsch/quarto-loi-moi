@@ -5,7 +5,7 @@
 		}
 	],
 	"settings": {
-		"python.defaultInterpreterPath": "${workspaceFolder}/examples/python/.venv/bin/python",
-		"julia.environmentPath": "${workspaceFolder}/examples/julia"
+		"python.defaultInterpreterPath": "${workspaceFolder}/examples/python-flat/.venv/bin/python",
+		"julia.environmentPath": "${workspaceFolder}/examples/julia-parts"
 	}
 }
