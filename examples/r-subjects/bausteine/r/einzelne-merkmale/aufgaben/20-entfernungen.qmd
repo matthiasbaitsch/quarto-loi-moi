@@ -7,8 +7,7 @@ library(tidyverse)
 ::: {#exr-entfernungen}
 ## Entfernungen zu umliegenden Städten
 
-Die Entfernungen von der Hochschule Bochum zu umliegenden Städten sind in der nachfolgenden Tabelle
-zusammengefasst.
+Die Entfernungen von der Hochschule Bochum zu umliegenden Städten sind in der nachfolgenden Tabelle zusammengefasst.
 
 | Stadt         | Entfernung (km) |
 |---------------|-----------------|
@@ -20,8 +19,7 @@ zusammengefasst.
 | Gelsenkirchen | 14.1            |
 | Mülheim       | 27.2            |
 
-Erzeugen Sie mithilfe des Befehls `tibble` einen entsprechenden Dataframe und stellen Sie die Entfernungen in
-einem geeigneten Plot dar.
+Erzeugen Sie mithilfe des Befehls `tibble` einen entsprechenden Dataframe und stellen Sie die Entfernungen in einem geeigneten Plot dar.
 
 ::: {.lm-scaffold}
 ```{r}

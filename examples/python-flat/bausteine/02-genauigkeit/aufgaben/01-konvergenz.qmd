@@ -11,17 +11,14 @@ from src.odesolve import *
 ::: {#exr-konvergenz}
 ## Konvergenz
 
-Wir untersuchen, wie schnell die Näherungen aus dem letzten Aufgabenblatt mit kleiner werdender Schrittweite
-gegen die exakte Lösung konvergieren. Verwenden Sie das Anfangswertproblem
+Wir untersuchen, wie schnell die Näherungen aus dem letzten Aufgabenblatt mit kleiner werdender Schrittweite gegen die exakte Lösung konvergieren. Verwenden Sie das Anfangswertproblem
 $$
   y'(x) = x - y(x) \quad \text{mit} \quad y(0) = 1, \qquad y(x) = 2e^{-x} + x - 1.
 $$
 
-1. Berechnen Sie für $h = 0.2, 0.1, 0.05, \dots, 0.2 / 2^5$ mit dem Euler- und dem Runge-Kutta-Verfahren den
-   Fehler $e(h) = |y_N - y(2)|$ an der Stelle $x = 2$ und stellen Sie ihn doppelt-logarithmisch über $h$ dar.
+1. Berechnen Sie für $h = 0.2, 0.1, 0.05, \dots, 0.2 / 2^5$ mit dem Euler- und dem Runge-Kutta-Verfahren den Fehler $e(h) = |y_N - y(2)|$ an der Stelle $x = 2$ und stellen Sie ihn doppelt-logarithmisch über $h$ dar.
 
-1. Bestimmen Sie aus den Verhältnissen $e(h) / e(h/2)$ aufeinanderfolgender Fehler die Ordnung der Verfahren.
-   Passt das Ergebnis zu dem, was Sie in der Vorlesung über die Verfahren gelernt haben?
+1. Bestimmen Sie aus den Verhältnissen $e(h) / e(h/2)$ aufeinanderfolgender Fehler die Ordnung der Verfahren. Passt das Ergebnis zu dem, was Sie in der Vorlesung über die Verfahren gelernt haben?
 
 ::: {.lm-solution}
 ```{python}
@@ -39,8 +36,6 @@ plt.legend()
 plt.show()
 ```
 
-Beim Euler-Verfahren halbiert sich der Fehler mit der Schrittweite (Verhältnis 2, Ordnung 1), beim
-Runge-Kutta-Verfahren wird er etwa um den Faktor $2^4 = 16$ kleiner (Ordnung 4). Im doppelt-logarithmischen
-Plot sind das Geraden mit den Steigungen 1 und 4.
+Beim Euler-Verfahren halbiert sich der Fehler mit der Schrittweite (Verhältnis 2, Ordnung 1), beim Runge-Kutta-Verfahren wird er etwa um den Faktor $2^4 = 16$ kleiner (Ordnung 4). Im doppelt-logarithmischen Plot sind das Geraden mit den Steigungen 1 und 4.
 :::
 :::

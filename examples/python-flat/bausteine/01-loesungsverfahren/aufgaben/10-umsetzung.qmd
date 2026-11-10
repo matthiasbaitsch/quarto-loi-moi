@@ -1,5 +1,3 @@
 ## Teil 2: Umsetzung in Python
 
-Laden Sie das [Arbeitsmaterial](${material}){download="${slug}-aufgaben.zip"} herunter, entpacken Sie es in Ihren Projektordner und öffnen
-Sie das Notebook. Entwickeln Sie den Code zunächst im Notebook. Sobald eine Funktion funktioniert, verschieben Sie
-sie in die Datei `src/odesolve.py` und importieren sie von dort.
+Laden Sie das [Arbeitsmaterial](${material}){download="${slug}-aufgaben.zip"} herunter, entpacken Sie es in Ihren Projektordner und öffnen Sie das Notebook. Entwickeln Sie den Code zunächst im Notebook. Sobald eine Funktion funktioniert, verschieben Sie sie in die Datei `src/odesolve.py` und importieren sie von dort.

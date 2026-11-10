@@ -19,12 +19,9 @@ halbschritt(F, I, h, y0)
 rungekutta(F, I, h, y0)
 ```
 
-Parameter sind die Funktion der Differentialgleichung $F$, das Lösungsintervall $I = [x_0, x_e]$, die
-Schrittweite $h$ und der Anfangswert $y_0$. Die Funktionen geben zwei Arrays mit den Werten $x_0, \dots, x_N$
-und $y_0, \dots, y_N$ zurück.
+Parameter sind die Funktion der Differentialgleichung $F$, das Lösungsintervall $I = [x_0, x_e]$, die Schrittweite $h$ und der Anfangswert $y_0$. Die Funktionen geben zwei Arrays mit den Werten $x_0, \dots, x_N$ und $y_0, \dots, y_N$ zurück.
 
-1. Testen Sie Ihre Funktionen mit dem Anfangswertproblem aus @exr-ein-schritt, dessen Ergebnisse Sie von Hand
-   kennen.
+1. Testen Sie Ihre Funktionen mit dem Anfangswertproblem aus @exr-ein-schritt, dessen Ergebnisse Sie von Hand kennen.
 
 1. Lösen Sie mit allen drei Funktionen das Anfangswertproblem
    $$
@@ -36,10 +33,8 @@ und $y_0, \dots, y_N$ zurück.
    $$
 
 ::: {.callout-tip title="Tipps für Python"}
-- Die Anzahl der Schritte ist $N = (x_e - x_0) / h$, gerundet mit `round`. Die Stellen erhalten Sie mit
-  `x0 + h * np.arange(N + 1)`.
-- Legen Sie für die Näherungen ein Array `y = np.zeros(N + 1)` an und berechnen Sie in einer Schleife `y[i + 1]`
-  aus `y[i]`.
+- Die Anzahl der Schritte ist $N = (x_e - x_0) / h$, gerundet mit `round`. Die Stellen erhalten Sie mit `x0 + h * np.arange(N + 1)`.
+- Legen Sie für die Näherungen ein Array `y = np.zeros(N + 1)` an und berechnen Sie in einer Schleife `y[i + 1]` aus `y[i]`.
 :::
 
 ::: {.lm-scaffold}
@@ -79,7 +74,6 @@ plt.legend()
 plt.show()
 ```
 
-Am Ende des Intervalls beträgt der Fehler beim Euler-Verfahren etwa 0.41, beim Halbschrittverfahren 0.026 und
-beim Runge-Kutta-Verfahren 0.0008.
+Am Ende des Intervalls beträgt der Fehler beim Euler-Verfahren etwa 0.41, beim Halbschrittverfahren 0.026 und beim Runge-Kutta-Verfahren 0.0008.
 :::
 :::

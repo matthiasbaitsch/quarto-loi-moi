@@ -8,8 +8,7 @@ $$
   b(\delta T) = \int_0^l q \, \delta T \, dx.
 $$
 
-Berechnen Sie für ein lineares Element der Länge $h$ die Elementmatrix $\mathbf{K}_e$ und den Elementvektor
-$\mathbf{r}_e$.
+Berechnen Sie für ein lineares Element der Länge $h$ die Elementmatrix $\mathbf{K}_e$ und den Elementvektor $\mathbf{r}_e$.
 
 ::: {.lm-solution}
 Mit $N_1' = -1/h$, $N_2' = 1/h$ und $\int_0^h N_i \, d\xi = h/2$:

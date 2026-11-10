@@ -1,8 +1,7 @@
 ::: {#exr-seitenradar}
 ## Messung mit dem Seitenradar
 
-Dargestellt ist ein Ausschnitt einer Geschwindigkeitsmessung mit dem Seitenradar an der Universitätsstraße in
-Bochum.
+Dargestellt ist ein Ausschnitt einer Geschwindigkeitsmessung mit dem Seitenradar an der Universitätsstraße in Bochum.
 
 ::: {.lm-sheet}
 ```{r}
@@ -35,8 +34,7 @@ tibble(
 ```
 :::
 
-1. Welche Fahrzeuge fahren wie oft am Messgerät vorbei? Wie groß sind die Anteile bezogen auf die gesamte Anzahl
-   von Fahrzeugen?
+1. Welche Fahrzeuge fahren wie oft am Messgerät vorbei? Wie groß sind die Anteile bezogen auf die gesamte Anzahl von Fahrzeugen?
 
 1. Erstellen Sie ein Histogramm für die Geschwindigkeit mit Klassen der Breite 5 km/h (Skizze).
 
@@ -51,7 +49,6 @@ tibble(
    | LKW         | 3      | 10.0 % |
    | Zweirad     | 2      | 6.7 %  |
 
-1. Anzahl je Klasse (in km/h): $[30, 35)$: 2, $[35, 40)$: 2, $[40, 45)$: 2, $[45, 50)$: 12, $[50, 55)$: 6,
-   $[55, 60)$: 4, $[60, 65)$: 2. Die meisten Fahrzeuge fahren knapp unter 50 km/h.
+1. Anzahl je Klasse (in km/h): $[30, 35)$: 2, $[35, 40)$: 2, $[40, 45)$: 2, $[45, 50)$: 12, $[50, 55)$: 6, $[55, 60)$: 4, $[60, 65)$: 2. Die meisten Fahrzeuge fahren knapp unter 50 km/h.
 :::
 :::

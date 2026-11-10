@@ -8,14 +8,10 @@ $$
   b(\delta u) = \int_0^l n \, \delta u \, dx + F \, \delta u(0).
 $$
 
-Berechnen Sie für ein lineares Element der Länge $h$ mit den Formfunktionen $N_1(\xi) = 1 - \xi / h$ und
-$N_2(\xi) = \xi / h$, $0 \leq \xi \leq h$, die Elementsteifigkeitsmatrix $\mathbf{K}_e$ und den Elementlastvektor
-$\mathbf{r}_e$ (ohne Feder und Einzelkraft).
+Berechnen Sie für ein lineares Element der Länge $h$ mit den Formfunktionen $N_1(\xi) = 1 - \xi / h$ und $N_2(\xi) = \xi / h$, $0 \leq \xi \leq h$, die Elementsteifigkeitsmatrix $\mathbf{K}_e$ und den Elementlastvektor $\mathbf{r}_e$ (ohne Feder und Einzelkraft).
 
 ::: {.lm-solution}
-Mit $N_1' = -1/h$, $N_2' = 1/h$ und
-$\int_0^h N_1^2 \, d\xi = \int_0^h N_2^2 \, d\xi = h/3$, $\int_0^h N_1 N_2 \, d\xi = h/6$,
-$\int_0^h N_i \, d\xi = h/2$:
+Mit $N_1' = -1/h$, $N_2' = 1/h$ und $\int_0^h N_1^2 \, d\xi = \int_0^h N_2^2 \, d\xi = h/3$, $\int_0^h N_1 N_2 \, d\xi = h/6$, $\int_0^h N_i \, d\xi = h/2$:
 $$
   \mathbf{K}_e = \frac{EA}{h} \begin{bmatrix} 1 & -1 \\ -1 & 1 \end{bmatrix}
   + \frac{C h}{6} \begin{bmatrix} 2 & 1 \\ 1 & 2 \end{bmatrix},
