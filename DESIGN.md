@@ -29,3 +29,29 @@ How loi-moi does what SPEC describes.
    `.lm-solution`, `.lm-scaffold`, `.lm-sheet`). Built by the recipe when needed; specific to exercise sheets.
 
 ### Recipes
+
+## Development
+
+1. Deno installed separately (Homebrew) for development (`deno test`, `deno check`, VS Code Deno extension); at
+   run time Quarto uses its own Deno.
+2. Tests on two levels: unit tests with `deno test` (fast, without Quarto) and the examples as end-to-end tests
+   (`quarto render`, then check `c/`; before a commit).
+3. Structure:
+
+   ```
+   _extensions/loimoi/         shipped with the extension
+     _extension.yml
+     pre-render.ts             entry point, called by Quarto
+     model.ts                  data structure (level 1)
+     recipes/
+       exercise-sheets.ts
+       exercise-sheets.yml     settings and defaults
+     markers.lua, markers.css  marking when writing
+   tests/                      not shipped; unit tests use the examples as input
+   examples/
+   ```
+
+4. `deno.json` in the project root with tasks (`test`, `check`) and imports. To check: Quarto's Deno may pick it
+   up when an example runs the extension.
+5. Each step: explain what is implemented → approval → code and unit test → review (with a short explanation of
+   new TypeScript constructs) → commit after approval.
