@@ -1,0 +1,85 @@
+```{python}
+#| label: setup
+#| include: false
+%load_ext autoreload
+%autoreload 2
+import numpy as np
+import matplotlib.pyplot as plt
+from src.odesolve import *
+```
+
+::: {#exr-programmierung}
+## Programmierung der Lösungsverfahren
+
+Implementieren Sie die Funktionen
+
+```{.python}
+euler(F, I, h, y0)
+halbschritt(F, I, h, y0)
+rungekutta(F, I, h, y0)
+```
+
+Parameter sind die Funktion der Differentialgleichung $F$, das Lösungsintervall $I = [x_0, x_e]$, die
+Schrittweite $h$ und der Anfangswert $y_0$. Die Funktionen geben zwei Arrays mit den Werten $x_0, \dots, x_N$
+und $y_0, \dots, y_N$ zurück.
+
+1. Testen Sie Ihre Funktionen mit dem Anfangswertproblem aus @exr-ein-schritt, dessen Ergebnisse Sie von Hand
+   kennen.
+
+1. Lösen Sie mit allen drei Funktionen das Anfangswertproblem
+   $$
+     y'(x) = \sin(2 \pi x) + y(x) \quad \text{mit} \quad y(0) = 0
+   $$
+   für $0 \leq x \leq 2$ und $h = 0.2$. Vergleichen Sie die Näherungen mit der exakten Lösung
+   $$
+     y(x) = \frac{2 \pi e^x - \sin(2 \pi x) - 2 \pi \cos(2 \pi x)}{1 + 4 \pi^2}.
+   $$
+
+::: {.callout-tip title="Tipps für Python"}
+- Die Anzahl der Schritte ist $N = (x_e - x_0) / h$, gerundet mit `round`. Die Stellen erhalten Sie mit
+  `x0 + h * np.arange(N + 1)`.
+- Legen Sie für die Näherungen ein Array `y = np.zeros(N + 1)` an und berechnen Sie in einer Schleife `y[i + 1]`
+  aus `y[i]`.
+:::
+
+::: {.lm-scaffold}
+```{python}
+# def euler(F, I, h, y0):
+#     # Stellen x und Array y anlegen, dann in einer Schleife y[i + 1] aus y[i] berechnen
+#     ...
+```
+:::
+
+::: {.lm-solution}
+Die Funktionen stehen in `src/odesolve.py` (Anhang). Der Test liefert dieselben Werte wie von Hand:
+
+```{python}
+F = lambda x, y: x - y
+for method in (euler, halbschritt, rungekutta):
+    x, y = method(F, [0, 0.2], 0.2, 1)
+    print(f"{method.__name__:12} {y[1]:.5f}")
+```
+:::
+
+```{python}
+F = lambda x, y: np.sin(2 * np.pi * x) + y
+
+def y_exact(x):
+    return (2 * np.pi * np.exp(x) - np.sin(2 * np.pi * x) - 2 * np.pi * np.cos(2 * np.pi * x)) / (1 + 4 * np.pi**2)
+```
+
+::: {.lm-solution}
+```{python}
+xe = np.linspace(0, 2, 200)
+plt.plot(xe, y_exact(xe), color="black", label="exakt")
+for method in (euler, halbschritt, rungekutta):
+    x, y = method(F, [0, 2], 0.2, 0)
+    plt.plot(x, y, "o-", label=method.__name__)
+plt.legend()
+plt.show()
+```
+
+Am Ende des Intervalls beträgt der Fehler beim Euler-Verfahren etwa 0.41, beim Halbschrittverfahren 0.026 und
+beim Runge-Kutta-Verfahren 0.0008.
+:::
+:::

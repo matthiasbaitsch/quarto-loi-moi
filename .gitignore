@@ -1,0 +1,14 @@
+.DS_Store
+.claude/settings.local.json
+
+# Python environment of the examples
+.venv/
+
+# Copies of the extension in the examples (make examples)
+examples/*/_extensions/
+
+# Quarto output
+.quarto/
+c/
+_material/
+*_files/

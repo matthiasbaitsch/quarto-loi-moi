@@ -1,0 +1,16 @@
+title: loi-moi
+author: Matthias Baitsch
+version: 0.0.1
+quarto-required: ">=1.10.0"
+contributes:
+  project:
+    project:
+      type: default
+      # Only the generated documents, not the exercises in bausteine/ (a project can override this)
+      render:
+        - lernpfad/**/*.qmd
+      pre-render:
+        - pre-render.ts
+    filters:
+      - path: markers.lua
+        at: pre-ast

@@ -1,0 +1,43 @@
+```{julia}
+#| label: setup
+#| include: false
+using LinearAlgebra
+include("src/pile.jl")
+include("src/fem.jl")
+include("src/convergence.jl")
+```
+
+::: {#exr-konvergenz}
+## Konvergenz der Kopfverschiebung
+
+Wir untersuchen, wie schnell die Kopfverschiebung $u_h(0)$ aus dem letzten Aufgabenblatt mit der Anzahl der
+Elemente gegen die exakte Lösung $u(0)$ konvergiert.
+
+1. Schreiben Sie in `src/convergence.jl` eine Funktion `head_errors(Nes)`, die für alle Elementanzahlen im
+   Vektor `Nes` den Fehler $|u(0) - u_h(0)|$ zurückgibt.
+
+1. Berechnen Sie die Fehler für $N_e = 2, 4, 8, \dots, 2^6$ und bestimmen Sie aus den Verhältnissen
+   aufeinanderfolgender Fehler die Ordnung der Konvergenz.
+
+1. Für den Fehler in der Energienorm haben wir in der Vorlesung die Ordnung 1 gefunden. Was fällt Ihnen auf?
+
+::: {.lm-scaffold}
+```{julia}
+# Nes = 2 .^ (1:6)
+# e = head_errors(Nes)
+# e[1:end-1] ./ e[2:end]
+```
+:::
+
+::: {.lm-solution}
+```{julia}
+Nes = 2 .^ (1:6)
+e = head_errors(Nes)
+round.(e[1:end-1] ./ e[2:end], digits=2)
+```
+
+Mit jeder Verdopplung der Elemente wird der Fehler etwa um den Faktor 4 kleiner, die Kopfverschiebung konvergiert
+also mit der Ordnung 2. Das ist besser als in der Energienorm (Ordnung 1): An den Knoten ist die Näherung genauer
+als dazwischen.
+:::
+:::

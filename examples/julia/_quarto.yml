@@ -1,0 +1,5 @@
+project:
+  type: loimoi
+
+engine: julia
+lang: de

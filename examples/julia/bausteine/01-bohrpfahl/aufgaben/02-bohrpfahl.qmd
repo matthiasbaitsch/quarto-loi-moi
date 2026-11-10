@@ -1,0 +1,48 @@
+```{julia}
+#| label: setup
+#| include: false
+using LinearAlgebra
+include("src/pile.jl")
+include("src/fem.jl")
+```
+
+::: {#exr-bohrpfahl}
+## Bohrpfahl mit finiten Elementen
+
+Laden Sie das [Arbeitsmaterial](${material}) herunter und öffnen Sie das Notebook. Die Parameter und die
+exakte Lösung $u$ stehen in `src/pile.jl`.
+
+1. Schreiben Sie in `src/fem.jl` eine Funktion `pile_fem(Ne)`, die mit den Matrizen aus @exr-elementmatrix die
+   Steifigkeitsmatrix $\mathbf{K}$ und den Lastvektor $\mathbf{r}$ für $N_e$ Elemente aufstellt, das
+   Gleichungssystem löst und die Knoten sowie die Verschiebungen an den Knoten zurückgibt.
+
+1. Berechnen Sie die Kopfverschiebung $u_h(0)$ für $N_e = 4$ Elemente und vergleichen Sie sie mit $u(0)$.
+
+::: {.callout-tip title="Tipps für Julia"}
+```{.julia}
+K = zeros(N, N)          # N×N-Matrix mit Nullen
+I = [e, e + 1]           # Indizes der Knoten von Element e
+K[I, I] += Ke            # Elementmatrix addieren
+x, uh = pile_fem(4)      # zwei Rückgabewerte
+```
+:::
+
+::: {.lm-scaffold}
+```{julia}
+# x, uh = pile_fem(4)
+# uh[1], u(0)
+```
+:::
+
+::: {.lm-solution}
+Die Funktion steht in `src/fem.jl` (Anhang).
+
+```{julia}
+x, uh = pile_fem(4)
+uh[1], u(0)
+```
+
+Die Kopfverschiebung beträgt $u_h(0) = 3.038$ mm, exakt sind es $u(0) = 3.048$ mm. Schon mit vier Elementen
+liegt der Fehler unter einem halben Prozent.
+:::
+:::

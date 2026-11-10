@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"python.defaultInterpreterPath": "${workspaceFolder}/examples/python/.venv/bin/python",
+		"julia.environmentPath": "${workspaceFolder}/examples/julia"
+	}
+}

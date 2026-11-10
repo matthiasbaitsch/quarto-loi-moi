@@ -1,0 +1,7 @@
+material: ipynb
+
+sheets:
+  - bausteine:
+      - 01-bohrpfahl
+  - bausteine:
+      - 02-konvergenz

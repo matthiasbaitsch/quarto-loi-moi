@@ -1,0 +1,10 @@
+# Project for writing the exercises: a single exercise rendered here gets these settings. The learning path
+# project one folder up only renders lernpfad/.
+project:
+  type: default
+
+lang: de
+
+filters:
+  - path: ../_extensions/loimoi/markers.lua
+    at: pre-ast

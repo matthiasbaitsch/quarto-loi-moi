@@ -1,0 +1,18 @@
+[project]
+name = "loi-moi-beispiel-python"
+version = "0.1.0"
+description = "Beispielprojekt für quarto-loi-moi (Python)"
+requires-python = ">=3.12"
+dependencies = [
+    "ipykernel",
+    "matplotlib",
+    "numpy",
+]
+
+# Nur zum Rendern mit Quarto, nicht für die Studierenden
+[dependency-groups]
+render = ["jupyter"]
+
+[tool.uv]
+package = false
+default-groups = []
