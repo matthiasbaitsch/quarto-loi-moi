@@ -1,7 +1,7 @@
 // Small helpers for reading folders and files.
 
-import { join } from "@std/path";
-import { parse } from "@std/yaml";
+import { join } from "jsr:@std/path@1";
+import { parse } from "jsr:@std/yaml@1";
 
 // The subfolders of a folder, without those starting with "_" or ".", sorted by name.
 export function subfolders(folder: string): string[] {

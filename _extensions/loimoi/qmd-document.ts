@@ -1,7 +1,7 @@
 // Document model of a Quarto Markdown file: text, divs and code cells, each with its original lines
 // (DESIGN, section "Document model"). Knows nothing about exercises.
 
-import { parse as parseYaml } from "@std/yaml";
+import { parse as parseYaml } from "jsr:@std/yaml@1";
 
 // A part of the document with its original lines.
 export abstract class Node {
@@ -146,8 +146,13 @@ function nodes(lines: string[], first: number, end: number, found: Block[]): Nod
 function node(lines: string[], block: Block): Node {
   if (block.kind === "div") {
     const close = block.end - 1;
-    return new Div(lines[block.first], lines[close], block.id, block.classes,
-      nodes(lines, block.first + 1, close, block.children));
+    return new Div(
+      lines[block.first],
+      lines[close],
+      block.id,
+      block.classes,
+      nodes(lines, block.first + 1, close, block.children),
+    );
   }
   const cellLines = lines.slice(block.first, block.end);
   const info = block.classes[0] ?? ""; // "{r}" for an executable cell, "r" for ```{.r}

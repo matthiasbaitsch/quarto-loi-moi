@@ -1,7 +1,7 @@
 // Data model of the library (DESIGN, section "Data structure").
 
-import { expandGlobSync } from "@std/fs";
-import { join, relative } from "@std/path";
+import { expandGlobSync } from "jsr:@std/fs@1";
+import { join, relative, resolve } from "jsr:@std/path@1";
 import { readAbout, stripNumber, subfolders } from "./utilities.ts";
 
 // Content of an about.yml, as read; the keys are not checked.
@@ -77,7 +77,8 @@ export class Library {
 
 // Reads the library in the folder root (bausteine/). ingredientNames are the names of the ingredient folders,
 // e.g. ["aufgaben", "folien", "skript"]; a folder with at least one of them is a building block.
-export function readLibrary(root: string, ingredientNames: string[]): Library {
+export function readLibrary(folder: string, ingredientNames: string[]): Library {
+  const root = resolve(folder); // absolute, e.g. for changing into the folder of an exercise
   // Ingredients of the folder path, empty if it is no building block.
   function ingredients(path: string): Ingredient[] {
     return subfolders(join(root, path))

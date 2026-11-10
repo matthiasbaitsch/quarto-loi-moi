@@ -9,7 +9,9 @@ include("src/fem.jl")
 ::: {#exr-bohrpfahl}
 ## Bohrpfahl mit finiten Elementen
 
-Laden Sie das [Arbeitsmaterial](${material}) herunter und öffnen Sie das Notebook. Die Parameter und die exakte Lösung $u$ stehen in `src/pile.jl`.
+![Bohrpfahl im Boden](bilder/pfahl.svg){width=10%}
+
+Laden Sie das [Arbeitsmaterial](${work-files}) herunter und öffnen Sie das Notebook. Die Parameter und die exakte Lösung $u$ stehen in `src/pile.jl`.
 
 1. Schreiben Sie in `src/fem.jl` eine Funktion `pile_fem(Ne)`, die mit den Matrizen aus @exr-elementmatrix die Steifigkeitsmatrix $\mathbf{K}$ und den Lastvektor $\mathbf{r}$ für $N_e$ Elemente aufstellt, das Gleichungssystem löst und die Knoten sowie die Verschiebungen an den Knoten zurückgibt.
 
