@@ -27,3 +27,12 @@ export function readAbout(folder: string): Record<string, unknown> {
 export function stripNumber(folderName: string): string {
   return folderName.replace(/^\d+-/, "");
 }
+
+// The GitHub Pages address of the Git remote, e.g. git@github.com:user/repo.git → https://user.github.io/repo;
+// undefined without a GitHub remote.
+export function gitHubPages(): string | undefined {
+  const result = new Deno.Command("git", { args: ["remote", "get-url", "origin"], stderr: "null" }).outputSync();
+  const remote = new TextDecoder().decode(result.stdout).trim();
+  const match = remote.match(/github\.com[:/]([^/]+)\/([^/]+?)(\.git)?$/);
+  return match === null ? undefined : `https://${match[1]}.github.io/${match[2]}`;
+}

@@ -5,22 +5,22 @@
 import { assert, assertEquals, assertFalse, assertStringIncludes } from "@std/assert";
 import { join } from "@std/path";
 import { unzipSync } from "fflate";
-import { readLibrary } from "../_extensions/loimoi/library.ts";
+import { Library } from "../_extensions/loimoi/library.ts";
 import { Series } from "../_extensions/loimoi/series.ts";
 import { outputFolder } from "./utilities.ts";
 
 // The series of an example.
 function series(example: string): Series {
   const root = new URL(`../examples/${example}/bausteine`, import.meta.url).pathname;
-  return new Series(readLibrary(root, ["aufgaben", "folien", "skript"]));
+  return new Series(Library.read(root, ["aufgaben", "folien", "skript"]), "aufgaben");
 }
 
-// Runs the series on an example into an empty folder and returns the folder; url is the URL of the folder, site the
-// URL of the published site.
-function run(example: string, url?: string, site?: string): string {
-  const folder = outputFolder(example);
-  series(example).run(folder, url, site);
-  return folder;
+// Runs the series on an example, with tests/output/<example>/ as lernpfad/, and returns the folder of the exercise
+// sheets; site is the URL of the published site.
+function run(example: string, site?: string): string {
+  const lernpfad = outputFolder(example);
+  series(example).run(lernpfad, "c", site);
+  return join(lernpfad, "aufgaben", "c");
 }
 
 // The full path of a folder in the bausteine/ of an example.
@@ -96,7 +96,7 @@ Deno.test("julia-parts", () => {
   Deno.writeTextFileSync(join(folder, "old.html"), "");
   Deno.writeTextFileSync(join(folder, "other.txt"), "");
   Deno.writeTextFileSync(join(folder, ".loimoi-generated"), "old.qmd\n", { append: true });
-  series("julia-parts").run(folder);
+  series("julia-parts").run(join(folder, "..", ".."), "c");
   assertFalse(exists(join(folder, "old.qmd")));
   assertFalse(exists(join(folder, "old.html")));
   assert(exists(join(folder, "other.txt")));
@@ -105,7 +105,7 @@ Deno.test("julia-parts", () => {
 // --- python-flat: flat ------------------------------------------------------------------------------------------
 
 Deno.test("python-flat", () => {
-  const folder = run("python-flat", "https://example.org/kurs/aufgaben/c", "https://example.org/kurs");
+  const folder = run("python-flat", "https://example.org/kurs");
 
   const sheet = join(folder, "01-loesungsverfahren-aufgaben.qmd");
 

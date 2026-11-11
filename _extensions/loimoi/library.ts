@@ -73,31 +73,32 @@ export class Ingredient extends Item {}
 // All material maintained by the teacher.
 export class Library {
   constructor(readonly root: string, readonly groups: Group[]) {}
-}
 
-// Reads the library in the folder root (bausteine/). ingredientNames are the names of the ingredient folders,
-// e.g. ["aufgaben", "folien", "skript"]; a folder with at least one of them is a building block.
-export function readLibrary(folder: string, ingredientNames: string[]): Library {
-  const root = resolve(folder); // absolute, e.g. for changing into the folder of an exercise
-  // Ingredients of the folder path, empty if it is no building block.
-  function ingredients(path: string): Ingredient[] {
-    return subfolders(join(root, path))
-      .filter((name) => ingredientNames.includes(name))
-      .map((name) => new Ingredient(root, join(path, name)));
-  }
+  // Reads the library in folder (bausteine/). ingredientNames are the names of the ingredient folders, e.g.
+  // ["aufgaben", "folien", "skript"]; a folder with at least one of them is a building block.
+  static read(folder: string, ingredientNames: string[]): Library {
+    const root = resolve(folder); // absolute, e.g. for changing into the folder of an exercise
 
-  // The building blocks in the folder path.
-  function blocks(path: string): BuildingBlock[] {
-    return subfolders(join(root, path)).map((name) => {
-      const blockPath = join(path, name);
-      return new BuildingBlock(root, blockPath, readAbout(join(root, blockPath)), ingredients(blockPath));
-    });
-  }
+    // Ingredients of the folder path, empty if it is no building block.
+    function ingredients(path: string): Ingredient[] {
+      return subfolders(join(root, path))
+        .filter((name) => ingredientNames.includes(name))
+        .map((name) => new Ingredient(root, join(path, name)));
+    }
 
-  const names = subfolders(root);
-  // bausteine/ contains building blocks (then it is the group) or groups.
-  if (names.some((name) => ingredients(name).length > 0)) {
-    return new Library(root, [new Group(root, "", readAbout(root), blocks(""))]);
+    // The building blocks in the folder path.
+    function blocks(path: string): BuildingBlock[] {
+      return subfolders(join(root, path)).map((name) => {
+        const blockPath = join(path, name);
+        return new BuildingBlock(root, blockPath, readAbout(join(root, blockPath)), ingredients(blockPath));
+      });
+    }
+
+    const names = subfolders(root);
+    // bausteine/ contains building blocks (then it is the group) or groups.
+    if (names.some((name) => ingredients(name).length > 0)) {
+      return new Library(root, [new Group(root, "", readAbout(root), blocks(""))]);
+    }
+    return new Library(root, names.map((name) => new Group(root, name, readAbout(join(root, name)), blocks(name))));
   }
-  return new Library(root, names.map((name) => new Group(root, name, readAbout(join(root, name)), blocks(name))));
 }

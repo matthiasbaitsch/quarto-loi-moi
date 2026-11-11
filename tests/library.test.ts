@@ -1,7 +1,7 @@
 // Tests for library.ts, using the examples as input.
 
 import { assertEquals } from "@std/assert";
-import { Ingredient, readLibrary } from "../_extensions/loimoi/library.ts";
+import { Ingredient, Library } from "../_extensions/loimoi/library.ts";
 
 // The folder bausteine/ of an example.
 function bausteine(example: string): string {
@@ -27,8 +27,8 @@ Deno.test("Ingredient", () => {
   assertEquals(ingredient.files("src/*.jl", { full: true }), [`${folder}/src/fem.jl`, `${folder}/src/pile.jl`]);
 });
 
-Deno.test("readLibrary: grouped by topic (julia-parts)", () => {
-  const library = readLibrary(bausteine("julia-parts"), ingredientNames);
+Deno.test("Library.read: grouped by topic (julia-parts)", () => {
+  const library = Library.read(bausteine("julia-parts"), ingredientNames);
   const blocks = library.groups.flatMap((group) => group.blocks);
 
   assertEquals(library.groups.map((group) => group.name()), ["bohrpfahl", "waermeleitung"]);
@@ -45,19 +45,22 @@ Deno.test("readLibrary: grouped by topic (julia-parts)", () => {
   ]);
 });
 
-Deno.test("readLibrary: flat (python-flat), _templates/ ignored", () => {
-  const library = readLibrary(bausteine("python-flat"), ingredientNames);
+Deno.test("Library.read: flat (python-flat), _templates/ ignored", () => {
+  const library = Library.read(bausteine("python-flat"), ingredientNames);
 
   assertEquals(library.groups.map((group) => group.name()), [""]);
   assertEquals(library.groups[0].blocks.map((block) => block.name()), ["loesungsverfahren", "genauigkeit"]);
   assertEquals(library.groups[0].blocks.map((block) => block.title()), ["Lösungsverfahren", "Genauigkeit"]);
 });
 
-Deno.test("readLibrary: grouped by purpose (r-subjects)", () => {
-  const library = readLibrary(bausteine("r-subjects"), ingredientNames);
+Deno.test("Library.read: grouped by purpose (r-subjects)", () => {
+  const library = Library.read(bausteine("r-subjects"), ingredientNames);
   const blocks = library.groups.flatMap((group) => group.blocks);
 
   assertEquals(library.groups.map((group) => group.name()), ["r", "statistik"]);
   assertEquals(library.groups.map((group) => group.title()), [undefined, undefined]);
-  assertEquals(blocks.map((block) => block.name({ full: true })), ["r/einzelne-merkmale", "statistik/einzelne-merkmale"]);
+  assertEquals(blocks.map((block) => block.name({ full: true })), [
+    "r/einzelne-merkmale",
+    "statistik/einzelne-merkmale",
+  ]);
 });

@@ -2,6 +2,16 @@
 
 What loi-moi does, without deciding how.
 
+This is how a teacher uses loi-moi:
+
+1. The teacher maintains two folders:
+   1. `bausteine/`: the building blocks, with one subfolder per topic or group of topics.
+   2. `lernpfad/`: the learning path, with one subfolder per track.
+2. loi-moi generates the products from the building blocks into the folder `c/` of each track.
+3. Quarto renders the track folders into what the students get.
+
+One exercise sheet from two building blocks:
+
 ```mermaid
 flowchart LR
   subgraph bausteine["bausteine/"]
@@ -34,8 +44,8 @@ flowchart LR
   where it is used (number, title, file names) belongs to the product.
 - **Work files:** what the students download to work with a product, e.g. a notebook with scaffolds for exercises,
   or the project for R slides.
-- **Series:** products of the same kind in a fixed order, numbered. A product is either part of a series or
-  stands alone (e.g. course notes).
+- **Track:** a folder in `lernpfad/`: a series or a standalone product (e.g. course notes).
+- **Series:** products of the same kind in a fixed order, numbered.
 - **Exercise:** a single task with a title (e.g. "Bohrpfahl"), with everything that belongs to it: text,
   solution, scaffold, given code, setup. A task with parts (a, b, …) is one exercise.
 - **Exercise sheet:** several exercises, plus text that structures them (e.g. headings of parts, download text).
@@ -102,50 +112,44 @@ Each group is a folder with building blocks, an optional `about.yml` and optiona
 - **`about.yml`** (optional): a `title`, e.g. for groups by topic.
 - **Files** (optional): files its building blocks use, e.g. a bibliography.
 
-Each building block is a folder with subfolders for material and an optional `about.yml`:
+Each building block is a folder with its ingredients as subfolders and an optional `about.yml`:
 
-- **Subfolders** hold the material for one kind of product each: `folien/` for slides, `aufgaben/` for exercise
-  sheets, `skript/` for course notes. The `.qmd` files directly in a subfolder are combined into one before any
-  further processing, in the order of their names; subfolders (e.g. `src/`, images) are not combined.
+- **Ingredients:** one subfolder per kind of product: `folien/` for slides, `aufgaben/` for exercise sheets,
+  `skript/` for course notes. The `.qmd` files directly in an ingredient are combined into one before any further
+  processing, in the order of their names; its subfolders (e.g. `src/`, images) are not combined.
 - **`about.yml`** (optional) describes the building block, with English keys. Currently only `title` is used, by
   products for titles. Additional information (e.g. a list of topics) can deliberately be added. Without
   `about.yml`, the title of the product comes from the learning path (`loimoi.yml`).
 
 Rules for the folder `bausteine/`:
 
-- A building block is a folder with at least one material subfolder (`folien/`, `aufgaben/`, `skript/`).
+- A building block is a folder with at least one ingredient (`folien/`, `aufgaben/`, `skript/`).
 - `bausteine/` contains either building blocks (then it is the group) or groups, not both.
 - Folder names can start with a number (`01-`). It only sorts and is not part of the name.
 - The name of a building block is its path below `bausteine/` without numbers, i.e. including its group, e.g.
   `bohrpfahl/grundlagen`. Names must be unique.
 - Folders starting with `_` are ignored (e.g. `_templates/`).
+
 ## Learning path
 
-The folder `lernpfad/` describes the learning path: one folder per series or standalone product.
+The folder `lernpfad/` describes the learning path: one folder per track.
 
-- By convention, the name of the folder sets the kind of product and the material it takes from the building
-  blocks (the subfolder with the same name):
+- By convention, the name of the track sets the kind of product and the ingredient it takes from the building
+  blocks:
   - `aufgaben/`: a series of exercise sheets
   - `folien/`: a series of slide sets
   - `skript/`: one book from all `skript/` folders
   - `folien-alle/`: one book from all `folien/` folders
 
   The building blocks are taken in the order of the folders, groups first.
-- Each folder can have a `loimoi.yml` that overrides the convention; without it, the folder works by convention.
-  `loimoi.yml` can set:
-  - the kind of product
-  - how the `.qmd` files of the building blocks are combined: which building blocks and files (by default all
-    `.qmd` files directly in the material subfolder), their order, additional content (e.g. headings of parts,
-    download text)
-  - title and key per product
-  - the patterns for file names
-  - the URL of the published site; by default derived from the Git remote (`https://<user>.github.io/<repo>`)
-  - the output folder (e.g. `d/` to compare with today's scripts)
-- `lernpfad/` itself can have a `loimoi.yml`; the folders inherit its content (and can override it), e.g. the
+- Each track can have a `loimoi.yml` that overrides the convention: selection and order of the building blocks
+  and their files, additional content (e.g. headings of parts), titles, file names, the URL of the published site
+  (by default from the Git remote: `https://<user>.github.io/<repo>`), the output folder.
+- `lernpfad/` itself can have a `loimoi.yml`; the tracks inherit its content (and can override it), e.g. the
   URL.
-- A folder can hold settings for its products (e.g. format, logo, literature in `_metadata.yml`) and extra files
+- A track can hold settings for its products (e.g. format, logo, literature in `_metadata.yml`) and extra files
   (e.g. front page and bibliography of a book).
-- The generated files go into an output folder, by default `c/`, not under version control.
+- The generated files of a track go into its output folder, by default `c/`, not under version control.
 
 **By convention** (as in numPDE, numMat, Informatik):
 
@@ -223,7 +227,8 @@ Per product (default names as in numPDE and numMat, configurable in `loimoi.yml`
 Placeholder in addition to the general ones: `${work-files}`, the absolute URL of the work files.
 
 A programming exercise has `.lm-scaffold` or code in `.lm-solution`; other exercises are paper exercises. Only
-one building block of an exercise sheet may have programming exercises.
+one building block of an exercise sheet may have programming exercises. Every exercise with code has its own
+`setup` cell (`#| label: setup`), so that it runs on its own.
 
 **Paper exercise:**
 
@@ -336,5 +341,5 @@ Writing material in a building block:
 Generating:
 
 - `quarto render` in the project generates all products into `c/`; files generated before are removed.
-- `quarto render lernpfad/<folder>` generates only the products of that folder (e.g. all exercise sheets).
+- `quarto render lernpfad/<track>` generates only the products of that track (e.g. all exercise sheets).
 - Errors stop with a message naming the file.
