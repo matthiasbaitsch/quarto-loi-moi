@@ -6,7 +6,7 @@ Quarto extension that generates what the students get (exercise sheets, later sl
 building blocks (*Bausteine*), for four courses: numPDE, numMat, Informatik, Mathematik B. It grew out of numPDE,
 where exercise text and solution code lived in two files, and each course had its own scripts.
 
-Git repository, local only (not on GitHub yet; planned: `matthiasbaitsch/quarto-loi-moi`).
+Git repository, public on GitHub: `matthiasbaitsch/quarto-loi-moi`.
 
 ## Where things are
 
