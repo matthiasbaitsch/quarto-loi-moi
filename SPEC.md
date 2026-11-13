@@ -1,345 +1,313 @@
 # Specification
 
-What loi-moi does, without deciding how.
+## Introduction
 
-This is how a teacher uses loi-moi:
+Quarto compiles Markdown source files into various target formats. Processing of multiple files is configured on a per-folder basis. However, for a teacher, it is most practical to organize the content of different forms (e.g. notes, exercises) for a course (e.g. calculus) by topic (e.g. sequences, power series). This means that within one source tree, there are files which need to be processed differently. Configuring Quarto to handle this situation is tedious.
 
-1. The teacher maintains two folders:
-   1. `bausteine/`: the building blocks, with one subfolder per topic or group of topics.
-   2. `lernpfad/`: the learning path, with one subfolder per track.
-2. loi-moi generates the products from the building blocks into the folder `c/` of each track.
-3. Quarto renders the track folders into what the students get.
+The Quarto extension loi-moi (from Vietnamese for 'new path') maps a source tree organized by topic (the *building blocks*) onto several source trees organized by target form (the *collections*). Along the way, it can create archives with work files (e.g. C# projects, Positron projects for R) and generate exercise sheets, notebooks (Jupyter, Quarto) and reference solutions from a single source.
 
-One exercise sheet from two building blocks:
+Using loi-moi:
 
-```mermaid
-flowchart LR
-  subgraph bausteine["bausteine/"]
-    B1["bohrpfahl/finite-elemente<br>about.yml, aufgaben/"]
-    B2["bohrpfahl/konvergenz<br>about.yml, aufgaben/"]
-  end
-  subgraph lernpfad["lernpfad/aufgaben/"]
-    L["loimoi.yml"]
-    subgraph c["c/"]
-      S["01-bohrpfahl-finite-elemente-aufgaben.qmd"]
-      M["01-bohrpfahl-finite-elemente-aufgaben.zip"]
-      R["01-bohrpfahl-finite-elemente-aufgaben-loesung-‹hash›.qmd"]
-    end
-  end
-  B1 & B2 --> LM((loi-moi))
-  L --> LM
-  LM --> S & M & R
-  S & R --> Q((Quarto))
-  Q --> H["HTML, PDF<br>for the students"]
+1.  the teacher
+    1. maintains building blocks of content, organized by topic
+    1. specifies the mapping from the building blocks onto collections
+    1. configures Quarto for each collection
+1.  loi-moi prepares the products in the collections
+1.  Quarto renders each collection into what the students get
+
+Project structure of a fictional math course:
+
+```
+building-blocks/                                     learning-material/
+├── 10-convergence/                  group           ├── loimoi.yml
+│   ├── about.yml                                    ├── exercises/       collection
+│   ├── 10-sequences/                building block  │   ├── loimoi.yml
+│   │   ├── about.yml                                │   ├── _quarto.yml
+│   │   ├── exercises/               ingredient      │   └── …
+│   │   │   ├── 10-golden-ratio.qmd                  ├── slides/          collection
+│   │   │   ├── 20-fibonacci.qmd                     │   └── …
+│   │   │   ├── images/sequence.svg                  └── …
+│   │   │   └── src/
+│   │   │       ├── fibonacci.jl
+│   │   │       └── …
+│   │   ├── slides/                  ingredient
+│   │   │   └── …
+│   │   └── …
+│   └── 20-series/                   building block
+│       └── …
+└── 20-functions/                    group
+    ├── about.yml
+    ├── 10-power-series/             building block
+    │   └── …
+    └── …
+
+          │                                          │
+          └──────────────── loi-moi ─────────────────┘
+                               ▼
+
+learning-material/
+├── exercises/c/
+│   ├── 01-convergence-sequences-exercises.qmd                    ┐
+│   ├── 01-convergence-sequences-exercises.zip                    │ product
+│   ├── 01-convergence-sequences-exercises-solution-2094a057.qmd  ┘
+│   ├── 02-convergence-series-exercises.qmd                       ┐ product
+│   ├── …
+│   ├── images/sequence.svg
+│   └── …
+├── slides/c/
+│   └── …
+└── …
+
+                                │
+                             Quarto
+                                ▼
+
+…/__output/c/
+├── 01-convergence-sequences-exercises.html
+└── …
 ```
 
 ## Terms
 
-- **Library:** all material maintained by the teacher.
-- **Group:** related building blocks.
-- **Building block:** material on one topic, independent of where it is used.
-- **Ingredient:** the part of a building block for one kind of product, e.g. its exercises or its slides.
-- **Learning path:** all products of a course.
-- **Product:** a set of related files, e.g. exercise sheet, work files and solution. Everything that depends on
-  where it is used (number, title, file names) belongs to the product.
-- **Work files:** what the students download to work with a product, e.g. a notebook with scaffolds for exercises,
-  or the project for R slides.
-- **Track:** a folder in `lernpfad/`: a series or a standalone product (e.g. course notes).
-- **Series:** products of the same kind in a fixed order, numbered.
-- **Exercise:** a single task with a title (e.g. "Bohrpfahl"), with everything that belongs to it: text,
-  solution, scaffold, given code, setup. A task with parts (a, b, …) is one exercise.
-- **Exercise sheet:** several exercises, plus text that structures them (e.g. headings of parts, download text).
-  With work files and solution, it forms a product.
+Maintained by the teacher:
 
-## Scope
+- **Building blocks** (`building-blocks/`): available content
+- **Group** (e.g. `10-convergence/`): related building blocks
+- **Building block** (`10-sequences/`): content on one topic
+- **Ingredient** (`exercises/`): content of one form
 
-The first version produces one series: the exercise sheets. Later, further series (slides) and standalone
-products (course notes, all slides in one document, course slides) are to follow (see ANALYSIS).
+Prepared for the students:
 
-## Groups and building blocks
+- **Learning material** (`learning-material/`): all collections for one course
+- **Collection** (`exercises/`): set of products of one form
+- **Product** (in `c/`): set of related files
+- **Work files** (e.g. `…-exercises.zip`): material students work with
 
-The folder `bausteine/` holds the library. Three examples:
+Exercises:
 
-**Flat** (as in Informatik): all building blocks directly in `bausteine/`.
+- **Exercise product:** exercise sheet, work files (e.g. a notebook) and reference solution
+- **Exercise sheet:** several exercises, plus structuring text
+- **Exercise:** a task with a title and text, optionally with solution and scaffold
 
-```
-bausteine/
-  _templates/          ignored
-  01-einfuehrung/
-    about.yml
-    folien/
-    aufgaben/
-  02-installation/
-  03-elementare-datentypen/
-```
+## Building blocks
 
-**Grouped by part** (does not exist yet): one folder per part of a course, in a fixed order. The same name can
-occur in several parts.
+Examples for folder layout
 
-```
-bausteine/
-  01-bohrpfahl/
-    about.yml          title: Bohrpfahl
-    01-grundlagen/
-      about.yml        title: Grundlagen
-      folien/
-      aufgaben/
-    02-variationsprobleme/
-  02-waermeleitung/
-    about.yml
-    01-grundlagen/
-    02-dirichlet-randbedingungen/
+```         
+flat                    by part                     by subject
+
+building-blocks/        building-blocks/            building-blocks/
+├── _templates/         ├── 10-convergence/         ├── theory/
+├── 10-sequences/       │   ├── about.yml           │   ├── sequences/
+│   ├── about.yml       │   ├── 10-sequences/       │   │   ├── exercises/
+│   ├── exercises/      │   │   ├── about.yml       │   │   └── notes/
+│   └── slides/         │   │   ├── exercises/      │   └── …
+├── 20-series/          │   │   └── notes/          └── programming/
+└── …                   │   └── 20-series/              ├── sequences/
+                        └── 20-functions/               │   ├── exercises/
+                            ├── about.yml               │   └── slides/
+                            └── 10-power-series/        └── …
 ```
 
-**Grouped by subject** (as in Mathematik B): one folder per subject. The groups are different aspects of the same
-topics; products can take material from several groups (e.g. an exercise sheet with statistics and R exercises).
+Example for an `about.yml` file
 
-```
-bausteine/
-  statistik/
-    statistische-daten/
-      folien/
-      aufgaben/
-      skript/
-    einzelne-merkmale/
-  r/
-    erste-schritte/
-    einzelne-merkmale/
+```yml
+group-title: "Sequences and Series: Convergence"
+block-title: "Sequences"
 ```
 
-Each group is a folder with building blocks, an optional `about.yml` and optional files. Groups are not nested.
+Remarks:
 
-- **`about.yml`** (optional): a `title`, e.g. for groups by topic.
-- **Files** (optional): files its building blocks use, e.g. a bibliography.
+- Building block content described by `about.yml` (merged along path, optional)
+- Building blocks identified by path
+- Leading numbers in names stripped
+- Folders starting with `_` ignored
 
-Each building block is a folder with its ingredients as subfolders and an optional `about.yml`:
+## Learning material
 
-- **Ingredients:** one subfolder per kind of product: `folien/` for slides, `aufgaben/` for exercise sheets,
-  `skript/` for course notes. The `.qmd` files directly in an ingredient are combined into one before any further
-  processing, in the order of their names; its subfolders (e.g. `src/`, images) are not combined.
-- **`about.yml`** (optional) describes the building block, with English keys. Currently only `title` is used, by
-  products for titles. Additional information (e.g. a list of topics) can deliberately be added. Without
-  `about.yml`, the title of the product comes from the learning path (`loimoi.yml`).
+Examples for folder layout
 
-Rules for the folder `bausteine/`:
+```         
+by convention               with configuration
 
-- A building block is a folder with at least one ingredient (`folien/`, `aufgaben/`, `skript/`).
-- `bausteine/` contains either building blocks (then it is the group) or groups, not both.
-- Folder names can start with a number (`01-`). It only sorts and is not part of the name.
-- The name of a building block is its path below `bausteine/` without numbers, i.e. including its group, e.g.
-  `bohrpfahl/grundlagen`. Names must be unique.
-- Folders starting with `_` are ignored (e.g. `_templates/`).
-
-## Learning path
-
-The folder `lernpfad/` describes the learning path: one folder per track.
-
-- By convention, the name of the track sets the kind of product and the ingredient it takes from the building
-  blocks:
-  - `aufgaben/`: a series of exercise sheets
-  - `folien/`: a series of slide sets
-  - `skript/`: one book from all `skript/` folders
-  - `folien-alle/`: one book from all `folien/` folders
-
-  The building blocks are taken in the order of the folders, groups first.
-- Each track can have a `loimoi.yml` that overrides the convention: selection and order of the building blocks
-  and their files, additional content (e.g. headings of parts), titles, file names, the URL of the published site
-  (by default from the Git remote: `https://<user>.github.io/<repo>`), the output folder.
-- `lernpfad/` itself can have a `loimoi.yml`; the tracks inherit its content (and can override it), e.g. the
-  URL.
-- A track can hold settings for its products (e.g. format, logo, literature in `_metadata.yml`) and extra files
-  (e.g. front page and bibliography of a book).
-- The generated files of a track go into its output folder, by default `c/`, not under version control.
-
-**By convention** (as in numPDE, numMat, Informatik):
-
-```
-lernpfad/
-  aufgaben/
-    loimoi.yml         format of the work files
-    c/                 generated
-  folien/
-    c/
-  skript/
-    c/
-  folien-alle/
-    c/
+learning-material/          learning-material/
+├── exercises/              ├── loimoi.yml
+│   └── c/                  ├── exercises/
+├── slides/                 │   ├── loimoi.yml
+│   └── c/                  │   └── c/
+├── notes/                  ├── theory-slides/
+│   └── c/                  │   ├── loimoi.yml
+├── slides-all/             │   └── c/
+│   └── c/                  └── …
+└── …
 ```
 
-**With configuration** (as in Mathematik B):
+Example for general section of a `loimoi.yml` file
 
-```
-lernpfad/
-  loimoi.yml           for all folders, e.g. the URL
-  aufgaben/
-    loimoi.yml         exercise sheets from statistics and R building blocks
-    c/                 generated
-  statistik-folien/
-    loimoi.yml         slides from the group statistik
-  r-folien/
-    loimoi.yml         slides from the group r
-  r-folien-alle/
-    loimoi.yml         book from the slides of the group r
-  skript/
-    loimoi.yml         book from the group statistik, in this order
+```yml
+output: c                                           # folder for the prepared material
+first-number: 1                                     # number of the first product
+site: https://teacher.github.io/calculus            # defaults to github remote
+
+ingredients:                                        # one entry per product
+  - convergence/sequences/exercises
+  - convergence/series/exercises
+  - [functions/power-series/exercises, functions/continuity/exercises]
+
+...
 ```
 
-**Side note:** the folder names (`bausteine/`, `lernpfad/`, `aufgaben/`, `folien/`, `skript/`, `folien-alle/`) are
-German; they can be internationalized (e.g. English names).
+Remarks:
 
-**Todo:** content that belongs to no building block (course slides, folder structure to download): where it lives.
+- Material processed by loi-moi into folder `c/` (in `.gitignore`)
+- Configuration in `loimoi.yml` (optional, merged along path)
+- Sensible defaults for all settings
+- `.qmd` files of an ingredient combined in name order, ingredients of a product in the order of `ingredients`
 
-## Products
+### Exercises
 
-loi-moi generates the content of `c/`; Quarto renders it into what the students get (directed by `_quarto.yml`
-and `_metadata.yml`).
+#### Series
 
-The file names of products in a series are built from:
+Example for exercise series
 
-- `<slug>`: number of the product in the series (two digits), then the name of its first building block with `/`
-  as `-`; e.g. `02-bohrpfahl-variationsprobleme`.
-- `<hash>`: the first 8 hex digits of `sha1("87362-" + slug)`, for names that cannot be guessed (e.g. solutions).
-
-Placeholders in the `.qmd` files of the building blocks are replaced:
-
-- `${slug}`: the slug of the product, e.g. for the name of a downloaded file.
-- `${site}`: the URL of the published site (see `loimoi.yml`), e.g. for absolute links.
-
-### Exercise sheets
-
-#### Content of `c/`
-
-Per product (default names as in numPDE and numMat, configurable in `loimoi.yml`):
-
-- **Exercise sheet:** a Quarto document, `<slug>-aufgaben.qmd`.
-- **Work files** (if there is a programming exercise): a zip file, `<slug>-aufgaben.zip`.
-- **Solution** (if there is an `.lm-solution`): a Quarto document or a zip file,
-  `<slug>-aufgaben-loesung-<hash>.{qmd,zip}`.
-
-#### In the building blocks (`aufgaben/`)
-
-`aufgaben/` contains:
-
-- **`.qmd` files:** text that structures the exercise sheet (e.g. headings of parts), exercises in divs
-  (`#exr-…`), scaffold and solutions.
-- **Subfolders** (optional): data, images or source code.
-
-Placeholder in addition to the general ones: `${work-files}`, the absolute URL of the work files.
-
-A programming exercise has `.lm-scaffold` or code in `.lm-solution`; other exercises are paper exercises. Only
-one building block of an exercise sheet may have programming exercises. Every exercise with code has its own
-`setup` cell (`#| label: setup`), so that it runs on its own.
-
-**Paper exercise:**
-
-````markdown
-## Teil 1: Auf dem Papier
-
-```{r}
-#| label: setup
-#| include: false
-library(tidyverse)
+```
+learning-material/exercises/c/
+├── 01-convergence-sequences-exercises.qmd                       exercise sheet
+├── 01-convergence-sequences-exercises.zip                       work files
+├── 01-convergence-sequences-exercises-solution-2094a057.qmd     reference solution
+├── 02-convergence-series-exercises.qmd                          exercise sheet
+├── …
+├── images/sequence.svg                                          used by exercise sheet
+└── …
 ```
 
-::: {#exr-lagemasse}
-## Lagemaße
+Examples for work files
 
-Bestimmen Sie Median und Mittelwert der Werte in der folgenden Tabelle.
-
-::: {.lm-sheet}
-```{r}
-#| echo: false
-knitr::kable(tibble(Wert = c(3, 5, 5, 8, 14)))
 ```
-:::
+single notebook (as in numPDE)                  Positron project (as in Mathematik B)
 
-::: {.lm-solution}
-Median: 5, Mittelwert: $35/5 = 7$.
-:::
-:::
-````
-
-**Programming exercise (R):**
-
-````markdown
-## Teil 2: Mit dem Computer
-
-Laden Sie das [Arbeitsmaterial](${work-files}) herunter.
-
-```{r}
-#| label: setup
-#| include: false
-library(tidyverse)
-befragung <- read_csv("daten/befragung.csv")
+01-convergence-sequences-exercises.zip          01-convergence-sequences-exercises.zip
+└── 01-convergence-sequences-exercises.ipynb    └── 01-convergence-sequences-exercises/
+                                                    ├── convergence-sequences-exercises.code-workspace
+                                                    ├── convergence-sequences-exercises.qmd
+                                                    ├── _quarto.yml
+                                                    └── data/fibonacci.csv
 ```
 
-::: {#exr-entfernungen}
-## Entfernungen
+#### Configuration
 
-Berechnen Sie den Mittelwert der Entfernungen.
-
-::: {.lm-scaffold}
-```{r}
-# mittelwert <- ...
+```yml
+recipe:
+  name: exercises
+  options:
+    work-files: notebook      # or r-project
 ```
-:::
 
-::: {.lm-solution}
-Der Mittelwert beträgt …
+Without configuration, the recipe is named after the collection (e.g. `exercises/` uses the recipe `exercises`). The recipe expands to the following configuration.
 
-```{r}
-mittelwert <- mean(befragung$entfernung)
+With `work-files: notebook`, the work files archive contains a single Jupyter notebook
+
+```yml
+quarto-files:
+  - name: "${slug}-exercises"
+    title: "Exercise sheet ${n}"
+    subtitle: "${group}: ${building-block}"
+    process: [exercise-sheet]
+
+  - name: "${slug}-exercises-solution-${hash}"
+    title: "Solutions to exercise sheet ${n}"
+    process: [exercise-solution]
+
+  - name: "${slug}-exercises"
+    title: "Exercise sheet ${n}"
+    process: [exercise-scaffold, jupyter, zip] # source deleted after zip
 ```
-:::
-:::
-````
 
-#### In the learning path (`lernpfad/aufgaben/`)
+With `work-files: r-project`, the work files archive contains a project
 
-`loimoi.yml` specifies:
+```yml
+quarto-files:
+  # sheet and solution as above
 
-- the format of the work files (required): notebook (`.ipynb`) or `.qmd`
-- the files and folders of `aufgaben/` that go into the work files (e.g. `daten/`, a workspace)
+  - name: "${slug}-exercises/${block-slug}-exercises"
+    title: "Exercise sheet ${n}"
+    process: [exercise-scaffold]
 
-#### Processing
-
-Before further processing:
-
-1. The `.qmd` files are combined.
-2. The `setup` cells are merged into one at the beginning; repeated lines are dropped.
-3. Subtitle: the titles of the group and of the first building block, joined with ": " (e.g. "Bohrpfahl:
-   Grundlagen").
-4. Images and other linked files are copied to `c/`.
-
-##### Exercise sheet
-
-1. Title: "Aufgabenblatt N".
-2. Removed: `.lm-solution`, `.lm-scaffold` and unwrapped code, except the `setup` cell.
-
-##### Work files
-
-1. Title: "Aufgabenblatt N".
-2. Paper exercises are dropped.
-3. Kept: the `setup` cell, exercise titles, unwrapped code and `.lm-scaffold`.
-4. A solution with code but no scaffold gets an empty code cell.
-5. Zipped: the document and the files and folders from `loimoi.yml`.
-
-##### Solution
-
-1. Title: "Lösungen zu Aufgabenblatt N".
-2. Kept: the `setup` cell, exercise titles, unwrapped code and `.lm-solution`.
-3. Appendix "Code": all files from `src/` of the building block.
+archives:                                      # folder deleted after zip
+  - name: "${slug}-exercises"
+    add:                                       # paths relative to building-blocks/
+      - "${ingredient}/data/"
+      - _templates/exercises/_quarto.yml
+      - _templates/exercises/exercises.code-workspace: "${block-slug}-exercises.code-workspace"
+```
 
 ## Usage
 
-Writing material in a building block:
+- `quarto render learning-material` prepares and renders all collections.
+- `quarto render learning-material/<collection>` prepares and renders only that collection.
+- loi-moi runs before every render, also for a single file or a preview, so nothing is stale.
+- `c/` is cleared first.
+- An error stops processing with a message naming the file.
 
-- The code runs in the editor, in the folder of the file.
-- Rendering a file on its own shows everything, with markers visible (e.g. solution and scaffold).
-- The teacher can view a file as each part of its product (e.g. exercise sheet, work files, solution).
+## Appendix
 
-Generating:
+### Settings in `loimoi.yml`
 
-- `quarto render` in the project generates all products into `c/`; files generated before are removed.
-- `quarto render lernpfad/<track>` generates only the products of that track (e.g. all exercise sheets).
-- Errors stop with a message naming the file.
+| Setting | Meaning | Default |
+|---|---|---|
+| `output` | folder for the prepared material | `c` |
+| `first-number` | number of the first product | `1` |
+| `site` | URL of the published site | from the Git remote |
+| `ingredients` | ingredients of each product, one entry per product | one product per building block with the ingredient, in folder order |
+| `recipe.name` | recipe that makes the products | name of the collection |
+| `recipe.options` | options of the recipe | see the recipe |
+
+### Actions
+
+Defined by the recipe, run per product in this order:
+
+| Action | Makes | Keys |
+|---|---|---|
+| `quarto-files` | Quarto files | `name`, `title`, `subtitle`, `process` |
+| `archives` | zip files from a folder | `name`, `add` |
+
+Processing steps (`process`):
+
+| Step | Does |
+|---|---|
+| `exercise-sheet` | keeps what belongs on the exercise sheet |
+| `exercise-scaffold` | keeps what belongs into the work files |
+| `exercise-solution` | keeps what belongs into the solution |
+| `jupyter` | converts to a Jupyter notebook, without running it |
+| `zip` | zips the file and deletes it |
+
+What the three exercise steps keep:
+
+| Content | `exercise-sheet` | `exercise-scaffold` | `exercise-solution` |
+|---|---|---|---|
+| exercise title | ✓ | ✓ | ✓ |
+| `setup` cell | ✓ | ✓ | ✓ |
+| text outside exercises (e.g. headings) | ✓ | – | – |
+| unmarked text (exercise text) | ✓ | – | – |
+| unmarked code (given code, e.g. loading data) | – | ✓ | ✓ |
+| `.lm-sheet` | ✓ | – | – |
+| `.lm-scaffold` | – | ✓ | – |
+| `.lm-solution` | – | empty code cell (1) | ✓ |
+
+(1) Only if the solution has code and the exercise has no scaffold.
+
+### Placeholders
+
+Filled in per product, in `loimoi.yml` and in the `.qmd` files of the building blocks:
+
+| Placeholder | Value | Example |
+|---|---|---|
+| `${n}` | number of the product | `1` |
+| `${block-slug}` | name of the first building block, `/` as `-` | `convergence-sequences` |
+| `${slug}` | `${n}` with two digits, then `${block-slug}` | `01-convergence-sequences` |
+| `${hash}` | first 8 hex digits of `sha1("87362-" + slug)`, for names that cannot be guessed | `2094a057` |
+| `${group}` | title of the group of the first building block | `Convergence` |
+| `${building-block}` | title of the first building block | `Sequences` |
+| `${ingredient}` | each ingredient folder of the product | `convergence/sequences/exercises` |
+| `${site}` | URL of the published site | `https://teacher.github.io/calculus` |
+| `${work-files}` | URL of the work files | `…/01-convergence-sequences-exercises.zip` |

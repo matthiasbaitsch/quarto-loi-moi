@@ -1,0 +1,14 @@
+::: {#exr-name}
+## Title
+
+Text of the exercise.
+
+::: {.lm-scaffold}
+```{python}
+```
+:::
+
+::: {.lm-solution}
+Solution.
+:::
+:::

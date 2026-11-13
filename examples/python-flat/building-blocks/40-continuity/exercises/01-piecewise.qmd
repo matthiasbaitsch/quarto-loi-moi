@@ -1,0 +1,19 @@
+::: {#exr-piecewise}
+## A piecewise function
+
+Let
+$$
+  f(x) = \begin{cases} x^2 & \text{for } x \leq 1, \\ a x - 1 & \text{for } x > 1. \end{cases}
+$$
+
+1. For which $a$ is $f$ continuous?
+
+1. Is $f$ then also differentiable at $x = 1$?
+
+::: {.lm-solution}
+1. Both pieces are continuous; at $x = 1$, the left piece gives $1$, the right one tends to $a - 1$. So $f$ is
+   continuous for $a = 2$.
+
+1. Yes: the derivative of the left piece at $1$ is $2 \cdot 1 = 2$, that of the right piece is $a = 2$.
+:::
+:::

@@ -1,0 +1,51 @@
+## Part 2: In R
+
+Download the [work files](${work-files}) and unzip them into your project folder.
+
+```{r}
+#| label: setup
+#| include: false
+library(knitr)
+```
+
+::: {#exr-taylor}
+## Taylor polynomials of the exponential function
+
+The power series of $e^x$ converges for all $x$. Its partial sums are the Taylor polynomials
+$$
+  T_n(x) = \sum_{k=0}^{n} \frac{x^k}{k!}.
+$$
+
+1. Implement the function `taylor_exp(x, n)`, which returns $T_n(x)$.
+
+1. Compute the errors of $T_1(1), \ldots, T_{15}(1)$. How does the error fall?
+
+::: {.lm-scaffold}
+```{r}
+taylor_exp <- function(x, n) {
+  # ...
+}
+```
+:::
+
+::: {.lm-solution}
+```{r}
+taylor_exp <- function(x, n) {
+  term <- 1
+  total <- 1
+  for (k in seq_len(n)) {
+    term <- term * x / k
+    total <- total + term
+  }
+  total
+}
+
+ns <- 1:15
+errors <- abs(sapply(ns, function(n) taylor_exp(1, n)) - exp(1))
+kable(data.frame(n = ns, error = format(errors, digits = 3)))
+```
+
+The error is about $1 / (n + 1)!$, the first term left out. It falls faster and faster; after about $17$ terms, it
+reaches the level of the rounding errors.
+:::
+:::

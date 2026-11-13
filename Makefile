@@ -1,4 +1,4 @@
-EXAMPLES = examples/python-flat examples/julia-parts examples/r-subjects
+EXAMPLES = examples/python-flat examples/julia-parts examples/r-topics
 
 # Copy the extension into the example projects (Quarto does not follow a symlink to an extension)
 examples:

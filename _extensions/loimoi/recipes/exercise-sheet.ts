@@ -12,7 +12,7 @@ export class ExerciseSheet implements Recipe {
   constructor(
     readonly ingredients: Ingredient[], // the aufgaben/ folders of the building blocks
     readonly number: number, // position in the series, from 1
-    readonly groupTitle?: string, // e.g. "Bohrpfahl"
+    readonly groupTitle?: string, // e.g. "Kreis"
     readonly blockTitle?: string, // e.g. "Finite Elemente"
   ) {}
 
@@ -75,7 +75,7 @@ export class ExerciseSheet implements Recipe {
   }
 
   // Writes the work files if there is a programming exercise: a zip file with the notebook, e.g.
-  // 01-bohrpfahl-finite-elemente-aufgaben.zip with 01-bohrpfahl-finite-elemente-aufgaben.ipynb.
+  // 01-kreis-grundlagen-aufgaben.zip with 01-kreis-grundlagen-aufgaben.ipynb.
   workFiles(folder: string): string[] {
     const nodes = forWorkFiles(this.nodes());
     if (!nodes.some((node) => node instanceof Div)) return []; // no programming exercise
@@ -86,7 +86,7 @@ export class ExerciseSheet implements Recipe {
     return [`${this.slug()}-aufgaben.zip`];
   }
 
-  // Writes the solution, e.g. 01-bohrpfahl-finite-elemente-aufgaben-loesung-830a5d95.qmd.
+  // Writes the solution, e.g. 01-kreis-grundlagen-aufgaben-loesung-a298685c.qmd.
   solution(folder: string): string {
     const header = [
       "---",
@@ -100,11 +100,12 @@ export class ExerciseSheet implements Recipe {
     return file;
   }
 
-  // Writes the exercise sheet, e.g. 01-bohrpfahl-finite-elemente-aufgaben.qmd.
-  // Without .lm-sheet, the sheet runs no code (saves time; works for all languages, unlike --no-execute).
+  // Writes the exercise sheet, e.g. 01-kreis-grundlagen-aufgaben.qmd.
+  // Without .lm-sheet, the sheet runs no code (saves time; works for all languages, unlike --no-execute). The sheet
+  // never shows code: what runs there only makes content, e.g. a table.
   sheet(folder: string): string {
     const nodes = tidy(forSheet(this.renderedNodes()));
-    const execute = hasSheetCode(nodes) ? [] : ["execute:", "  eval: false"];
+    const execute = ["execute:", ...(hasSheetCode(nodes) ? [] : ["  eval: false"]), "  echo: false"];
     const header = [
       "---",
       `title: Aufgabenblatt ${this.number}`,
@@ -141,12 +142,12 @@ export class ExerciseSheet implements Recipe {
     return encodeHex(digest).slice(0, 8);
   }
 
-  // Group title and building block title, e.g. "Bohrpfahl: Finite Elemente".
+  // Group title and building block title, e.g. "Kreis: Grundlagen".
   subtitle(): string {
     return [this.groupTitle, this.blockTitle].filter((title) => title !== undefined).join(": ");
   }
 
-  // Number and name of the first building block, e.g. "01-bohrpfahl-finite-elemente" (SPEC, section "Products").
+  // Number and name of the first building block, e.g. "01-kreis-grundlagen" (SPEC, section "Products").
   slug(): string {
     const parts = this.ingredients[0].name({ full: true }).split("/");
     const blockName = parts.slice(0, -1).join("-"); // without the ingredient, e.g. "aufgaben"

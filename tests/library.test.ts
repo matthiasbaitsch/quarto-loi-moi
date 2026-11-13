@@ -12,31 +12,31 @@ const ingredientNames = ["aufgaben", "folien", "skript"];
 
 Deno.test("Ingredient", () => {
   const root = bausteine("julia-parts");
-  const ingredient = new Ingredient(root, "01-bohrpfahl/01-finite-elemente/aufgaben");
-  const folder = `${root}/01-bohrpfahl/01-finite-elemente/aufgaben`;
+  const ingredient = new Ingredient(root, "01-kreis/01-grundlagen/aufgaben");
+  const folder = `${root}/01-kreis/01-grundlagen/aufgaben`;
 
   assertEquals(ingredient.name(), "aufgaben");
-  assertEquals(ingredient.name({ full: true }), "bohrpfahl/finite-elemente/aufgaben");
-  assertEquals(ingredient.name({ full: true, separator: "-" }), "bohrpfahl-finite-elemente-aufgaben");
+  assertEquals(ingredient.name({ full: true }), "kreis/grundlagen/aufgaben");
+  assertEquals(ingredient.name({ full: true, separator: "-" }), "kreis-grundlagen-aufgaben");
 
   assertEquals(ingredient.fullPath(), folder);
-  assertEquals(ingredient.fullPath("src/fem.jl"), `${folder}/src/fem.jl`);
+  assertEquals(ingredient.fullPath("src/kreis.jl"), `${folder}/src/kreis.jl`);
 
-  assertEquals(ingredient.files("*.qmd"), ["01-elementmatrix.qmd", "02-bohrpfahl.qmd"]);
-  assertEquals(ingredient.files("src/*.jl"), ["src/fem.jl", "src/pile.jl"]);
-  assertEquals(ingredient.files("src/*.jl", { full: true }), [`${folder}/src/fem.jl`, `${folder}/src/pile.jl`]);
+  assertEquals(ingredient.files("*.qmd"), ["01-sechseck.qmd", "02-vieleck.qmd"]);
+  assertEquals(ingredient.files("src/*.jl"), ["src/kreis.jl", "src/vieleck.jl"]);
+  assertEquals(ingredient.files("src/*.jl", { full: true }), [`${folder}/src/kreis.jl`, `${folder}/src/vieleck.jl`]);
 });
 
 Deno.test("Library.read: grouped by topic (julia-parts)", () => {
   const library = Library.read(bausteine("julia-parts"), ingredientNames);
   const blocks = library.groups.flatMap((group) => group.blocks);
 
-  assertEquals(library.groups.map((group) => group.name()), ["bohrpfahl", "waermeleitung"]);
-  assertEquals(library.groups.map((group) => group.title()), ["Bohrpfahl", "Wärmeleitung"]);
+  assertEquals(library.groups.map((group) => group.name()), ["kreis", "kugel"]);
+  assertEquals(library.groups.map((group) => group.title()), ["Kreis", "Kugel"]);
   assertEquals(blocks.map((block) => block.name({ full: true })), [
-    "bohrpfahl/finite-elemente",
-    "bohrpfahl/konvergenz",
-    "waermeleitung/finite-elemente",
+    "kreis/grundlagen",
+    "kreis/konvergenz",
+    "kugel/grundlagen",
   ]);
   assertEquals(blocks.map((block) => block.ingredients.map((ingredient) => ingredient.name())), [
     ["aufgaben"],
@@ -49,8 +49,8 @@ Deno.test("Library.read: flat (python-flat), _templates/ ignored", () => {
   const library = Library.read(bausteine("python-flat"), ingredientNames);
 
   assertEquals(library.groups.map((group) => group.name()), [""]);
-  assertEquals(library.groups[0].blocks.map((block) => block.name()), ["loesungsverfahren", "genauigkeit"]);
-  assertEquals(library.groups[0].blocks.map((block) => block.title()), ["Lösungsverfahren", "Genauigkeit"]);
+  assertEquals(library.groups[0].blocks.map((block) => block.name()), ["zinsen", "sparplan"]);
+  assertEquals(library.groups[0].blocks.map((block) => block.title()), ["Zinsen", "Sparplan"]);
 });
 
 Deno.test("Library.read: grouped by purpose (r-subjects)", () => {
@@ -60,7 +60,7 @@ Deno.test("Library.read: grouped by purpose (r-subjects)", () => {
   assertEquals(library.groups.map((group) => group.name()), ["r", "statistik"]);
   assertEquals(library.groups.map((group) => group.title()), [undefined, undefined]);
   assertEquals(blocks.map((block) => block.name({ full: true })), [
-    "r/einzelne-merkmale",
-    "statistik/einzelne-merkmale",
+    "r/haeufigkeiten",
+    "statistik/haeufigkeiten",
   ]);
 });

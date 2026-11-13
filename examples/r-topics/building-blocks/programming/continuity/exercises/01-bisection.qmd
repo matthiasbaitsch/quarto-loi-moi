@@ -1,0 +1,50 @@
+## Part 2: In R
+
+Download the [work files](${work-files}) and unzip them into your project folder.
+
+::: {#exr-bisection}
+## Bisection
+
+If $f$ is continuous on $[a, b]$ and $f(a)$ and $f(b)$ have opposite signs, $f$ has a zero in $[a, b]$
+(intermediate value theorem). Bisection halves the interval in each step and keeps the half in which the sign
+changes.
+
+1. Implement the function `bisection(f, a, b, n)`, which returns the vector of the midpoints of the first $n$
+   intervals.
+
+1. Find the zero of $\cos x - x$ in $[0, 1]$ with $n = 50$. Take the last midpoint as the exact zero and plot the
+   errors of the first $40$ midpoints in a semi-log diagram. How many steps are needed for ten correct digits?
+
+::: {.lm-scaffold}
+```{r}
+bisection <- function(f, a, b, n) {
+  # ...
+}
+```
+:::
+
+::: {.lm-solution}
+```{r}
+bisection <- function(f, a, b, n) {
+  midpoints <- numeric(n)
+  for (k in seq_len(n)) {
+    m <- (a + b) / 2
+    midpoints[k] <- m
+    if (sign(f(m)) == sign(f(a))) {
+      a <- m
+    } else {
+      b <- m
+    }
+  }
+  midpoints
+}
+
+midpoints <- bisection(function(x) cos(x) - x, 0, 1, 50)
+errors <- abs(midpoints[1:40] - midpoints[50])
+plot(1:40, errors, log = "y", type = "b", xlab = "step", ylab = "error")
+```
+
+After $n$ steps, the interval has the length $2^{-n}$, so the error falls along a straight line. Ten correct digits
+need $2^{-n} < 10^{-10}$, that is $n \geq 34$.
+:::
+:::

@@ -1,0 +1,11 @@
+# Each exercise sheet combines the paper exercises of a topic with its programming exercises.
+ingredients:
+  - [theory/sequences/exercises, programming/sequences/exercises]
+  - [theory/series/exercises, programming/series/exercises]
+  - [theory/power-series/exercises, programming/power-series/exercises]
+  - [theory/continuity/exercises, programming/continuity/exercises]
+
+recipe:
+  name: exercises
+  options:
+    work-files: r-project

@@ -1,0 +1,40 @@
+```{python}
+#| label: setup
+#| include: false
+import math
+```
+
+::: {#exr-fibonacci}
+## How fast do the ratios converge?
+
+1. Implement the function `fibonacci_ratios(n)`, which returns the list of the ratios $q_1, \ldots, q_n$ from
+   @exr-golden-ratio.
+
+1. Compute the ratios for $n = 20$ together with their errors. By which factor does the error fall in each step?
+
+::: {.lm-scaffold}
+```{python}
+def fibonacci_ratios(n):
+    ...
+```
+:::
+
+::: {.lm-solution}
+```{python}
+def fibonacci_ratios(n):
+    a, b = 1, 1
+    ratios = []
+    for k in range(n):
+        ratios.append(b / a)
+        a, b = b, a + b
+    return ratios
+
+phi = (1 + math.sqrt(5)) / 2
+for q in fibonacci_ratios(20):
+    print(q, abs(q - phi))
+```
+
+The error falls by the factor $\varphi^2 \approx 2.6$ in each step, and its sign alternates: the ratios lie
+alternately above and below $\varphi$.
+:::
+:::

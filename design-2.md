@@ -171,6 +171,9 @@ classDiagram
 4. **Exercise conventions that the code relies on:** every exercise has its own `setup` cell (so it runs on its
    own; merged lines appear once); code in a scaffold is commented out (otherwise running the exercise overwrites
    the function imported from `src/`); each building block has its own `src/`.
+5. **Generated files in `c/` of the track, next to the maintained ones; no separate tree for Quarto.** The Moodle
+   links point to `lernpfad/aufgaben/c/…` and must not change. A separate tree would need copies of `_quarto.yml`,
+   `_metadata.yml` and the other maintained files: editing in one place, rendering in another.
 
 ## Development
 

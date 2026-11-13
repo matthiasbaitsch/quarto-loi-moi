@@ -11,11 +11,11 @@ export type About = Record<string, unknown>;
 export class Item {
   constructor(
     readonly root: string, // the folder bausteine/
-    readonly path: string, // relative to root, e.g. "01-bohrpfahl/01-grundlagen/aufgaben"
+    readonly path: string, // relative to root, e.g. "01-kreis/01-grundlagen/aufgaben"
   ) {}
 
   // The folder name without leading number, e.g. "grundlagen". With full: true the path without numbers, e.g.
-  // "bohrpfahl/grundlagen"; separator: "-" gives "bohrpfahl-grundlagen" for file names.
+  // "kreis/grundlagen"; separator: "-" gives "kreis-grundlagen" for file names.
   name(options: { full?: boolean; separator?: string } = {}): string {
     const parts = this.path.split("/").map(stripNumber);
     if (!options.full) return parts[parts.length - 1];

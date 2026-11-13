@@ -6,5 +6,6 @@
             "packageManager": "ms-python.python:pip"
         }
     ],
-    "deno.enable": true
+    "deno.enable": true,
+    "ltex.language": "en-US"
 }

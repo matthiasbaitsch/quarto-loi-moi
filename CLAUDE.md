@@ -16,16 +16,14 @@ Git repository, local only (not on GitHub yet; planned: `matthiasbaitsch/quarto-
 - `TODO.md`: open points, code-quality issues from the review, what is missing before numPDE/numMat.
 - `ANALYSIS.md`: how the four courses make their products today.
 - `_extensions/loimoi/`: the code (TypeScript, Deno); `tests/`; `examples/` (`julia-parts`, `python-flat`,
-  `r-subjects`), which also serve as tests.
+  `r-topics`: a fictional math course with triangle, circle, sequences, derivative), which also serve as tests.
 - The previous `CLAUDE.md` with all decisions and technical results of the prototype is in the Git history
   (`git show c38da51:CLAUDE.md`).
 
 ## Current work
 
 1. Rewrite `DESIGN.md`. It should let the user briefly recall how the whole thing works.
-2. The figure at the beginning of `SPEC.md` is to be replaced; proposal: an ASCII tree of `bausteine/` and
-   `lernpfad/aufgaben/c/` with loi-moi and Quarto as arrows.
-3. Then: `Configuration` class, rest of the code review (`TODO.md`), then the courses (numPDE first).
+2. Then: rewrite the code completely, from `SPEC.md` and `DESIGN.md`; then the courses (numPDE first).
 
 ## Development
 

@@ -1,0 +1,19 @@
+## Part 1: On paper
+
+::: {#exr-radius}
+## Radius of convergence
+
+Determine the radius of convergence of the power series
+
+1. $\displaystyle \sum_{k=0}^{\infty} \frac{x^k}{2^k}$,
+
+1. $\displaystyle \sum_{k=0}^{\infty} \frac{x^k}{k!}$.
+
+::: {.lm-solution}
+With the ratio test, the series $\sum a_k x^k$ converges for $|x| < R = \lim |a_k / a_{k+1}|$.
+
+1. $|a_k / a_{k+1}| = 2^{k+1} / 2^k = 2$, so $R = 2$.
+
+1. $|a_k / a_{k+1}| = (k + 1)! / k! = k + 1 \to \infty$, so $R = \infty$: the series converges for all $x$.
+:::
+:::

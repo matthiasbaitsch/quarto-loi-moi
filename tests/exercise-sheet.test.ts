@@ -42,14 +42,14 @@ function exists(file: string): boolean {
 
 Deno.test("julia-parts", () => {
   const folder = run("julia-parts");
-  const sheet = join(folder, "01-bohrpfahl-finite-elemente-aufgaben.qmd");
+  const sheet = join(folder, "01-kreis-grundlagen-aufgaben.qmd");
 
   assert(exists(sheet));
   const text = Deno.readTextFileSync(sheet);
 
   // header with number, group title and block title
   assertStringIncludes(text, "title: Aufgabenblatt 1");
-  assertStringIncludes(text, 'subtitle: "Bohrpfahl: Finite Elemente"');
+  assertStringIncludes(text, 'subtitle: "Kreis: Grundlagen"');
 
   // a sheet without .lm-sheet runs no code
   assertStringIncludes(text, "execute:\n  eval: false");
@@ -62,34 +62,34 @@ Deno.test("julia-parts", () => {
   assertFalse(text.includes("\n\n:::\n"));
 
   // solution named with hash
-  const solution = join(folder, "01-bohrpfahl-finite-elemente-aufgaben-loesung-830a5d95.qmd");
+  const solution = join(folder, "01-kreis-grundlagen-aufgaben-loesung-a298685c.qmd");
   assert(exists(solution));
   const solutionText = Deno.readTextFileSync(solution);
 
   // solution: title and solution of each exercise, not its text
   assertStringIncludes(solutionText, "title: Lösungen zu Aufgabenblatt 1");
-  assertStringIncludes(solutionText, "## Elementsteifigkeitsmatrix und Elementlastvektor");
-  assertStringIncludes(solutionText, "Mit $N_1' = -1/h$");
-  assertFalse(solutionText.includes("Für den Bohrpfahl lauten"));
+  assertStringIncludes(solutionText, "## Sechseck im Kreis");
+  assertStringIncludes(solutionText, "Die Verbindungen vom Mittelpunkt");
+  assertFalse(solutionText.includes("Einem Kreis mit Radius"));
 
   // blank lines between the blocks of the solution
-  assertStringIncludes(solutionText, "## Elementsteifigkeitsmatrix und Elementlastvektor\n\n");
+  assertStringIncludes(solutionText, "## Sechseck im Kreis\n\n");
 
   // code runs in the folder of the exercise; Julia's include is relative to the file, so it becomes absolute
-  const aufgaben = bausteine("julia-parts", "01-bohrpfahl/01-finite-elemente/aufgaben");
+  const aufgaben = bausteine("julia-parts", "01-kreis/01-grundlagen/aufgaben");
   assertStringIncludes(solutionText, `cd("${aufgaben}")`);
-  assertStringIncludes(solutionText, `include("${aufgaben}/src/pile.jl")`);
+  assertStringIncludes(solutionText, `include("${aufgaben}/src/kreis.jl")`);
 
   // work files: a zip file with the notebook
-  const zip = unzipSync(Deno.readFileSync(join(folder, "01-bohrpfahl-finite-elemente-aufgaben.zip")));
-  assertEquals(Object.keys(zip), ["01-bohrpfahl-finite-elemente-aufgaben.ipynb"]);
+  const zip = unzipSync(Deno.readFileSync(join(folder, "01-kreis-grundlagen-aufgaben.zip")));
+  assertEquals(Object.keys(zip), ["01-kreis-grundlagen-aufgaben.ipynb"]);
 
   // appendix of the solution with the files from src/
   assertStringIncludes(solutionText, "# Anhang: Code {.unnumbered}");
-  assertStringIncludes(solutionText, '```{.julia filename="src/fem.jl"}');
+  assertStringIncludes(solutionText, '```{.julia filename="src/vieleck.jl"}');
 
   // images are copied
-  assert(exists(join(folder, "bilder/pfahl.svg")));
+  assert(exists(join(folder, "bilder/kreis.svg")));
 
   // files generated before are removed, other files stay
   Deno.writeTextFileSync(join(folder, "old.qmd"), "");
@@ -107,7 +107,7 @@ Deno.test("julia-parts", () => {
 Deno.test("python-flat", () => {
   const folder = run("python-flat", "https://example.org/kurs");
 
-  const sheet = join(folder, "01-loesungsverfahren-aufgaben.qmd");
+  const sheet = join(folder, "01-zinsen-aufgaben.qmd");
 
   // sheet named with block only
   assert(exists(sheet));
@@ -116,18 +116,18 @@ Deno.test("python-flat", () => {
   const text = Deno.readTextFileSync(sheet);
   assertStringIncludes(
     text,
-    "[Arbeitsmaterial](https://example.org/kurs/aufgaben/c/01-loesungsverfahren-aufgaben.zip)" +
-      '{download="01-loesungsverfahren-aufgaben.zip"}',
+    "[Arbeitsmaterial](https://example.org/kurs/aufgaben/c/01-zinsen-aufgaben.zip)" +
+      '{download="01-zinsen-aufgaben.zip"}',
   );
   assertStringIncludes(text, "[Kursseite](https://example.org/kurs/index.html)");
   assertFalse(text.includes("${"));
 
   // code runs in the folder of the exercise
-  assertStringIncludes(text, `os.chdir("${bausteine("python-flat", "01-loesungsverfahren/aufgaben")}")`);
+  assertStringIncludes(text, `os.chdir("${bausteine("python-flat", "01-zinsen/aufgaben")}")`);
 
   // the notebook names its kernel
-  const zip = unzipSync(Deno.readFileSync(join(folder, "01-loesungsverfahren-aufgaben.zip")));
-  const notebook = JSON.parse(new TextDecoder().decode(zip["01-loesungsverfahren-aufgaben.ipynb"]));
+  const zip = unzipSync(Deno.readFileSync(join(folder, "01-zinsen-aufgaben.zip")));
+  const notebook = JSON.parse(new TextDecoder().decode(zip["01-zinsen-aufgaben.ipynb"]));
   assertEquals(notebook.metadata.kernelspec.name, "python3");
 });
 
@@ -136,19 +136,22 @@ Deno.test("python-flat", () => {
 Deno.test("r-subjects", () => {
   const folder = run("r-subjects");
 
-  const sheet = join(folder, "01-r-einzelne-merkmale-aufgaben.qmd");
+  const sheet = join(folder, "01-r-haeufigkeiten-aufgaben.qmd");
 
   // sheet named with group and block
   assert(exists(sheet));
 
   // code runs in the folder of the exercise, also in later chunks
-  const aufgaben = bausteine("r-subjects", "r/einzelne-merkmale/aufgaben");
+  const aufgaben = bausteine("r-subjects", "r/haeufigkeiten/aufgaben");
   assertStringIncludes(Deno.readTextFileSync(sheet), `setwd("${aufgaben}")`);
   assertStringIncludes(Deno.readTextFileSync(sheet), `knitr::opts_knit$set(root.dir = "${aufgaben}")`);
 
   // a sheet with .lm-sheet runs its code
-  const statistik = Deno.readTextFileSync(join(folder, "02-statistik-einzelne-merkmale-aufgaben.qmd"));
+  const statistik = Deno.readTextFileSync(join(folder, "02-statistik-haeufigkeiten-aufgaben.qmd"));
   assertFalse(statistik.includes("eval: false"));
+
+  // the sheet never shows code
+  assertStringIncludes(statistik, "execute:\n  echo: false");
 
   // the setup cells are merged into one
   assertEquals(Deno.readTextFileSync(sheet).split("label: setup").length - 1, 1);

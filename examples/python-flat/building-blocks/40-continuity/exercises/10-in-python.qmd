@@ -1,0 +1,6 @@
+## Part 2: In Python
+
+Download the [work files](${work-files}){download="${slug}-exercises.zip"}, unzip them into your project folder and
+open the notebook.
+
+How to set up Python is explained on the [course page](${site}/index.html).

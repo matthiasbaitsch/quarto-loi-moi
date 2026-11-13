@@ -2,6 +2,8 @@
 
 ## Next
 
+- SPEC introduction: sharpen the core idea (two axes, topic and form, decoupled by loi-moi).
+
 - `Configuration` class (DESIGN, "Series and recipes" 3); `output` and `site` move there from `pre-render.ts`.
 - Finish the review of `c38da51`: `series.ts`, `recipes/exercise-sheet.ts`, the tests.
 - `markers.lua` and `markers.css` do not exist yet; `bausteine/_quarto.yml` in the examples still references the

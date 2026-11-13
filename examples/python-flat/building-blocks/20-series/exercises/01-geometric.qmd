@@ -1,0 +1,20 @@
+::: {#exr-geometric}
+## The geometric series
+
+1. Show that, for $q \neq 1$,
+   $$
+     \sum_{k=0}^{n} q^k = \frac{1 - q^{n+1}}{1 - q}.
+   $$
+
+1. Compute the value of $0.999\ldots = \sum_{k=1}^{\infty} 9 \cdot 10^{-k}$.
+
+::: {.lm-solution}
+1. Multiplying the sum $s_n$ by $1 - q$, all terms but the first and the last cancel:
+   $(1 - q) s_n = 1 - q^{n+1}$.
+
+1. For $|q| < 1$, $q^{n+1} \to 0$, so $\sum_{k=0}^{\infty} q^k = 1 / (1 - q)$. With $q = 1/10$:
+   $$
+     \sum_{k=1}^{\infty} 9 \cdot 10^{-k} = \frac{9}{10} \cdot \frac{1}{1 - 1/10} = 1.
+   $$
+:::
+:::
