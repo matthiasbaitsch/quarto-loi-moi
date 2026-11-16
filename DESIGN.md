@@ -76,37 +76,38 @@ Make processing of Quarto files simple
 ```mermaid
 classDiagram
   direction LR
-  QmdDocument "1" --> "*" Node
-  Node <|-- Text
-  Node <|-- Div
-  Node <|-- CodeCell
-  Div "1" --> "*" Node
+  QmdDocument "1" --> "*" QmdNode
+  QmdNode <|-- QmdText
+  QmdNode <|-- QmdDiv
+  QmdNode <|-- QmdCodeCell
+  QmdDiv "1" --> "*" QmdNode
   class QmdDocument {
     header: Record
     output: Record
-    nodes: Node[]
+    nodes: QmdNode[]
     parse(text: string)$ QmdDocument
     read(...files: string[])$ QmdDocument
     text() string
+    ipynb() string
     write(file: string)
-    map(f: Node → Node[]) QmdDocument
+    map(f: QmdNode → QmdNode[]) QmdDocument
   }
-  class Node {
+  class QmdNode {
     <<abstract>>
     text() string
-    map(f: Node → Node[]) Node[]
+    map(f: QmdNode → QmdNode[]) QmdNode[]
   }
-  class Text {
+  class QmdText {
     lines: string[]
   }
-  class Div {
+  class QmdDiv {
     open: string
     close: string
     id: string
     classes: string[]
-    children: Node[]
+    children: QmdNode[]
   }
-  class CodeCell {
+  class QmdCodeCell {
     lines: string[]
     language: string
     options: Record
@@ -117,7 +118,8 @@ classDiagram
 Remarks:
 
 - `read(...files)`: headers merged, error if values clash
-- `map(f)`: each node replaced by `f(node)` (none, itself, or several); a `Div` maps its children first
+- `output`: `format` (`qmd` or `ipynb`, default `qmd`) and `zip` (default `false`)
+- `map(f)`: each node replaced by `f(node)` (none, itself, or several); a `QmdDiv` maps its children first
 
 #### Processing steps
 
@@ -156,7 +158,6 @@ Remarks:
 - `ReplacePlaceholders` also replaces in the header
 - `AttachSrc` puts the files of `src/` into an appendix of the document, as code cells; `files` from
   `basket.files("src/*")`
-- `output`: `format` (`qmd` or `ipynb`, default `qmd`) and `zip` (default `false`), set by `Jupyter` and `Zip`
 
 ## Process
 
@@ -231,6 +232,9 @@ Remarks:
   would turn ` ```{julia} ` into a plain code block.
 - **Everything before Quarto, no filter.** A filter runs per document, loi-moi needs the whole collection.
 - **Names from folders, not from `about.yml`.** Renaming a folder is deliberate, retyping a title is not.
+- **Jupyter notebooks written as JSON, not with `quarto convert`.** `quarto convert` needs a Jupyter kernel for
+  the language installed on the machine (Julia and R run with other engines in Quarto) and has no option to set
+  it; without one, code cells end up as text.
 
 ## Development
 

@@ -1,0 +1,68 @@
+import { basename } from "@std/path";
+import { stringify as stringifyYaml } from "@std/yaml";
+import { zipSync } from "fflate";
+import { jupyterNotebook } from "./jupyter-notebook.ts";
+import { QmdNode } from "./qmd-node.ts";
+import { parseBody, splitHeader } from "./qmd-parser.ts";
+import { Yaml } from "./utilities.ts";
+
+export interface Output {
+  format: "qmd" | "ipynb";
+  zip: boolean;
+}
+
+export class QmdDocument {
+  
+  constructor(
+    readonly header: Yaml,
+    readonly nodes: QmdNode[],
+    readonly output: Output = { format: "qmd", zip: false },
+  ) {}
+
+  static parse(text: string): QmdDocument {
+    const { header, body } = splitHeader(text);
+    return new QmdDocument(header, parseBody(body));
+  }
+
+  static read(...files: string[]): QmdDocument {
+    const header: Yaml = {};
+    const bodies: string[] = [];
+    for (const file of files) {
+      const parts = splitHeader(Deno.readTextFileSync(file));
+      for (const [key, value] of Object.entries(parts.header)) {
+        const clash = key in header && JSON.stringify(header[key]) !== JSON.stringify(value);
+        if (clash) throw new Error(`Header value ${key} in ${file} clashes with a previous file`);
+        header[key] = value;
+      }
+      bodies.push(parts.body.replace(/\n$/, ""));
+    }
+    return new QmdDocument(header, parseBody(bodies.join("\n") + "\n"));
+  }
+
+  body(): string {
+    return this.nodes.map((node) => node.text()).join("\n");
+  }
+
+  text(): string {
+    if (Object.keys(this.header).length === 0) return this.body();
+    return `---\n${stringifyYaml(this.header)}---\n${this.body()}`;
+  }
+
+  ipynb(): string {
+    return JSON.stringify(jupyterNotebook(this.header, this.nodes), null, 1);
+  }
+
+  map(f: (node: QmdNode) => QmdNode[]): QmdDocument {
+    return new QmdDocument(this.header, this.nodes.flatMap((node) => node.map(f)), { ...this.output });
+  }
+
+  // `file` without extension; the extension comes from `output.format`
+  write(file: string): void {
+    const path = `${file}.${this.output.format}`;
+    Deno.writeTextFileSync(path, this.output.format === "qmd" ? this.text() : this.ipynb());
+    if (this.output.zip) {
+      Deno.writeFileSync(`${file}.zip`, zipSync({ [basename(path)]: Deno.readFileSync(path) }));
+      Deno.removeSync(path);
+    }
+  }
+}
