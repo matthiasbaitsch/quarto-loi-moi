@@ -8,7 +8,7 @@
 
 ## Later
 
-- Folder names per ingredient type (`exercises`, `aufgaben`, …) from a YAML file.
+- Selection of building blocks by subtree (e.g. `folien-r-alle` only the R building blocks of Mathe B).
 - Mathe B: solution sheet with executed code.
 - Recipes for slides, course notes, all slides, course slides; Informatik (C#); numMat's extra downloads.
 - Several collections in one render.

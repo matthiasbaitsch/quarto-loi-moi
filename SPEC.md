@@ -206,7 +206,9 @@ quarto-files:
 Remarks:
 
 - Default recipe selected by the name of the collection
-- Predefined recipes come with loi-moi; own recipes in `learning-material/_recipes/` override them by name
+- Mappings from collection to recipe and to ingredient folder in `_loimoi/mappings.yml` (e.g. `aufgaben/` uses
+  the recipe `exercises`)
+- Predefined recipes come with loi-moi; own recipes in `learning-material/_loimoi/recipes/` override them by name
 - A recipe might declare options
 - Use options with care (readability, maintenance)
 

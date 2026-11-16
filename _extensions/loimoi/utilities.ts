@@ -18,3 +18,16 @@ export function mergeYamlAlongPath(root: string, path: string, fileName: string)
   }
   return merged;
 }
+
+// `${key}` replaced by its value; unknown keys stay unchanged
+export function replacePlaceholders(text: string, values: Record<string, string>): string {
+  return text.replace(/\$\{([\w-]+)\}/g, (match, key) => values[key] ?? match);
+}
+
+const builtInConfig = new URL("./config/", import.meta.url).pathname;
+
+// The user's file in `learning-material/_loimoi/` if it exists, otherwise the built-in one
+export function configFile(path: string, learningMaterial: string): string {
+  const own = join(learningMaterial, "_loimoi", path);
+  return existsSync(own) ? own : join(builtInConfig, path);
+}

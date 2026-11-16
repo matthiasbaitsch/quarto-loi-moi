@@ -1,4 +1,5 @@
 import { QmdDocument } from "../qmd-document.ts";
+import { replacePlaceholders } from "../utilities.ts";
 import { ProcessingStep } from "./processing-step.ts";
 
 export class ReplacePlaceholders implements ProcessingStep {
@@ -6,7 +7,7 @@ export class ReplacePlaceholders implements ProcessingStep {
 
   // Parsed again, so that ids, classes and cell options with placeholders are right
   run(doc: QmdDocument): QmdDocument {
-    const text = doc.text().replace(/\$\{([\w-]+)\}/g, (match, key) => this.values[key] ?? match);
+    const text = replacePlaceholders(doc.text(), this.values);
     const parsed = QmdDocument.parse(text);
     return new QmdDocument(parsed.header, parsed.nodes, { ...doc.output });
   }

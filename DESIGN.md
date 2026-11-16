@@ -192,6 +192,9 @@ The `read` method
   1. merges `loimoi.yml` files along the path over them
   1. derives what's missing from defaults
 
+YAML configuration (e.g. `recipes/exercises.yml`) in `_extensions/loimoi/config/`; a file with the same path in
+`learning-material/_loimoi/` replaces it (`configFile()` in `utilities.ts`).
+
 ### Recipe and Action classes
 
 ```mermaid
@@ -210,6 +213,7 @@ classDiagram
     <<abstract>>
     name: string
     provides: string?
+    file(placeholders: Record) string
     run(basket: Basket, placeholders: Record, folder: string)
   }
   class QuartoFile {
@@ -226,7 +230,7 @@ Remarks:
 
 - `QuartoFile` copies the files referenced in the document (e.g. `images/a.svg` to `c/images/a.svg`); error if a
   file of the same name differs
-- `Recipe.run`: adds the placeholders from `provides` (filled-in `name` of the action), runs the actions in order
+- `Recipe.run`: adds the placeholders from `provides` (`file()` of the action), runs the actions in order
 
 ## Decisions
 
