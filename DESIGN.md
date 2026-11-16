@@ -130,6 +130,7 @@ classDiagram
   ProcessingStep <|-- ExerciseSheet
   ProcessingStep <|-- ExerciseScaffold
   ProcessingStep <|-- ExerciseSolution
+  ProcessingStep <|-- AttachSrc
   ProcessingStep <|-- Jupyter
   ProcessingStep <|-- Zip
   class Pipeline {
@@ -145,11 +146,16 @@ classDiagram
   class ReplacePlaceholders {
     values: Record
   }
+  class AttachSrc {
+    files: string[]
+  }
 ```
 
 Remarks:
 
 - `ReplacePlaceholders` also replaces in the header
+- `AttachSrc` puts the files of `src/` into an appendix of the document, as code cells; `files` from
+  `basket.files("src/*")`
 - `output`: `format` (`qmd` or `ipynb`, default `qmd`) and `zip` (default `false`), set by `Jupyter` and `Zip`
 
 ## Process
