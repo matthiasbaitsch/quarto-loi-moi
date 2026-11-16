@@ -121,6 +121,7 @@ Remarks:
 - Building block content described by `about.yml` (merged along path, optional)
 - Building blocks identified by path
 - Leading numbers in names stripped
+- Folder names in English or German, e.g. `exercises/` or `aufgaben/`
 - Folders starting with `_` ignored
 
 ## Learning material
@@ -149,10 +150,13 @@ output: c                                           # folder for the prepared ma
 first-number: 1                                     # number of the first product
 site: https://teacher.github.io/calculus            # defaults to github remote
 
-ingredients:                                        # one entry per product
-  - convergence/sequences/exercises
-  - convergence/series/exercises
-  - [functions/power-series/exercises, functions/continuity/exercises]
+products:                                           # one entry per product
+  - ingredients: [convergence/sequences/exercises]  # name and titles from the building block
+  - ingredients: [convergence/series/exercises]
+  - ingredients: [functions/power-series/exercises, functions/continuity/exercises]
+    name: functions-power-series-continuity         # name and titles set
+    product-title: Power series and continuity
+    group-title: Functions
 
 ...
 ```
@@ -162,7 +166,9 @@ Remarks:
 - Material processed by loi-moi into folder `c/` (in `.gitignore`)
 - Configuration in `loimoi.yml` (optional, merged along path)
 - Sensible defaults for all settings
-- `.qmd` files of an ingredient combined in name order, ingredients of a product in the order of `ingredients`
+- `.qmd` files of an ingredient combined in name order, ingredients of a product in the given order
+- Product `name` used in file names; `product-title` and `group-title` used in titles; all default to the first
+  building block
 
 ### Recipes
 
@@ -185,15 +191,15 @@ options:
     default: a
 
 quarto-files:
-  - name: "${slug}-always"                       # for every value
+  - name: "${nn-name}-always"                    # for every value
     process: [...]
 
   - when: {format: a}
-    name: "${slug}-only-a"
+    name: "${nn-name}-only-a"
     process: [...]
 
   - when: {format: b}
-    name: "${slug}-only-b"
+    name: "${nn-name}-only-b"
     process: [...]
 ```
 
@@ -245,34 +251,34 @@ options:
     default: notebook
 
 quarto-files:
-  - name: "${slug}-exercises"
+  - name: "${nn-name}-exercises"
     title: "Exercise sheet ${n}"
-    subtitle: "${group}: ${building-block}"
+    subtitle: "${group-title}: ${product-title}"
     process: [exercise-sheet]
 
-  - name: "${slug}-exercises-solution-${hash}"
+  - name: "${nn-name}-exercises-solution-${hash}"
     title: "Solutions to exercise sheet ${n}"
     process: [exercise-solution]
 
   - when: {work-files: notebook}                 # single Jupyter notebook
-    name: "${slug}-exercises"
+    name: "${nn-name}-exercises"
     title: "Exercise sheet ${n}"
     process: [exercise-scaffold, jupyter, zip]   # source deleted after zip
     provides: work-files
 
   - when: {work-files: folder}                   # folder, e.g. a project
-    name: "${slug}-exercises/${block-slug}-exercises"
+    name: "${nn-name}-exercises/${name}-exercises"
     title: "Exercise sheet ${n}"
     process: [exercise-scaffold]
 
 archives:                                        # folder deleted after zip
   - when: {work-files: folder}
-    name: "${slug}-exercises"
+    name: "${nn-name}-exercises"
     provides: work-files
     add:                                         # see "Paths in add"
       - data/
       - /_templates/exercises/_quarto.yml
-      - /_templates/exercises/exercises.code-workspace: "${block-slug}-exercises.code-workspace"
+      - /_templates/exercises/exercises.code-workspace: "${name}-exercises.code-workspace"
 ```
 
 ## Usage
@@ -292,7 +298,7 @@ archives:                                        # folder deleted after zip
 | `output` | folder for the prepared material | `c` |
 | `first-number` | number of the first product | `1` |
 | `site` | URL of the published site | from the Git remote |
-| `ingredients` | ingredients of each product, one entry per product | one product per building block with an ingredient named like the collection, in folder order |
+| `products` | one entry per product: `ingredients`, optional `name`, `product-title`, `group-title` | one product per building block with an ingredient named like the collection, in folder order |
 | `recipe` | recipe that makes the products | name of the collection |
 | `options` | options of the recipe | see the recipe |
 
@@ -343,10 +349,10 @@ Filled in per product when the recipe runs:
 | Placeholder | Value | Example |
 |---|---|---|
 | `${n}` | number of the product | `1` |
-| `${block-slug}` | name of the first building block, `/` as `-` | `convergence-sequences` |
-| `${slug}` | `${n}` with two digits, then `${block-slug}` | `01-convergence-sequences` |
-| `${hash}` | first 8 hex digits of `sha1("87362-" + slug)`, for names that cannot be guessed | `2094a057` |
-| `${group}` | title of the group of the first building block | `Convergence` |
-| `${building-block}` | title of the first building block | `Sequences` |
+| `${name}` | identifies the product in file names; `name` of the product, default: path of the first building block, leading numbers stripped, `/` as `-` | `convergence-sequences` |
+| `${nn-name}` | `${n}` with two digits, then `${name}` | `01-convergence-sequences` |
+| `${hash}` | first 8 hex digits of `sha1("87362-" + nn-name)`, for names that cannot be guessed | `2094a057` |
+| `${group-title}` | `group-title` of the product, default: `group-title` of the first building block | `Convergence` |
+| `${product-title}` | `product-title` of the product, default: `block-title` of the first building block | `Sequences` |
 | `${site}` | URL of the published site | `https://teacher.github.io/calculus` |
 | `${work-files}` | URL of the file of the action with `provides: work-files` | `…/01-convergence-sequences-exercises.zip` |

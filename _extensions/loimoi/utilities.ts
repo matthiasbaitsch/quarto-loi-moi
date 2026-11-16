@@ -1,38 +1,20 @@
-// Small helpers for reading folders and files.
+import { existsSync } from "@std/fs";
+import { join } from "@std/path";
+import { parse } from "@std/yaml";
 
-import { join } from "jsr:@std/path@1";
-import { parse } from "jsr:@std/yaml@1";
+export type Yaml = Record<string, unknown>;
 
-// The subfolders of a folder, without those starting with "_" or ".", sorted by name.
-export function subfolders(folder: string): string[] {
-  const names = [];
-  for (const entry of Deno.readDirSync(folder)) {
-    if (entry.isDirectory && !entry.name.startsWith("_") && !entry.name.startsWith(".")) names.push(entry.name);
+export function readYaml(file: string): Yaml {
+  return existsSync(file) ? parse(Deno.readTextFileSync(file)) as Yaml : {};
+}
+
+// Merges the files with the given name from `root` down to `root/path`; later ones override earlier ones
+export function mergeYamlAlongPath(root: string, path: string, fileName: string): Yaml {
+  let folder = root;
+  let merged = readYaml(join(folder, fileName));
+  for (const part of path.split("/")) {
+    folder = join(folder, part);
+    merged = { ...merged, ...readYaml(join(folder, fileName)) };
   }
-  return names.sort();
-}
-
-// The content of about.yml in a folder, or {} if there is none.
-export function readAbout(folder: string): Record<string, unknown> {
-  const file = join(folder, "about.yml");
-  try {
-    return (parse(Deno.readTextFileSync(file)) ?? {}) as Record<string, unknown>;
-  } catch (error) {
-    if (error instanceof Deno.errors.NotFound) return {};
-    throw error;
-  }
-}
-
-// "01-grundlagen" → "grundlagen": leading numbers only sort.
-export function stripNumber(folderName: string): string {
-  return folderName.replace(/^\d+-/, "");
-}
-
-// The GitHub Pages address of the Git remote, e.g. git@github.com:user/repo.git → https://user.github.io/repo;
-// undefined without a GitHub remote.
-export function gitHubPages(): string | undefined {
-  const result = new Deno.Command("git", { args: ["remote", "get-url", "origin"], stderr: "null" }).outputSync();
-  const remote = new TextDecoder().decode(result.stdout).trim();
-  const match = remote.match(/github\.com[:/]([^/]+)\/([^/]+?)(\.git)?$/);
-  return match === null ? undefined : `https://${match[1]}.github.io/${match[2]}`;
+  return merged;
 }

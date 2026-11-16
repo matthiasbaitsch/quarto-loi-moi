@@ -9,10 +9,10 @@ Running `quarto render learning-material/<collection>` triggers execution of loi
 1. collects required information, most importantly
     1. a representation of the `building-blocks` tree
     1. the configuration from `loimoi.yml`
-    1. the list of ingredients
+    1. the list of products
     1. the recipe
 1. clears `c/`
-1. runs the recipe's actions for each entry in the ingredients list
+1. runs the recipe's actions for each product
 
 Remarks:
 
@@ -38,6 +38,7 @@ classDiagram
     defaultPaths(ingredientType) string[][]
   }
   class Folder {
+    root: string
     path: string
     name(options) string
     files(pattern, options) string[]
@@ -59,9 +60,12 @@ classDiagram
 
 Remarks:
 
-- `Basket`: the ingredients for one product
-- `BuildingBlock.root`: Absolute path to building block tree
+- `Basket`: the ingredients for one product; `name()`, `title()`, `groupTitle()` are the defaults for the product,
+  from the first building block
+- `root`: absolute path to building block tree; `Folder` needs it to read from disk and to return paths
+  relative to it
 - `name(options)`: derived from file system path, leading numbers stripped, options `full`, `sep`
+- `files(pattern, options)`, `folders(pattern, options)`: paths relative to `root`, option `absolute`
 
 ### Quarto document processing
 
@@ -168,7 +172,7 @@ classDiagram
     site: string
     output: string
     firstNumber: number
-    ingredients: string[][]
+    products: ingredients, name?, productTitle?, groupTitle?
     recipe: name, options
     read(collection: string, tree: BuildingBlockTree)$ CollectionSettings
   }

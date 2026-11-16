@@ -1,9 +1,13 @@
 # Each exercise sheet combines the paper exercises of a topic with its programming exercises.
-ingredients:
-  - [theory/sequences/exercises, programming/sequences/exercises]
-  - [theory/series/exercises, programming/series/exercises]
-  - [theory/power-series/exercises, programming/power-series/exercises]
-  - [theory/continuity/exercises, programming/continuity/exercises]
+products:
+  - ingredients: [theory/sequences/exercises, programming/sequences/exercises]
+    name: sequences
+  - ingredients: [theory/series/exercises, programming/series/exercises]
+    name: series
+  - ingredients: [theory/power-series/exercises, programming/power-series/exercises]
+    name: power-series
+  - ingredients: [theory/continuity/exercises, programming/continuity/exercises]
+    name: continuity
 
 recipe: exercises
 options:

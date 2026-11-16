@@ -8,6 +8,7 @@
 
 ## Later
 
+- Folder names per ingredient type (`exercises`, `aufgaben`, …) from a YAML file.
 - Mathe B: solution sheet with executed code.
 - Recipes for slides, course notes, all slides, course slides; Informatik (C#); numMat's extra downloads.
 - Several collections in one render.
