@@ -18,13 +18,6 @@ changes.
 1. Find the zero of $\cos x - x$ in $[0, 1]$ with $n = 50$. Take the last midpoint as the exact zero and plot the
    errors of the first $40$ midpoints in a semi-log diagram. How many steps are needed for ten correct digits?
 
-::: {.lm-scaffold}
-```{python}
-def bisection(f, a, b, n):
-    ...
-```
-:::
-
 ::: {.lm-solution}
 ```{python}
 def bisection(f, a, b, n):

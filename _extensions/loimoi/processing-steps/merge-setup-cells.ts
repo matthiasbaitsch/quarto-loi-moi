@@ -1,5 +1,6 @@
 import { QmdDocument } from "../qmd-document.ts";
-import { QmdCodeCell, QmdNode } from "../qmd-node.ts";
+import { QmdCodeCell } from "../qmd-node.ts";
+import { isSetup } from "./exercise.ts";
 import { ProcessingStep } from "./processing-step.ts";
 
 export class MergeSetupCells implements ProcessingStep {
@@ -19,10 +20,6 @@ export class MergeSetupCells implements ProcessingStep {
       return replacement;
     });
   }
-}
-
-function isSetup(node: QmdNode): boolean {
-  return node instanceof QmdCodeCell && node.options.label === "setup";
 }
 
 // Fence and options of the first cell, the code of all cells, each line once

@@ -1,10 +1,16 @@
 import { QmdDocument } from "../qmd-document.ts";
+import { ExerciseScaffold } from "./exercise-scaffold.ts";
+import { ExerciseSheet } from "./exercise-sheet.ts";
+import { ExerciseSolution } from "./exercise-solution.ts";
 import { Jupyter } from "./jupyter.ts";
 import { ProcessingStep } from "./processing-step.ts";
 import { Zip } from "./zip.ts";
 
 // Steps that can be added by their name in `process`
 const steps: Record<string, () => ProcessingStep> = {
+  "exercise-sheet": () => new ExerciseSheet(),
+  "exercise-scaffold": () => new ExerciseScaffold(),
+  "exercise-solution": () => new ExerciseSolution(),
   jupyter: () => new Jupyter(),
   zip: () => new Zip(),
 };
