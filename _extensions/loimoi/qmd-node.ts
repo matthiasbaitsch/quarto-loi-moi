@@ -6,6 +6,10 @@ export abstract class QmdNode {
   map(f: (node: QmdNode) => QmdNode[]): QmdNode[] {
     return f(this);
   }
+
+  forEach(f: (node: QmdNode) => void): void {
+    f(this);
+  }
 }
 
 export class QmdText extends QmdNode {
@@ -51,5 +55,10 @@ export class QmdDiv extends QmdNode {
   override map(f: (node: QmdNode) => QmdNode[]): QmdNode[] {
     const children = this.children.flatMap((child) => child.map(f));
     return f(new QmdDiv(this.open, this.close, this.id, this.classes, children));
+  }
+
+  override forEach(f: (node: QmdNode) => void): void {
+    this.children.forEach((child) => child.forEach(f));
+    f(this);
   }
 }

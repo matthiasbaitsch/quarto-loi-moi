@@ -52,6 +52,10 @@ export class QmdDocument {
     return JSON.stringify(jupyterNotebook(this.header, this.nodes), null, 1);
   }
 
+  forEach(f: (node: QmdNode) => void): void {
+    this.nodes.forEach((node) => node.forEach(f));
+  }
+
   map(f: (node: QmdNode) => QmdNode[]): QmdDocument {
     return new QmdDocument(this.header, this.nodes.flatMap((node) => node.map(f)), { ...this.output });
   }

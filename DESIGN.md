@@ -91,11 +91,13 @@ classDiagram
     ipynb() string
     write(file: string)
     map(f: QmdNode → QmdNode[]) QmdDocument
+    forEach(f: QmdNode → void)
   }
   class QmdNode {
     <<abstract>>
     text() string
     map(f: QmdNode → QmdNode[]) QmdNode[]
+    forEach(f: QmdNode → void)
   }
   class QmdText {
     lines: string[]
