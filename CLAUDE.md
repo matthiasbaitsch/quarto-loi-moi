@@ -11,19 +11,18 @@ Git repository, public on GitHub: `matthiasbaitsch/quarto-loi-moi`.
 ## Where things are
 
 - `SPEC.md`: what loi-moi does (terms, folders, products, processing rules, usage). Up to date.
-- `DESIGN.md`: being rewritten from scratch. Material: `design-1.md` (committed version with class diagrams),
-  `design-2.md` (parts and decisions with reasons). Decide together what to reuse.
-- `TODO.md`: open points, code-quality issues from the review, what is missing before numPDE/numMat.
+- `DESIGN.md`: how loi-moi works: models, process, decisions.
+- `TODO.md`: open points, next and later.
 - `ANALYSIS.md`: how the four courses make their products today.
 - `_extensions/loimoi/`: the code (TypeScript, Deno); `tests/`; `examples/` (`julia-parts`, `python-flat`,
-  `r-topics`: a fictional math course with triangle, circle, sequences, derivative), which also serve as tests.
+  `r-topics`: a fictional calculus course with sequences, series, power series, continuity), which also serve as tests.
 - The previous `CLAUDE.md` with all decisions and technical results of the prototype is in the Git history
   (`git show c38da51:CLAUDE.md`).
 
 ## Current work
 
-1. Rewrite `DESIGN.md`. It should let the user briefly recall how the whole thing works.
-2. Then: rewrite the code completely, from `SPEC.md` and `DESIGN.md`; then the courses (numPDE first).
+1. Rewrite the code completely, from `SPEC.md` and `DESIGN.md`.
+2. Then the courses (numPDE first).
 
 ## Development
 

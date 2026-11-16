@@ -164,6 +164,46 @@ Remarks:
 - Sensible defaults for all settings
 - `.qmd` files of an ingredient combined in name order, ingredients of a product in the order of `ingredients`
 
+### Recipes
+
+A recipe is a YAML file with the actions that make a product from its ingredients. 
+
+The recipe is selected in `loimoi.yml`:
+
+```yml
+recipe: exercises
+options:
+  work-files: folder
+```
+
+Example for a recipe with an option
+
+```yml
+options:
+  format:
+    values: [a, b, c]
+    default: a
+
+quarto-files:
+  - name: "${slug}-always"                       # for every value
+    process: [...]
+
+  - when: {format: a}
+    name: "${slug}-only-a"
+    process: [...]
+
+  - when: {format: b}
+    name: "${slug}-only-b"
+    process: [...]
+```
+
+Remarks:
+
+- Default recipe selected by the name of the collection
+- Predefined recipes come with loi-moi; own recipes in `learning-material/_recipes/` override them by name
+- A recipe might declare options
+- Use options with care (readability, maintenance)
+
 ### Exercises
 
 #### Series
@@ -194,20 +234,16 @@ single notebook (as in numPDE)                  Positron project (as in Mathemat
                                                     └── data/fibonacci.csv
 ```
 
-#### Configuration
+#### Recipe
+
+The predefined recipe `exercises.yml`:
 
 ```yml
-recipe:
-  name: exercises
-  options:
-    work-files: notebook      # or r-project
-```
+options:
+  work-files:
+    values: [notebook, folder]
+    default: notebook
 
-Without configuration, the recipe is named after the collection (e.g. `exercises/` uses the recipe `exercises`). The recipe expands to the following configuration.
-
-With `work-files: notebook`, the work files archive contains a single Jupyter notebook
-
-```yml
 quarto-files:
   - name: "${slug}-exercises"
     title: "Exercise sheet ${n}"
@@ -218,27 +254,25 @@ quarto-files:
     title: "Solutions to exercise sheet ${n}"
     process: [exercise-solution]
 
-  - name: "${slug}-exercises"
+  - when: {work-files: notebook}                 # single Jupyter notebook
+    name: "${slug}-exercises"
     title: "Exercise sheet ${n}"
-    process: [exercise-scaffold, jupyter, zip] # source deleted after zip
-```
+    process: [exercise-scaffold, jupyter, zip]   # source deleted after zip
+    provides: work-files
 
-With `work-files: r-project`, the work files archive contains a project
-
-```yml
-quarto-files:
-  # sheet and solution as above
-
-  - name: "${slug}-exercises/${block-slug}-exercises"
+  - when: {work-files: folder}                   # folder, e.g. a project
+    name: "${slug}-exercises/${block-slug}-exercises"
     title: "Exercise sheet ${n}"
     process: [exercise-scaffold]
 
-archives:                                      # folder deleted after zip
-  - name: "${slug}-exercises"
-    add:                                       # paths relative to building-blocks/
-      - "${ingredient}/data/"
-      - _templates/exercises/_quarto.yml
-      - _templates/exercises/exercises.code-workspace: "${block-slug}-exercises.code-workspace"
+archives:                                        # folder deleted after zip
+  - when: {work-files: folder}
+    name: "${slug}-exercises"
+    provides: work-files
+    add:                                         # see "Paths in add"
+      - data/
+      - /_templates/exercises/_quarto.yml
+      - /_templates/exercises/exercises.code-workspace: "${block-slug}-exercises.code-workspace"
 ```
 
 ## Usage
@@ -258,9 +292,9 @@ archives:                                      # folder deleted after zip
 | `output` | folder for the prepared material | `c` |
 | `first-number` | number of the first product | `1` |
 | `site` | URL of the published site | from the Git remote |
-| `ingredients` | ingredients of each product, one entry per product | one product per building block with the ingredient, in folder order |
-| `recipe.name` | recipe that makes the products | name of the collection |
-| `recipe.options` | options of the recipe | see the recipe |
+| `ingredients` | ingredients of each product, one entry per product | one product per building block with an ingredient named like the collection, in folder order |
+| `recipe` | recipe that makes the products | name of the collection |
+| `options` | options of the recipe | see the recipe |
 
 ### Actions
 
@@ -268,8 +302,14 @@ Defined by the recipe, run per product in this order:
 
 | Action | Makes | Keys |
 |---|---|---|
-| `quarto-files` | Quarto files | `name`, `title`, `subtitle`, `process` |
-| `archives` | zip files from a folder | `name`, `add` |
+| `quarto-files` | Quarto files | `name`, `title`, `subtitle`, `process`, `when`, `provides` |
+| `archives` | zip files from a folder | `name`, `add`, `when`, `provides` |
+
+Paths in `add`:
+
+- `data/`: relative to the ingredients of the product, i.e. `data/` from every ingredient folder that has one
+- `/_templates/…`: a leading `/` means relative to `building-blocks/`, for files shared by all products
+- `path: new-name` copies under a new name
 
 Processing steps (`process`):
 
@@ -298,7 +338,7 @@ What the three exercise steps keep:
 
 ### Placeholders
 
-Filled in per product, in `loimoi.yml` and in the `.qmd` files of the building blocks:
+Filled in per product when the recipe runs:
 
 | Placeholder | Value | Example |
 |---|---|---|
@@ -308,6 +348,5 @@ Filled in per product, in `loimoi.yml` and in the `.qmd` files of the building b
 | `${hash}` | first 8 hex digits of `sha1("87362-" + slug)`, for names that cannot be guessed | `2094a057` |
 | `${group}` | title of the group of the first building block | `Convergence` |
 | `${building-block}` | title of the first building block | `Sequences` |
-| `${ingredient}` | each ingredient folder of the product | `convergence/sequences/exercises` |
 | `${site}` | URL of the published site | `https://teacher.github.io/calculus` |
-| `${work-files}` | URL of the work files | `…/01-convergence-sequences-exercises.zip` |
+| `${work-files}` | URL of the file of the action with `provides: work-files` | `…/01-convergence-sequences-exercises.zip` |

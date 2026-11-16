@@ -59,7 +59,7 @@ classDiagram
 
 Remarks:
 
-- `Basket`: the ingredients of one product
+- `Basket`: the ingredients for one product
 - `BuildingBlock.root`: Absolute path to building block tree
 - `name(options)`: derived from file system path, leading numbers stripped, options `full`, `sep`
 
@@ -152,26 +152,80 @@ Remarks:
 
 The pre-render script runs the whole process:
 
-1. Configuration
+1. Create `CollectionSettings` object from `loimoi.yml` and building block tree
+1. Collect list of `Basket` objects from building block source tree
+1. Create `Recipe` object
+1. Clear `c/` folder
+1. Run actions in recipe for each basket
 
-  1. Figure out defaults for entries missing in `loimoi.yml`
+In detail.
 
-  1. Per product: values for the placeholders (naming), filled into the settings
+### Settings for one collection
 
-1. List of ingredients
+```mermaid
+classDiagram
+  class CollectionSettings {
+    site: string
+    output: string
+    firstNumber: number
+    ingredients: string[][]
+    recipe: name, options
+    read(collection: string, tree: BuildingBlockTree)$ CollectionSettings
+  }
+```
 
-  1. Collect the ingredients of each product
+The `read` method 
+  1. sets fixed defaults (`output`, `firstNumber`)
+  1. merges `loimoi.yml` files along the path over them
+  1. derives what's missing from defaults
 
-1. Recipes
+### Recipe and Action classes
 
-  1. A recipe is a set of actions required to transform ingredients into a product
+```mermaid
+classDiagram
+  direction TD
+  Recipe "1" --> "*" Action
+  Action <|-- QuartoFile
+  Action <|-- Archive
+  class Recipe {
+    folder: string
+    actions: Action[]
+    read(file: string, options: Record, folder: string)$ Recipe
+    run(basket: Basket, placeholders: Record)
+  }
+  class Action {
+    <<abstract>>
+    name: string
+    provides: string?
+    run(basket: Basket, placeholders: Record, folder: string)
+  }
+  class QuartoFile {
+    title: string
+    subtitle: string
+    process: string[]
+  }
+  class Archive {
+    add: Record[]
+  }
+```
 
-1. Actions
+Remarks:
 
-  1. Quarto file: Collect Quarto file from ingredients, process and save it.
-
-  1. Archive: Copy files into a folder and create an archive
+- `QuartoFile` copies the files referenced in the document (e.g. `images/a.svg` to `c/images/a.svg`); error if a
+  file of the same name differs
+- `Recipe.run`: adds the placeholders from `provides` (filled-in `name` of the action), runs the actions in order
 
 ## Decisions
 
+- **Pandoc finds the structure, loi-moi cuts the original text.** Cells stay exactly as written; `pandoc.write`
+  would turn ` ```{julia} ` into a plain code block.
+- **Everything before Quarto, no filter.** A filter runs per document, loi-moi needs the whole collection.
+- **Names from folders, not from `about.yml`.** Renaming a folder is deliberate, retyping a title is not.
+
 ## Development
+
+- One file per class, named after the class (`qmd-document.ts`); free functions in `utilities.ts`
+- Tests: assertion first; unit tests for `BuildingBlockTree`, `QmdDocument` and the steps; each example one test,
+  each aspect in one example only
+- `deno task test`, `deno task check`, `make examples`
+- Simple and commented; no `continue`/`break`; no environment variables

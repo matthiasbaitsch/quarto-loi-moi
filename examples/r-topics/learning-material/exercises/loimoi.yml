@@ -5,7 +5,6 @@ ingredients:
   - [theory/power-series/exercises, programming/power-series/exercises]
   - [theory/continuity/exercises, programming/continuity/exercises]
 
-recipe:
-  name: exercises
-  options:
-    work-files: r-project
+recipe: exercises
+options:
+  work-files: folder
