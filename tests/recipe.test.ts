@@ -54,4 +54,5 @@ Deno.test("exercises recipe, folder: r-topics, project with qmd, data and templa
 Deno.test("exercises recipe: unknown option or value is an error", () => {
   assertThrows(() => Recipe.read(exercises, { "work-files": "project" }, "."), Error, "project");
   assertThrows(() => Recipe.read(exercises, { "format": "a" }, "."), Error, "format");
+  assertThrows(() => Recipe.read(exercises.replace("exercises.yml", "slides.yml"), {}, "."), Error, "not found");
 });

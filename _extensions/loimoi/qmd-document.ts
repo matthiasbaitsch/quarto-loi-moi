@@ -12,12 +12,15 @@ export interface Output {
 }
 
 export class QmdDocument {
-  
-  constructor(
-    readonly header: Yaml,
-    readonly nodes: QmdNode[],
-    readonly output: Output = { format: "qmd", zip: false },
-  ) {}
+  readonly header: Yaml;
+  readonly nodes: QmdNode[];
+  readonly output: Output;
+
+  constructor(header: Yaml, nodes: QmdNode[], output: Output = { format: "qmd", zip: false }) {
+    this.header = header;
+    this.nodes = nodes;
+    this.output = output;
+  }
 
   static parse(text: string): QmdDocument {
     const { header, body } = splitHeader(text);

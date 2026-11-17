@@ -30,9 +30,9 @@ Git repository, public on GitHub: `matthiasbaitsch/quarto-loi-moi`.
   follow symlinks); render an example with `quarto render` in its folder (Python:
   `QUARTO_PYTHON=$PWD/.venv/bin/python quarto render`).
 - Test policy: assertion first; one test per example, each aspect in one example only.
-- Code style: simple and commented (the user is learning TypeScript; explain new constructs in the review); file
-  names follow class names; no `continue`/`break`; no environment variables; all strings in code until the
-  configuration exists.
+- Code style: simple; comments sparingly, only where the code doesn't say it (the user is learning TypeScript;
+  explain new constructs in the review, not in the code); file names follow class names; no `continue`/`break`;
+  no environment variables; attributes declared in the class, not as constructor parameters.
 
 ## Collaboration
 

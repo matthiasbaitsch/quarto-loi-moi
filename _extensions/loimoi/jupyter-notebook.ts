@@ -6,13 +6,13 @@ import { Yaml } from "./utilities.ts";
 
 interface Cell {
   cell_type: "markdown" | "code" | "raw";
-  metadata: Yaml;
+  metadata: Record<string, unknown>;
   source: string[];
   outputs?: unknown[];
   execution_count?: null;
 }
 
-export function jupyterNotebook(header: Yaml, nodes: QmdNode[]): Yaml {
+export function jupyterNotebook(header: Yaml, nodes: QmdNode[]): Record<string, unknown> {
   const cells: Cell[] = [];
   let language = "";
   let markdown: string[] = [];

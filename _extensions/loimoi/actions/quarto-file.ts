@@ -50,7 +50,7 @@ export class QuartoFile extends Action {
 function copyImages(doc: QmdDocument, basket: Basket, folder: string): void {
   for (const [, image] of doc.text().matchAll(/!\[[^\]]*\]\(([^)\s]+)/g)) {
     if (!image.includes("://") && !image.startsWith("/")) {
-      const source = basket.ingredients.map((ingredient) => ingredient.fullPath(image)).find((path) => existsSync(path));
+      const source = basket.ingredients.map((ingredient) => ingredient.absolutePath(image)).find((path) => existsSync(path));
       if (source === undefined) throw new Error(`Image not found: ${image}`);
       const target = join(folder, image);
       if (existsSync(target) && !sameContent(source, target)) {

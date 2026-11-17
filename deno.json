@@ -11,5 +11,8 @@
     "@std/crypto": "jsr:@std/crypto@1",
     "@std/encoding": "jsr:@std/encoding@1",
     "fflate": "npm:fflate@0.8"
+  },
+  "fmt": {
+    "lineWidth": 120
   }
 }

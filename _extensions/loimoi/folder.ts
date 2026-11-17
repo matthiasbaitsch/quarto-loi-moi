@@ -13,16 +13,17 @@ export interface PathOptions {
 }
 
 export class Folder {
+  readonly rootFolder: string;
+  readonly path: string; // relative to `rootFolder`
 
-  constructor(
-    readonly root: string, 
-    readonly path: string
-  ) {
-    if (!existsSync(this.fullPath())) throw new Error(`Folder not found: ${path}`);
+  constructor(rootFolder: string, path: string) {
+    this.rootFolder = rootFolder;
+    this.path = path;
+    if (!existsSync(this.absolutePath())) throw new Error(`Folder not found: ${path}`);
   }
 
-  fullPath(file = ""): string {
-    return join(this.root, this.path, file);
+  absolutePath(path = ""): string {
+    return join(this.rootFolder, this.path, path);
   }
 
   name({ full = true, sep = "-" }: NameOptions = {}): string {
@@ -41,8 +42,8 @@ export class Folder {
 
   private find(pattern: string, directories: boolean, { absolute = false }: PathOptions): string[] {
     const paths: string[] = [];
-    for (const entry of expandGlobSync(pattern, { root: this.fullPath() })) {
-      const path = absolute ? entry.path : relative(this.root, entry.path);
+    for (const entry of expandGlobSync(pattern, { root: this.absolutePath() })) {
+      const path = absolute ? entry.path : relative(this.rootFolder, entry.path);
       if (entry.isDirectory === directories) paths.push(path);
     }
     return paths.sort();

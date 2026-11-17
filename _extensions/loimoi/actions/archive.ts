@@ -35,8 +35,8 @@ export class Archive extends Action {
 
 // A leading `/` means relative to `building-blocks/`, otherwise relative to the ingredients of the product
 function sources(basket: Basket, source: string): string[] {
-  if (source.startsWith("/")) return [join(basket.ingredients[0].root, source)];
-  return basket.ingredients.map((ingredient) => ingredient.fullPath(source)).filter((path) => existsSync(path));
+  if (source.startsWith("/")) return [join(basket.ingredients[0].rootFolder, source)];
+  return basket.ingredients.map((ingredient) => ingredient.absolutePath(source)).filter((path) => existsSync(path));
 }
 
 // The zip contains the folder itself

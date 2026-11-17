@@ -5,7 +5,11 @@ import { ProcessingStep } from "./processing-step.ts";
 const languages: Record<string, string> = { ".jl": "julia", ".py": "python", ".R": "r", ".r": "r" };
 
 export class AttachSrc implements ProcessingStep {
-  constructor(readonly files: string[]) {} // absolute paths
+  readonly files: string[]; // absolute paths
+
+  constructor(files: string[]) {
+    this.files = files;
+  }
 
   run(doc: QmdDocument): QmdDocument {
     if (this.files.length === 0) return doc;

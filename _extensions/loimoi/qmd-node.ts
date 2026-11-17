@@ -13,8 +13,11 @@ export abstract class QmdNode {
 }
 
 export class QmdText extends QmdNode {
-  constructor(readonly lines: string[]) {
+  readonly lines: string[];
+
+  constructor(lines: string[]) {
     super();
+    this.lines = lines;
   }
 
   text(): string {
@@ -23,13 +26,17 @@ export class QmdText extends QmdNode {
 }
 
 export class QmdCodeCell extends QmdNode {
-  constructor(
-    readonly lines: string[],
-    readonly language: string,
-    readonly executable: boolean,
-    readonly options: Yaml,
-  ) {
+  readonly lines: string[];
+  readonly language: string;
+  readonly executable: boolean;
+  readonly options: Yaml;
+
+  constructor(lines: string[], language: string, executable: boolean, options: Yaml) {
     super();
+    this.lines = lines;
+    this.language = language;
+    this.executable = executable;
+    this.options = options;
   }
 
   text(): string {
@@ -38,14 +45,19 @@ export class QmdCodeCell extends QmdNode {
 }
 
 export class QmdDiv extends QmdNode {
-  constructor(
-    readonly open: string,
-    readonly close: string,
-    readonly id: string,
-    readonly classes: string[],
-    readonly children: QmdNode[],
-  ) {
+  readonly open: string;
+  readonly close: string;
+  readonly id: string;
+  readonly classes: string[];
+  readonly children: QmdNode[];
+
+  constructor(open: string, close: string, id: string, classes: string[], children: QmdNode[]) {
     super();
+    this.open = open;
+    this.close = close;
+    this.id = id;
+    this.classes = classes;
+    this.children = children;
   }
 
   text(): string {

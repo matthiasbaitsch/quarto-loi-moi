@@ -4,10 +4,13 @@ import { BuildingBlock } from "./building-block.ts";
 import { Folder, NameOptions, PathOptions } from "./folder.ts";
 
 export class Basket {
-  constructor(
-    readonly blocks: BuildingBlock[], // the building block of each ingredient
-    readonly ingredients: Folder[], // the ingredient folders, in the order given
-  ) {}
+  readonly blocks: BuildingBlock[]; // the building block of each ingredient
+  readonly ingredients: Folder[]; // the ingredient folders, in the order given
+
+  constructor(blocks: BuildingBlock[], ingredients: Folder[]) {
+    this.blocks = blocks;
+    this.ingredients = ingredients;
+  }
 
   name(options: NameOptions = {}): string {
     return this.blocks[0].name(options);

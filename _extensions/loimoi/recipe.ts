@@ -2,6 +2,7 @@ import { Action, Placeholders } from "./actions/action.ts";
 import { Archive } from "./actions/archive.ts";
 import { QuartoFile } from "./actions/quarto-file.ts";
 import { Basket } from "./basket.ts";
+import { existsSync } from "@std/fs";
 import { readYaml, Yaml } from "./utilities.ts";
 
 interface Option {
@@ -10,10 +11,17 @@ interface Option {
 }
 
 export class Recipe {
-  constructor(readonly actions: Action[], readonly folder: string) {}
+  readonly actions: Action[];
+  readonly folder: string;
+
+  constructor(actions: Action[], folder: string) {
+    this.actions = actions;
+    this.folder = folder;
+  }
 
   // Only the actions whose `when` matches the options
   static read(file: string, options: Record<string, string>, folder: string): Recipe {
+    if (!existsSync(file)) throw new Error(`Recipe not found: ${file}`);
     const yaml = readYaml(file);
     const chosen = choose((yaml.options ?? {}) as Record<string, Option>, options, file);
     const matches = (entry: Yaml) =>
