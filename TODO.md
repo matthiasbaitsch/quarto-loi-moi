@@ -2,9 +2,6 @@
 
 ## Next
 
-- Test for the error "Different files with the same name" (images, folders).
-- julia-parts: the setup cell `include("src/fibonacci.jl")` also lands in the students' notebook, where it fails
-  until they create the file.
 - numPDE: groups by topic in folders, `about.yml`, `.lm-` markers, code from `notebook.qmd` into the
   exercises, `${notebook}` → `${work-files}`; compare `c/` with today's.
 

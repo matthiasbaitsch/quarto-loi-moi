@@ -45,7 +45,7 @@ export class QuartoFile extends Action {
     copyImages(doc, basket, dirname(path));
     // Work files never get `src/`: it holds the code of the solution
     const workFiles = this.process.includes("exercise-scaffold");
-    for (const [filePath, source] of Object.entries(folderFiles(basket))) {
+    for (const [filePath, source] of folderFiles(basket)) {
       if (!(workFiles && filePath.startsWith("src/"))) copyChecked(source, dirname(path), filePath);
     }
   }
@@ -62,18 +62,15 @@ function copyImages(doc: QmdDocument, basket: Basket, folder: string): void {
   }
 }
 
-// The files in the folders of every ingredient (e.g. `data/fibonacci.csv` → absolute path), copied next to the
-// written file so code like `read.csv("data/…")` runs there; not the files directly in the ingredient folder
-function folderFiles(basket: Basket): Record<string, string> {
-  const files: Record<string, string> = {};
-  for (const ingredient of basket.ingredients) {
+// The files in the folders of every ingredient as pairs (e.g. `data/fibonacci.csv`, absolute path), copied next to
+// the written file so code like `read.csv("data/…")` runs there; not the files directly in the ingredient folder.
+// Pairs, not a record: two ingredients may have a file with the same path
+function folderFiles(basket: Basket): [string, string][] {
+  return basket.ingredients.flatMap((ingredient) => {
     const root = ingredient.absolutePath();
-    for (const source of studentFiles(root)) {
-      const path = relative(root, source);
-      if (dirname(path) !== ".") files[path] = source;
-    }
-  }
-  return files;
+    const paths = studentFiles(root).map((source): [string, string] => [relative(root, source), source]);
+    return paths.filter(([path]) => dirname(path) !== ".");
+  });
 }
 
 // `path` relative to `folder`; error if a different file with the same name is already there

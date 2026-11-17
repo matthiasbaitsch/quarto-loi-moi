@@ -1,5 +1,5 @@
 import { assert, assertEquals, assertThrows } from "@std/assert";
-import { existsSync } from "@std/fs";
+import { ensureDirSync, existsSync } from "@std/fs";
 import { join } from "@std/path";
 import { unzipSync } from "fflate";
 import { BuildingBlockTree } from "../_extensions/loimoi/building-block-tree.ts";
@@ -59,6 +59,18 @@ Deno.test("exercises recipe, folder: r-topics, project with qmd, data and templa
   assert(!existsSync(join(folder, "01-sequences-exercises")));
   assert(existsSync(join(folder, "data/fibonacci.csv")));
   assert(!existsSync(join(folder, "data/_fibonacci.R")));
+});
+
+Deno.test("files of the same name with different content are an error", () => {
+  const root = Deno.makeTempDirSync();
+  for (const [name, content] of [["a", "1\n"], ["b", "2\n"]]) {
+    ensureDirSync(join(root, name, "exercises/data"));
+    Deno.writeTextFileSync(join(root, name, "exercises/text.qmd"), `Text ${name}\n`);
+    Deno.writeTextFileSync(join(root, name, "exercises/data/values.csv"), content);
+  }
+  const basket = new BuildingBlockTree(root).ingredients(["a/exercises", "b/exercises"]);
+  const sheet = new QuartoFile({ name: "sheet", process: [] });
+  assertThrows(() => sheet.run(basket, placeholders, Deno.makeTempDirSync()), Error, "data/values.csv");
 });
 
 Deno.test("exercises recipe: unknown option or value is an error", () => {
