@@ -37,7 +37,7 @@ Deno.test("remove lm-step: versioned file names become the students' file name",
 Deno.test("attach src: heading without _lm_step", () => {
   const src = join(Deno.makeTempDirSync(), "truss_lm_step04.py");
   Deno.writeTextFileSync(src, "x = 1\n");
-  const doc = new AttachSrc([src]).run(QmdDocument.parse("Text\n"));
+  const doc = new AttachSrc([src], "Appendix").run(QmdDocument.parse("Text\n"));
   assertEquals(doc.text(), "Text\n\n## Appendix\n\n### `src/truss.py`\n\n```{.python}\nx = 1\n```\n");
 });
 
@@ -78,7 +78,8 @@ Deno.test("merge setup cells: one cell at the place of the first, lines once", (
 
 Deno.test("attach src: julia-parts, files of src/ as code blocks in an appendix", () => {
   const src = examples + "julia-parts/building-blocks/10-convergence/10-sequences/exercises/src/fibonacci.jl";
-  const doc = new AttachSrc([src]).run(QmdDocument.parse("Text\n"));
-  const expected = "Text\n\n## Appendix\n\n### `src/fibonacci.jl`\n\n```{.julia}\n" + Deno.readTextFileSync(src) + "```\n";
+  const doc = new AttachSrc([src], "Appendix").run(QmdDocument.parse("Text\n"));
+  const expected = "Text\n\n## Appendix\n\n### `src/fibonacci.jl`\n\n```{.julia}\n" + Deno.readTextFileSync(src) +
+    "```\n";
   assertEquals(doc.text(), expected);
 });

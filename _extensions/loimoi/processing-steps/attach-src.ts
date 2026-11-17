@@ -7,9 +7,11 @@ const languages: Record<string, string> = { ".jl": "julia", ".py": "python", ".R
 
 export class AttachSrc implements ProcessingStep {
   readonly files: string[]; // absolute paths
+  readonly heading: string; // e.g. "Appendix"
 
-  constructor(files: string[]) {
+  constructor(files: string[], heading: string) {
     this.files = files;
+    this.heading = heading;
   }
 
   run(doc: QmdDocument): QmdDocument {
@@ -20,7 +22,7 @@ export class AttachSrc implements ProcessingStep {
       const code = Deno.readTextFileSync(file).replace(/\n?$/, "\n");
       return `### \`src/${removeLmStep(basename(file))}\`\n\n\`\`\`{.${language}}\n${code}\`\`\``;
     });
-    const parsed = QmdDocument.parse(`${doc.text()}\n## Appendix\n\n${sections.join("\n\n")}\n`);
+    const parsed = QmdDocument.parse(`${doc.text()}\n## ${this.heading}\n\n${sections.join("\n\n")}\n`);
     return new QmdDocument(parsed.header, parsed.nodes, { ...doc.output });
   }
 }

@@ -42,7 +42,9 @@ Deno.test("parse: header, divs and code cells", () => {
 
   const [exercise, executable, shown] = doc.nodes.filter((node) => !(node instanceof QmdText));
   assertEquals((exercise as QmdDiv).id, "exr-a");
-  assertEquals(((exercise as QmdDiv).children.find((child) => child instanceof QmdDiv) as QmdDiv).classes, ["lm-solution"]);
+  assertEquals(((exercise as QmdDiv).children.find((child) => child instanceof QmdDiv) as QmdDiv).classes, [
+    "lm-solution",
+  ]);
   assertEquals((executable as QmdCodeCell).language, "julia");
   assertEquals((executable as QmdCodeCell).options, { echo: false });
   assertEquals((executable as QmdCodeCell).executable, true);
@@ -50,7 +52,8 @@ Deno.test("parse: header, divs and code cells", () => {
 });
 
 Deno.test("map: remove solutions, also inside divs", () => {
-  const removeSolution = (node: QmdNode) => node instanceof QmdDiv && node.classes.includes("lm-solution") ? [] : [node];
+  const removeSolution = (node: QmdNode) =>
+    node instanceof QmdDiv && node.classes.includes("lm-solution") ? [] : [node];
   const expected = text.replace("::: {.lm-solution}\nSolution.\n:::\n", "");
   assertEquals(QmdDocument.parse(text).map(removeSolution).text(), expected);
 });

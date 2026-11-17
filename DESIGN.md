@@ -186,6 +186,7 @@ classDiagram
     outputFolder() string
     site() string?
     recipe() Recipe
+    words() Record
     productConfigurations() ProductConfiguration[]
   }
   class ProductConfiguration {
@@ -203,6 +204,8 @@ is missing:
 
 - `site()`: from the Git remote
 - `recipe()`: either from `recipe` in `loimoi.yml` or default via `conventions.yml`
+- `words()`: words for recipes and steps from `words/<language>.yml`, the language of the collection via
+  `conventions.yml`; added to the placeholders
 - `productConfigurations()`: either from `products` in `loimoi.yml` or one per ingredient via `conventions.yml`
 
 YAML configuration (e.g. `recipes/exercises.yml`) in `_extensions/loimoi/config/`; a file with the same path in `learning-material/_loimoi/` replaces it (`configFile()` in `utilities.ts`). Exception: `conventions.yml`, the first

@@ -5,11 +5,15 @@ import { unzipSync } from "fflate";
 import { BuildingBlockTree } from "../_extensions/loimoi/building-block-tree.ts";
 import { QuartoFile } from "../_extensions/loimoi/actions/quarto-file.ts";
 import { Recipe } from "../_extensions/loimoi/recipe.ts";
+import { readYaml } from "../_extensions/loimoi/utilities.ts";
 
 const examples = new URL("../examples/", import.meta.url).pathname;
 const exercises = new URL("../_extensions/loimoi/config/recipes/exercises.yml", import.meta.url).pathname;
 
+const words = readYaml(new URL("../_extensions/loimoi/config/words/en.yml", import.meta.url).pathname);
+
 const placeholders = {
+  ...words as Record<string, string>,
   "n": "1",
   "nn-name": "01-convergence-sequences",
   "name": "convergence-sequences",

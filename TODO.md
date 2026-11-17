@@ -2,8 +2,6 @@
 
 ## Next
 
-- German words for German courses: file names (`-aufgaben`, `-loesung`), titles ("Aufgabenblatt", "Lösungen zu …")
-  and text added by steps (e.g. "Appendix").
 - numPDE: groups by topic in folders, `about.yml`, `.lm-` markers, code from `notebook.qmd` into the
   exercises, `${notebook}` → `${work-files}`; compare `c/` with today's.
 

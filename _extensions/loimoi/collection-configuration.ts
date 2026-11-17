@@ -2,7 +2,7 @@ import { basename, dirname, join } from "jsr:@std/path@1";
 import { BuildingBlockTree } from "./building-block-tree.ts";
 import { ProductConfiguration } from "./product-configuration.ts";
 import { Recipe } from "./recipe.ts";
-import { configFile, conventions, gitHubPages, mergeYamlAlongPath, Yaml } from "./utilities.ts";
+import { configFile, conventions, gitHubPages, mergeYamlAlongPath, readYaml, Yaml } from "./utilities.ts";
 
 export class CollectionConfiguration {
   private readonly collectionFolder: string;
@@ -35,6 +35,14 @@ export class CollectionConfiguration {
     const file = configFile(`recipes/${this.recipeName()}.yml`, this.learningMaterialFolder());
     const options = (this.settings.options ?? {}) as Record<string, string>;
     return Recipe.read(file, options, this.outputFolder());
+  }
+
+  // Words for recipes and steps from `words/<language>.yml`; the language from `lang` in `loimoi.yml`, otherwise
+  // from the name of the collection
+  words(): Record<string, string> {
+    const languages = (this.conventions["collection-languages"] ?? {}) as Record<string, string>;
+    const language = (this.settings.lang as string | undefined) ?? languages[this.collectionFolderName()] ?? "en";
+    return readYaml(configFile(`words/${language}.yml`, this.learningMaterialFolder())) as Record<string, string>;
   }
 
   productConfigurations(): ProductConfiguration[] {

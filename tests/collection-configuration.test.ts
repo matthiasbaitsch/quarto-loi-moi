@@ -16,10 +16,11 @@ Deno.test("julia-parts: everything from defaults", () => {
   assertEquals(configuration.outputFolder(), `${examples}julia-parts/learning-material/exercises/c`);
   assertEquals(configuration.site(), "https://matthiasbaitsch.github.io/quarto-loi-moi");
   assertEquals(configuration.recipe().actions.map((action) => action.name), [
-    "${nn-name}-exercises",
-    "${nn-name}-exercises-solution-${hash}",
-    "${nn-name}-exercises",
+    "${nn-name}-${exercises}",
+    "${nn-name}-${exercises}-${solution}-${hash}",
+    "${nn-name}-${exercises}",
   ]);
+  assertEquals(configuration.words()["exercise-sheet"], "Exercise sheet");
   assertEquals(configuration.productConfigurations().length, 4);
   assertObjectMatch(configuration.productConfigurations()[0], {
     number: 1,
@@ -39,9 +40,10 @@ Deno.test("julia-parts: everything from defaults", () => {
   });
 });
 
-Deno.test("python-flat: recipe from the conventions, ingredient folders named like the collection", () => {
+Deno.test("python-flat: recipe from the conventions, lang from loimoi.yml, ingredient folders named like the collection", () => {
   const configuration = read("python-flat", "aufgaben");
   assertEquals(configuration.recipe().actions.length, 4);
+  assertEquals(configuration.words()["exercise-sheet"], "Exercise sheet");
   assertEquals(configuration.productConfigurations().map((product) => product.ingredients), [
     ["10-sequences/aufgaben"],
     ["20-series/aufgaben"],
@@ -73,4 +75,11 @@ Deno.test("product without product-title and without block-title is an error", (
   Deno.writeTextFileSync(join(collection, "loimoi.yml"), "products:\n  - ingredients: [theory/sequences/exercises]\n");
   const tree = new BuildingBlockTree(`${examples}r-topics/building-blocks`);
   assertThrows(() => new CollectionConfiguration(collection, tree).productConfigurations(), Error, "theory-sequences");
+});
+
+Deno.test("collection aufgaben without lang: German words", () => {
+  const collection = join(Deno.makeTempDirSync(), "learning-material/aufgaben");
+  ensureDirSync(collection);
+  const tree = new BuildingBlockTree(`${examples}python-flat/building-blocks`);
+  assertEquals(new CollectionConfiguration(collection, tree).words()["exercise-sheet"], "Aufgabenblatt");
 });

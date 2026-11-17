@@ -326,6 +326,7 @@ archives:                                        # folder deleted after zip
 |---|---|---|
 | `output` | folder for the prepared material | `c` |
 | `first-number` | number of the first product | `1` |
+| `lang` | language of the words in file names and titles (`en`, `de`) | from the collection's name via `conventions.yml` (`aufgaben`: `de`), otherwise `en` |
 | `site` | URL of the published site | from the Git remote |
 | `products` | one entry per product: `ingredients`, optional `name`, `product-title`, `group-title` | one product per building block with the ingredient folder from `conventions.yml`, in folder order |
 | `recipe` | recipe that makes the products | from `conventions.yml` |
@@ -393,3 +394,4 @@ Filled in per product when the recipe runs:
 | `${product-title}` | `product-title` of the product, default: `block-title` of the first building block | `Sequences` |
 | `${site}` | URL of the published site | `https://teacher.github.io/calculus` |
 | `${work-files}` | URL of the file of the action with `provides: work-files` | `…/01-convergence-sequences-exercises.zip` |
+| `${exercise-sheet}`, `${exercises}`, … | words in the language of the collection (`collection-languages` in `conventions.yml`, `aufgaben` German, otherwise English), from `words/<language>.yml` | `Aufgabenblatt`, `aufgaben` |

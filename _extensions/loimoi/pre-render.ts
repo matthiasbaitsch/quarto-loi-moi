@@ -15,6 +15,7 @@ Deno.mkdirSync(outputFolder);
 
 const recipe = configuration.recipe();
 const site = configuration.site();
+const words = configuration.words();
 for (const product of configuration.productConfigurations()) {
-  recipe.run(tree.ingredients(product.ingredients), product.placeholders(site));
+  recipe.run(tree.ingredients(product.ingredients), { ...words, ...product.placeholders(site) });
 }

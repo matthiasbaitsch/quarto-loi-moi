@@ -33,7 +33,9 @@ export class QuartoFile extends Action {
     pipeline.addStep(new ReplacePlaceholders(placeholders));
     pipeline.addStep(new MergeSetupCells());
     for (const step of this.process) {
-      pipeline.addStep(step === "attach-src" ? new AttachSrc(basket.files("src/*", { absolute: true })) : step);
+      pipeline.addStep(
+        step === "attach-src" ? new AttachSrc(basket.files("src/*", { absolute: true }), placeholders.appendix) : step,
+      );
     }
     const doc = pipeline.run(QmdDocument.read(...basket.files("*.qmd", { absolute: true })));
 
@@ -71,7 +73,9 @@ function copyFolders(basket: Basket, folder: string, workFiles: boolean): void {
 function copyImages(doc: QmdDocument, basket: Basket, folder: string): void {
   for (const [, image] of doc.text().matchAll(/!\[[^\]]*\]\(([^)\s]+)/g)) {
     if (!image.includes("://") && !image.startsWith("/")) {
-      const source = basket.ingredients.map((ingredient) => ingredient.absolutePath(image)).find((path) => existsSync(path));
+      const source = basket.ingredients.map((ingredient) => ingredient.absolutePath(image)).find((path) =>
+        existsSync(path)
+      );
       if (source === undefined) throw new Error(`Image not found: ${image}`);
       copyChecked(source, folder, image);
     }
