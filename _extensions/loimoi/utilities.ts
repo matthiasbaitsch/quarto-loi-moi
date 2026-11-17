@@ -26,6 +26,11 @@ export function studentFiles(folder: string): string[] {
   return [...walkSync(folder, { includeDirs: false, skip: [excluded] })].map((entry) => entry.path);
 }
 
+// `truss_lm_step04` becomes `truss`: versioned files of the solution, one file for the students
+export function removeLmStep(text: string): string {
+  return text.replace(/_lm_step\d+/g, "");
+}
+
 // `${key}` replaced by its value; unknown keys stay unchanged
 export function replacePlaceholders(text: string, values: Record<string, string>): string {
   return text.replace(/\$\{([\w-]+)\}/g, (match, key) => values[key] ?? match);

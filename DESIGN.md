@@ -135,6 +135,7 @@ classDiagram
   ProcessingStep <|-- ExerciseScaffold
   ProcessingStep <|-- ExerciseSolution
   ProcessingStep <|-- AttachSrc
+  ProcessingStep <|-- RemoveLmStep
   ProcessingStep <|-- Jupyter
   ProcessingStep <|-- Zip
   class Pipeline {
@@ -244,9 +245,9 @@ classDiagram
 
 Remarks:
 
-- `QuartoFile` copies the folders of the ingredients next to the written file (not into a zip, `src/` not into
-  work files), without names starting with `_` or `.` and `…_files` (`studentFiles()` in `utilities.ts`); an
-  `Archive` copies folders in `add` the same way
+- `QuartoFile` copies the folders of the ingredients next to the written file (not into a zip; special folders
+  `src/` and `zip/<name>/` → `<name>.zip`, both not into work files), without names starting with `_` or `.` and
+  `…_files` (`studentFiles()` in `utilities.ts`); an `Archive` copies folders in `add` the same way
 - `QuartoFile` copies the files referenced in the document (e.g. `images/a.svg` to `c/images/a.svg`); error if a
   file of the same name differs
 - `Recipe.run`: adds the placeholders from `provides` (`file()` of the action), runs the actions in order

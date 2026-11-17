@@ -16,13 +16,13 @@ quarto-files:
   - when: {work-files: notebook}
     name: "${nn-name}-exercises"
     title: "Exercise sheet ${n}"
-    process: [exercise-scaffold, jupyter, zip]
+    process: [exercise-scaffold, remove-lm-step, jupyter, zip]
     provides: work-files
 
   - when: {work-files: folder}
     name: "${nn-name}-exercises/${name}-exercises"
     title: "Exercise sheet ${n}"
-    process: [exercise-scaffold]
+    process: [exercise-scaffold, remove-lm-step]
 
 archives:
   - when: {work-files: folder}

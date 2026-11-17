@@ -42,7 +42,7 @@ Deno.test("exercises recipe, notebook: julia-parts, sheet, solution, zipped note
   assert(!existsSync(join(folder, "work-files/src")));
 });
 
-Deno.test("exercises recipe, folder: r-topics, project with qmd, data and templates", () => {
+Deno.test("exercises recipe, folder: r-topics, project with qmd, data and templates, extra download", () => {
   const folder = Deno.makeTempDirSync();
   const tree = new BuildingBlockTree(examples + "r-topics/building-blocks");
   const basket = tree.ingredients(["theory/sequences/exercises", "programming/sequences/exercises"]);
@@ -59,6 +59,10 @@ Deno.test("exercises recipe, folder: r-topics, project with qmd, data and templa
   assert(!existsSync(join(folder, "01-sequences-exercises")));
   assert(existsSync(join(folder, "data/fibonacci.csv")));
   assert(!existsSync(join(folder, "data/_fibonacci.R")));
+
+  const extra = unzipSync(Deno.readFileSync(join(folder, "fibonacci-table.zip")));
+  assertEquals(Object.keys(extra), ["fibonacci-table/fibonacci-table.txt"]);
+  assert(!existsSync(join(folder, "zip")));
 });
 
 Deno.test("files of the same name with different content are an error", () => {

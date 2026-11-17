@@ -123,9 +123,9 @@ Remarks:
 - Leading numbers in names stripped
 - Folder names in English or German, e.g. `exercises/` or `aufgaben/`
 - Folders and files starting with `_` or `.` ignored, also Quarto's `…_files` folders
-- Folders of an ingredient (e.g. `images/`, `data/`, `src/`) copied next to each file of the product (a
-  zipped notebook contains only the notebook, work files never get `src/`, the code of the solution); error if a
-  file of the same name differs
+- Folders of an ingredient (e.g. `images/`, `data/`) copied next to each file of the product (a zipped notebook
+  contains only the notebook); error if a file of the same name differs. Special folders, not in work files:
+  `src/` (code of the solution, copied) and `zip/<name>/` (extra download, becomes `<name>.zip`)
 
 ## Learning material
 
@@ -294,13 +294,13 @@ quarto-files:
   - when: {work-files: notebook}                 # single Jupyter notebook
     name: "${nn-name}-exercises"
     title: "Exercise sheet ${n}"
-    process: [exercise-scaffold, jupyter, zip]   # source deleted after zip
+    process: [exercise-scaffold, remove-lm-step, jupyter, zip]   # source deleted after zip
     provides: work-files
 
   - when: {work-files: folder}                   # folder, e.g. a project
     name: "${nn-name}-exercises/${name}-exercises"
     title: "Exercise sheet ${n}"
-    process: [exercise-scaffold]
+    process: [exercise-scaffold, remove-lm-step]
 
 archives:                                        # folder deleted after zip
   - when: {work-files: folder}
@@ -354,7 +354,8 @@ Processing steps (`process`):
 | `exercise-sheet` | keeps what belongs on the exercise sheet |
 | `exercise-scaffold` | keeps what belongs into the work files |
 | `exercise-solution` | keeps what belongs into the solution |
-| `attach-src` | adds the files of `src/` as code blocks (not executed) in an appendix |
+| `attach-src` | adds the files of `src/` as code blocks (not executed) in an appendix, headed e.g. `src/truss.py` (without `_lm_step…`) |
+| `remove-lm-step` | removes `_lm_step` and the number after it, e.g. `truss_lm_step04` → `truss` (see below) |
 | `jupyter` | converts to a Jupyter notebook, without running it |
 | `zip` | zips the file and deletes it |
 
@@ -372,6 +373,11 @@ What the three exercise steps keep:
 | `.lm-solution` | – | empty code cell (1) | ✓ |
 
 (1) Only if the solution has code and the exercise has no scaffold.
+
+Code in `src/` growing from sheet to sheet: one versioned file per change, e.g. `src/truss_lm_step02.py`,
+`src/truss_lm_step04.py`; the solution imports the version it needs, the work files get `src.truss` (step
+`remove-lm-step`), as the students keep one file `src/truss.py`. A version changed by mistake is an error (files of
+the same name must not differ).
 
 ### Placeholders
 

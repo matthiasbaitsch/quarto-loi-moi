@@ -1,5 +1,6 @@
 import { copySync, ensureDirSync, existsSync } from "jsr:@std/fs@1";
 import { dirname, join, relative } from "jsr:@std/path@1";
+import { unzipSync, zipSync } from "npm:fflate@0.8";
 import { Basket } from "../basket.ts";
 import { AttachSrc } from "../processing-steps/attach-src.ts";
 import { MergeSetupCells } from "../processing-steps/merge-setup-cells.ts";
@@ -43,11 +44,26 @@ export class QuartoFile extends Action {
     ensureDirSync(dirname(path));
     new QmdDocument(header, doc.nodes, doc.output).write(path);
     copyImages(doc, basket, dirname(path));
-    // Work files never get `src/`: it holds the code of the solution
-    const workFiles = this.process.includes("exercise-scaffold");
-    for (const [filePath, source] of folderFiles(basket)) {
-      if (!(workFiles && filePath.startsWith("src/"))) copyChecked(source, dirname(path), filePath);
+    copyFolders(basket, dirname(path), this.process.includes("exercise-scaffold"));
+  }
+}
+
+// The folders of the ingredients next to the written file. Folders with a special meaning, neither of them into
+// work files: `src/` holds the code of the solution, copied; `zip/<name>/` is an extra download, becomes
+// `<name>.zip`. All other folders copied.
+function copyFolders(basket: Basket, folder: string, workFiles: boolean): void {
+  const zips: Record<string, Record<string, Uint8Array>> = {};
+  for (const [path, source] of folderFiles(basket)) {
+    const [top, name] = path.split("/");
+    if (top === "zip") {
+      zips[name] ??= {};
+      zips[name][relative("zip", path)] = Deno.readFileSync(source);
+    } else if (!(top === "src" && workFiles)) {
+      copyChecked(source, folder, path);
     }
+  }
+  if (!workFiles) {
+    for (const [name, files] of Object.entries(zips)) zipChecked(files, folder, `${name}.zip`);
   }
 }
 
@@ -76,15 +92,31 @@ function folderFiles(basket: Basket): [string, string][] {
 // `path` relative to `folder`; error if a different file with the same name is already there
 function copyChecked(source: string, folder: string, path: string): void {
   const target = join(folder, path);
-  if (existsSync(target) && !sameContent(source, target)) {
+  if (existsSync(target) && !sameBytes(Deno.readFileSync(source), Deno.readFileSync(target))) {
     throw new Error(`Different files with the same name: ${path}`);
   }
   ensureDirSync(dirname(target));
   copySync(source, target, { overwrite: true });
 }
 
-function sameContent(a: string, b: string): boolean {
-  const bytesA = Deno.readFileSync(a);
-  const bytesB = Deno.readFileSync(b);
-  return bytesA.length === bytesB.length && bytesA.every((byte, i) => byte === bytesB[i]);
+// Written only once; an existing zip is compared by its content, the bytes of a zip contain timestamps
+function zipChecked(files: Record<string, Uint8Array>, folder: string, path: string): void {
+  const target = join(folder, path);
+  if (existsSync(target)) {
+    if (!sameFiles(unzipSync(Deno.readFileSync(target)), files)) {
+      throw new Error(`Different files with the same name: ${path}`);
+    }
+  } else {
+    Deno.writeFileSync(target, zipSync(files));
+  }
+}
+
+function sameFiles(a: Record<string, Uint8Array>, b: Record<string, Uint8Array>): boolean {
+  const names = Object.keys(a).sort();
+  const sameNames = names.join("\n") === Object.keys(b).sort().join("\n");
+  return sameNames && names.every((name) => sameBytes(a[name], b[name]));
+}
+
+function sameBytes(a: Uint8Array, b: Uint8Array): boolean {
+  return a.length === b.length && a.every((byte, i) => byte === b[i]);
 }

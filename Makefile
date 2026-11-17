@@ -1,4 +1,6 @@
-EXAMPLES = examples/python-flat examples/julia-parts examples/r-topics
+EXAMPLES = examples/python-flat examples/julia-parts examples/r-topics examples/nummat
+COLLECTIONS = examples/python-flat/learning-material/aufgaben examples/julia-parts/learning-material/exercises \
+	examples/r-topics/learning-material/exercises examples/nummat/lernpfad/aufgaben
 
 # Copy the extension into the example projects (Quarto does not follow a symlink to an extension)
 examples:
@@ -8,23 +10,27 @@ examples:
 		cp -R _extensions/loimoi $$example/_extensions/; \
 	done
 
-# Render all examples
-render: $(addprefix render-,$(notdir $(EXAMPLES)))
+# Render the public examples; nummat needs numMat on this machine
+render: render-python-flat render-julia-parts render-r-topics
 
-# Render every collection of one example, e.g. `make render-julia-parts`; with `uv run` if the example has a
-# pyproject.toml, so Quarto uses its virtual environment
-render-%: examples
-	run=""; \
-	if [ -f examples/$*/pyproject.toml ]; then run="uv run --project $(CURDIR)/examples/$*"; fi; \
-	for collection in examples/$*/learning-material/*/; do \
-		(cd $$collection && $$run quarto render) || exit 1; \
-	done
+# Python from the virtual environment of the example
+render-python-flat: examples
+	uv run --project examples/python-flat quarto render examples/python-flat/learning-material/aufgaben
+
+render-julia-parts: examples
+	quarto render examples/julia-parts/learning-material/exercises
+
+render-r-topics: examples
+	quarto render examples/r-topics/learning-material/exercises
+
+# pyproject.toml and uv.lock are symlinks to numMat's; Jupyter is in its group `render`
+render-nummat: examples
+	uv run --project examples/nummat --group render quarto render examples/nummat/lernpfad/aufgaben
 
 # Remove what loi-moi, Quarto and `make examples` produced in the examples
 clean:
 	rm -rf __output
-	for example in $(EXAMPLES); do \
-		rm -rf $$example/_extensions/loimoi $$example/learning-material/*/c $$example/learning-material/*/.quarto; \
-	done
+	for example in $(EXAMPLES); do rm -rf $$example/_extensions/loimoi; done
+	for collection in $(COLLECTIONS); do rm -rf $$collection/c $$collection/.quarto; done
 
-.PHONY: examples render clean
+.PHONY: examples render render-python-flat render-julia-parts render-r-topics render-nummat clean

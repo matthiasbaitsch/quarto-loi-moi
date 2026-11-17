@@ -7,6 +7,9 @@
 # Copies of the extension in the examples (make examples)
 examples/*/_extensions/
 
+# numMat's building blocks via a symlink to a local path, to find problems
+examples/nummat/
+
 # Quarto output
 .quarto/
 __output/
