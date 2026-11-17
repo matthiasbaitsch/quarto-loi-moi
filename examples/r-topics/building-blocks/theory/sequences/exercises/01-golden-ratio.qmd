@@ -3,8 +3,7 @@
 ::: {#exr-golden-ratio}
 ## The golden ratio
 
-The Fibonacci numbers are $F_1 = F_2 = 1$ and $F_{n+2} = F_{n+1} + F_n$. Their ratios $q_n = F_{n+1} / F_n$ seem to
-converge.
+The Fibonacci numbers are $F_1 = F_2 = 1$ and $F_{n+2} = F_{n+1} + F_n$. Their ratios $q_n = F_{n+1} / F_n$ seem to converge.
 
 1. Compute $q_1, \ldots, q_5$.
 
@@ -17,8 +16,7 @@ converge.
 
 1. Dividing $F_{n+2} = F_{n+1} + F_n$ by $F_{n+1}$ gives $q_{n+1} = 1 + F_n / F_{n+1} = 1 + 1 / q_n$.
 
-1. For the limit $q$, $q = 1 + 1/q$, so $q^2 - q - 1 = 0$. Since all $q_n \geq 1$, the limit is the positive root,
-   the golden ratio
+1. For the limit $q$, $q = 1 + 1/q$, so $q^2 - q - 1 = 0$. Since all $q_n \geq 1$, the limit is the positive root, the golden ratio
    $$
      \varphi = \frac{1 + \sqrt{5}}{2} \approx 1.618.
    $$

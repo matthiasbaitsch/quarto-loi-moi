@@ -1,6 +1,6 @@
 // Executable cells become code cells, everything else markdown
 
-import { stringify as stringifyYaml } from "@std/yaml";
+import { stringify as stringifyYaml } from "jsr:@std/yaml@1";
 import { QmdCodeCell, QmdDiv, QmdNode } from "./qmd-node.ts";
 import { Yaml } from "./utilities.ts";
 

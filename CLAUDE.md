@@ -27,8 +27,9 @@ Git repository, public on GitHub: `matthiasbaitsch/quarto-loi-moi`.
 ## Development
 
 - `deno task test`, `deno task check`; `make examples` copies the extension into the examples (Quarto does not
-  follow symlinks); render an example with `quarto render` in its folder (Python:
-  `QUARTO_PYTHON=$PWD/.venv/bin/python quarto render`).
+  follow a symlink to an extension); `make render` or `make render-<example>` renders (with `uv run` if the example
+  has a `pyproject.toml`); `make clean` removes all generated files; output in `__output/`. Don't render on every
+  change, the user tests themselves.
 - Test policy: assertion first; one test per example, each aspect in one example only.
 - Code style: simple; comments sparingly, only where the code doesn't say it (the user is learning TypeScript;
   explain new constructs in the review, not in the code); file names follow class names; no `continue`/`break`;

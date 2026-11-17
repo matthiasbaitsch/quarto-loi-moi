@@ -1,4 +1,4 @@
-import { basename, extname } from "@std/path";
+import { basename, extname } from "jsr:@std/path@1";
 import { QmdDocument } from "../qmd-document.ts";
 import { ProcessingStep } from "./processing-step.ts";
 
@@ -17,7 +17,7 @@ export class AttachSrc implements ProcessingStep {
       const language = languages[extname(file)];
       if (language === undefined) throw new Error(`Unknown language of ${file}`);
       const code = Deno.readTextFileSync(file).replace(/\n?$/, "\n");
-      return `### \`${basename(file)}\`\n\n\`\`\`{${language}}\n${code}\`\`\``;
+      return `### \`${basename(file)}\`\n\n\`\`\`{.${language}}\n${code}\`\`\``;
     });
     const parsed = QmdDocument.parse(`${doc.text()}\n## Appendix\n\n${sections.join("\n\n")}\n`);
     return new QmdDocument(parsed.header, parsed.nodes, { ...doc.output });

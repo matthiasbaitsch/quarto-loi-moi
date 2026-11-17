@@ -1,5 +1,5 @@
-import { join, relative } from "@std/path";
-import { existsSync, expandGlobSync } from "@std/fs";
+import { join, relative } from "jsr:@std/path@1";
+import { existsSync, expandGlobSync } from "jsr:@std/fs@1";
 
 export interface NameOptions {
   // Use full path or folder name only

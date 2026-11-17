@@ -14,8 +14,7 @@ $$
 
 1. Implement the function `partial_sums(n)`, which returns the list of the partial sums $s_1, \ldots, s_n$.
 
-1. Compute the errors of $s_{10}$, $s_{100}$ and $s_{1000}$. How many terms are needed for one more correct digit?
-   Compare with the geometric series from @exr-geometric.
+1. Compute the errors of $s_{10}$, $s_{100}$ and $s_{1000}$. How many terms are needed for one more correct digit? Compare with the geometric series from @exr-geometric.
 
 ::: {.lm-scaffold}
 ```{python}
@@ -39,7 +38,6 @@ for n in [10, 100, 1000]:
     print(n, abs(sums[n - 1] - math.log(2)))
 ```
 
-The error is about $1 / (2n)$: one more correct digit needs ten times as many terms. The geometric series with
-$q = 1/10$ gains one digit with each term.
+The error is about $1 / (2n)$: one more correct digit needs ten times as many terms. The geometric series with $q = 1/10$ gains one digit with each term.
 :::
 :::

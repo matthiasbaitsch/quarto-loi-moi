@@ -1,3 +1,7 @@
+# Logical name → names tried, upward from the working directory
+names:
+  building-blocks: [building-blocks, bausteine]
+
 # Collection folder → recipe
 collection-recipes:
   exercises: exercises

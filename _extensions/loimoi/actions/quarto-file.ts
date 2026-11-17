@@ -1,12 +1,12 @@
-import { copySync, ensureDirSync, existsSync } from "@std/fs";
-import { dirname, join } from "@std/path";
+import { copySync, ensureDirSync, existsSync } from "jsr:@std/fs@1";
+import { dirname, join, relative } from "jsr:@std/path@1";
 import { Basket } from "../basket.ts";
 import { AttachSrc } from "../processing-steps/attach-src.ts";
 import { MergeSetupCells } from "../processing-steps/merge-setup-cells.ts";
 import { Pipeline } from "../processing-steps/pipeline.ts";
 import { ReplacePlaceholders } from "../processing-steps/replace-placeholders.ts";
 import { QmdDocument } from "../qmd-document.ts";
-import { replacePlaceholders, Yaml } from "../utilities.ts";
+import { replacePlaceholders, studentFiles, Yaml } from "../utilities.ts";
 import { Action, Placeholders } from "./action.ts";
 
 export class QuartoFile extends Action {
@@ -43,6 +43,11 @@ export class QuartoFile extends Action {
     ensureDirSync(dirname(path));
     new QmdDocument(header, doc.nodes, doc.output).write(path);
     copyImages(doc, basket, dirname(path));
+    // Work files never get `src/`: it holds the code of the solution
+    const workFiles = this.process.includes("exercise-scaffold");
+    for (const [filePath, source] of Object.entries(folderFiles(basket))) {
+      if (!(workFiles && filePath.startsWith("src/"))) copyChecked(source, dirname(path), filePath);
+    }
   }
 }
 
@@ -52,14 +57,33 @@ function copyImages(doc: QmdDocument, basket: Basket, folder: string): void {
     if (!image.includes("://") && !image.startsWith("/")) {
       const source = basket.ingredients.map((ingredient) => ingredient.absolutePath(image)).find((path) => existsSync(path));
       if (source === undefined) throw new Error(`Image not found: ${image}`);
-      const target = join(folder, image);
-      if (existsSync(target) && !sameContent(source, target)) {
-        throw new Error(`Different files with the same name: ${image}`);
-      }
-      ensureDirSync(dirname(target));
-      copySync(source, target, { overwrite: true });
+      copyChecked(source, folder, image);
     }
   }
+}
+
+// The files in the folders of every ingredient (e.g. `data/fibonacci.csv` → absolute path), copied next to the
+// written file so code like `read.csv("data/…")` runs there; not the files directly in the ingredient folder
+function folderFiles(basket: Basket): Record<string, string> {
+  const files: Record<string, string> = {};
+  for (const ingredient of basket.ingredients) {
+    const root = ingredient.absolutePath();
+    for (const source of studentFiles(root)) {
+      const path = relative(root, source);
+      if (dirname(path) !== ".") files[path] = source;
+    }
+  }
+  return files;
+}
+
+// `path` relative to `folder`; error if a different file with the same name is already there
+function copyChecked(source: string, folder: string, path: string): void {
+  const target = join(folder, path);
+  if (existsSync(target) && !sameContent(source, target)) {
+    throw new Error(`Different files with the same name: ${path}`);
+  }
+  ensureDirSync(dirname(target));
+  copySync(source, target, { overwrite: true });
 }
 
 function sameContent(a: string, b: string): boolean {

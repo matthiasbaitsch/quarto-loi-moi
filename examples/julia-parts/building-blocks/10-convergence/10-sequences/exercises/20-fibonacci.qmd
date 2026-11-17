@@ -1,7 +1,6 @@
 ## Part 2: In Julia
 
-Download the [work files](${work-files}) and unzip them into your project folder. Develop your code in the notebook
-first. Once a function works, move it into the folder `src/` and include it from there.
+Download the [work files](${work-files}) and unzip them into your project folder. Develop your code in the notebook first. Once a function works, move it into the folder `src/` and include it from there.
 
 ```{julia}
 #| label: setup
@@ -12,8 +11,7 @@ include("src/fibonacci.jl")
 ::: {#exr-fibonacci}
 ## How fast do the ratios converge?
 
-1. Implement the function `fibonacci_ratios(n)`, which returns the vector of the ratios $q_1, \ldots, q_n$ from
-   @exr-golden-ratio.
+1. Implement the function `fibonacci_ratios(n)`, which returns the vector of the ratios $q_1, \ldots, q_n$ from @exr-golden-ratio.
 
 1. Compute the ratios for $n = 20$ together with their errors. By which factor does the error fall in each step?
 
@@ -34,7 +32,6 @@ ratios = fibonacci_ratios(20)
 [ratios abs.(ratios .- φ)]
 ```
 
-The error falls by the factor $\varphi^2 \approx 2.6$ in each step, and its sign alternates: the ratios lie
-alternately above and below $\varphi$.
+The error falls by the factor $\varphi^2 \approx 2.6$ in each step, and its sign alternates: the ratios lie alternately above and below $\varphi$.
 :::
 :::

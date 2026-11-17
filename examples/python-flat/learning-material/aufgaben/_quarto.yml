@@ -1,0 +1,6 @@
+project:
+  type: default
+  output-dir: ../../../../__output/python-flat/learning-material/aufgaben
+
+metadata-files:
+  - ../../../_common.yml

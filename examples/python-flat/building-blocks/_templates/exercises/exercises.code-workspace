@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"editor.formatOnSave": true,
+		"workbench.startupEditor": "none",
+		"files.exclude": {
+			"*_cache": true,
+			"*_files": true,
+			"*.code-workspace": true
+		}
+	}
+}

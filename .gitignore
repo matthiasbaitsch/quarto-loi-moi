@@ -9,6 +9,7 @@ examples/*/_extensions/
 
 # Quarto output
 .quarto/
+__output/
 c/
 _material/
 *_files/

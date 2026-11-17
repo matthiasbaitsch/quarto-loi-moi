@@ -28,11 +28,20 @@ Deno.test("julia-parts: everything from defaults", () => {
     title: "Sequences",
     groupTitle: "Convergence",
   });
+  assertEquals(configuration.productConfigurations()[0].placeholders("https://teacher.github.io/calculus"), {
+    "n": "1",
+    "name": "convergence-sequences",
+    "nn-name": "01-convergence-sequences",
+    "hash": "2094a057",
+    "product-title": "Sequences",
+    "group-title": "Convergence",
+    "site": "https://teacher.github.io/calculus",
+  });
 });
 
-Deno.test("python-flat: recipe from the mappings, ingredient folders named like the collection", () => {
+Deno.test("python-flat: recipe from the conventions, ingredient folders named like the collection", () => {
   const configuration = read("python-flat", "aufgaben");
-  assertEquals(configuration.recipe().actions.length, 3);
+  assertEquals(configuration.recipe().actions.length, 4);
   assertEquals(configuration.productConfigurations().map((product) => product.ingredients), [
     ["10-sequences/aufgaben"],
     ["20-series/aufgaben"],

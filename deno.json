@@ -12,6 +12,11 @@
     "@std/encoding": "jsr:@std/encoding@1",
     "fflate": "npm:fflate@0.8"
   },
+  "lint": {
+    "rules": {
+      "exclude": ["no-import-prefix"]
+    }
+  },
   "fmt": {
     "lineWidth": 120
   }

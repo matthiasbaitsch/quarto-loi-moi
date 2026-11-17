@@ -37,7 +37,6 @@ for n in range(1, 16):
     print(n, abs(taylor_exp(1.0, n) - math.e))
 ```
 
-The error is about $1 / (n + 1)!$, the first term left out. It falls faster and faster; after about $17$ terms, it
-reaches the level of the rounding errors.
+The error is about $1 / (n + 1)!$, the first term left out. It falls faster and faster; after about $17$ terms, it reaches the level of the rounding errors.
 :::
 :::

@@ -1,6 +1,6 @@
 // Pandoc finds divs and code cells with their line ranges; the nodes are cut from the original lines
 
-import { parse as parseYaml } from "@std/yaml";
+import { parse as parseYaml } from "jsr:@std/yaml@1";
 import { QmdCodeCell, QmdDiv, QmdNode, QmdText } from "./qmd-node.ts";
 import { Yaml } from "./utilities.ts";
 

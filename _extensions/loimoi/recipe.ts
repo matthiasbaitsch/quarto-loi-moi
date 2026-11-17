@@ -2,7 +2,7 @@ import { Action, Placeholders } from "./actions/action.ts";
 import { Archive } from "./actions/archive.ts";
 import { QuartoFile } from "./actions/quarto-file.ts";
 import { Basket } from "./basket.ts";
-import { existsSync } from "@std/fs";
+import { existsSync } from "jsr:@std/fs@1";
 import { readYaml, Yaml } from "./utilities.ts";
 
 interface Option {

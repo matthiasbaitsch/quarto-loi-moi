@@ -4,7 +4,8 @@ How loi-moi does what SPEC describes.
 
 ## Overview
 
-Running `quarto render learning-material/<collection>` triggers execution of loi-moi's `pre-render` script which
+Running `quarto render` in a collection folder triggers execution of loi-moi's `pre-render` script (named in the
+collection's `_quarto.yml`, run in the collection folder) which
 
 1. collects required information, most importantly
     1. a representation of the `building-blocks` tree
@@ -157,7 +158,7 @@ classDiagram
 Remarks:
 
 - `ReplacePlaceholders` also replaces in the header
-- `AttachSrc` puts the files of `src/` into an appendix of the document, as code cells; `files` from
+- `AttachSrc` puts the files of `src/` into an appendix of the document, as code blocks (not executed); `files` from
   `basket.files("src/*")`
 
 ## Process
@@ -196,14 +197,19 @@ classDiagram
   }
 ```
 
-The constructor merges the `loimoi.yml` files along the path and reads `mappings.yml`. The methods derive what
+The constructor merges the `loimoi.yml` files along the path and reads `conventions.yml`. The methods derive what
 is missing:
 
 - `site()`: from the Git remote
-- `recipe()`: either from `recipe` in `loimoi.yml` or default via `mappings.yml`
-- `productConfigurations()`: either from `products` in `loimoi.yml` or one per ingredient via `mappings.yml`
+- `recipe()`: either from `recipe` in `loimoi.yml` or default via `conventions.yml`
+- `productConfigurations()`: either from `products` in `loimoi.yml` or one per ingredient via `conventions.yml`
 
-YAML configuration (e.g. `recipes/exercises.yml`) in `_extensions/loimoi/config/`; a file with the same path in `learning-material/_loimoi/` replaces it (`configFile()` in `utilities.ts`).
+YAML configuration (e.g. `recipes/exercises.yml`) in `_extensions/loimoi/config/`; a file with the same path in `learning-material/_loimoi/` replaces it (`configFile()` in `utilities.ts`). Exception: `conventions.yml`, the first
+`_loimoi/conventions.yml` upward from the working directory (`conventions()`).
+
+`resolve(logicalName)` in `utilities.ts` finds a file or folder by a logical name (e.g. `building-blocks`): upward
+from the working directory, the first folder containing one of the names listed under `names` in
+`conventions.yml`; error if none or several in the same folder.
 
 ### Recipe and Action classes
 
@@ -238,6 +244,9 @@ classDiagram
 
 Remarks:
 
+- `QuartoFile` copies the folders of the ingredients next to the written file (not into a zip, `src/` not into
+  work files), without names starting with `_` or `.` and `…_files` (`studentFiles()` in `utilities.ts`); an
+  `Archive` copies folders in `add` the same way
 - `QuartoFile` copies the files referenced in the document (e.g. `images/a.svg` to `c/images/a.svg`); error if a
   file of the same name differs
 - `Recipe.run`: adds the placeholders from `provides` (`file()` of the action), runs the actions in order
@@ -248,6 +257,11 @@ Remarks:
   would turn ` ```{julia} ` into a plain code block.
 - **Everything before Quarto, no filter.** A filter runs per document, loi-moi needs the whole collection.
 - **Names from folders, not from `about.yml`.** Renaming a folder is deliberate, retyping a title is not.
+- **No project type.** A Quarto project has one type, collections need different ones (`book` for course notes);
+  so `_quarto.yml` names the pre-render script, shared settings via `metadata-files`. Quarto requires an extension
+  to contribute something: loi-moi contributes the metadata `loimoi: true`.
+- **Code runs on copies.** The folders of the ingredients are copied into `c/`, so code reading `data/…` runs there
+  as in the work files; no folder name fixed, no working directory changed per language (as in the prototype).
 - **Jupyter notebooks written as JSON, not with `quarto convert`.** `quarto convert` needs a Jupyter kernel for
   the language installed on the machine (Julia and R run with other engines in Quarto) and has no option to set
   it; without one, code cells end up as text.

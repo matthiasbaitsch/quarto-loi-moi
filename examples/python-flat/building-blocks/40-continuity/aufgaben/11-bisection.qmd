@@ -8,15 +8,11 @@ import matplotlib.pyplot as plt
 ::: {#exr-bisection}
 ## Bisection
 
-If $f$ is continuous on $[a, b]$ and $f(a)$ and $f(b)$ have opposite signs, $f$ has a zero in $[a, b]$
-(intermediate value theorem). Bisection halves the interval in each step and keeps the half in which the sign
-changes.
+If $f$ is continuous on $[a, b]$ and $f(a)$ and $f(b)$ have opposite signs, $f$ has a zero in $[a, b]$ (intermediate value theorem). Bisection halves the interval in each step and keeps the half in which the sign changes.
 
-1. Implement the function `bisection(f, a, b, n)`, which returns the list of the midpoints of the first $n$
-   intervals.
+1. Implement the function `bisection(f, a, b, n)`, which returns the list of the midpoints of the first $n$ intervals.
 
-1. Find the zero of $\cos x - x$ in $[0, 1]$ with $n = 50$. Take the last midpoint as the exact zero and plot the
-   errors of the first $40$ midpoints in a semi-log diagram. How many steps are needed for ten correct digits?
+1. Find the zero of $\cos x - x$ in $[0, 1]$ with $n = 50$. Take the last midpoint as the exact zero and plot the errors of the first $40$ midpoints in a semi-log diagram. How many steps are needed for ten correct digits?
 
 ::: {.lm-solution}
 ```{python}
@@ -39,7 +35,6 @@ plt.ylabel("error")
 plt.show()
 ```
 
-After $n$ steps, the interval has the length $2^{-n}$, so the error falls along a straight line. Ten correct digits
-need $2^{-n} < 10^{-10}$, that is $n \geq 34$.
+After $n$ steps, the interval has the length $2^{-n}$, so the error falls along a straight line. Ten correct digits need $2^{-n} < 10^{-10}$, that is $n \geq 34$.
 :::
 :::

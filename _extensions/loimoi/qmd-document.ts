@@ -1,6 +1,6 @@
-import { basename } from "@std/path";
-import { stringify as stringifyYaml } from "@std/yaml";
-import { zipSync } from "fflate";
+import { basename } from "jsr:@std/path@1";
+import { stringify as stringifyYaml } from "jsr:@std/yaml@1";
+import { zipSync } from "npm:fflate@0.8";
 import { jupyterNotebook } from "./jupyter-notebook.ts";
 import { QmdNode } from "./qmd-node.ts";
 import { parseBody, splitHeader } from "./qmd-parser.ts";

@@ -45,7 +45,6 @@ errors <- abs(sapply(ns, function(n) taylor_exp(1, n)) - exp(1))
 kable(data.frame(n = ns, error = format(errors, digits = 3)))
 ```
 
-The error is about $1 / (n + 1)!$, the first term left out. It falls faster and faster; after about $17$ terms, it
-reaches the level of the rounding errors.
+The error is about $1 / (n + 1)!$, the first term left out. It falls faster and faster; after about $17$ terms, it reaches the level of the rounding errors.
 :::
 :::

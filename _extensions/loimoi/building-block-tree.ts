@@ -1,5 +1,5 @@
-import { dirname, relative } from "@std/path";
-import { walkSync } from "@std/fs";
+import { dirname, relative } from "jsr:@std/path@1";
+import { walkSync } from "jsr:@std/fs@1";
 import { Basket } from "./basket.ts";
 import { BuildingBlock } from "./building-block.ts";
 import { Folder } from "./folder.ts";

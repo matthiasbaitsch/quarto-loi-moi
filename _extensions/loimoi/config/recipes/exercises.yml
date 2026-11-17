@@ -11,7 +11,7 @@ quarto-files:
 
   - name: "${nn-name}-exercises-solution-${hash}"
     title: "Solutions to exercise sheet ${n}"
-    process: [exercise-solution]
+    process: [exercise-solution, attach-src]
 
   - when: {work-files: notebook}
     name: "${nn-name}-exercises"
@@ -29,6 +29,5 @@ archives:
     name: "${nn-name}-exercises"
     provides: work-files
     add:
-      - data/
       - /_templates/exercises/_quarto.yml
       - /_templates/exercises/exercises.code-workspace: "${name}-exercises.code-workspace"

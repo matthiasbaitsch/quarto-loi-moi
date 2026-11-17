@@ -1,0 +1,6 @@
+project:
+  pre-render: _extensions/loimoi/pre-render.ts
+  render:
+    - c/**/*.qmd
+
+lang: en

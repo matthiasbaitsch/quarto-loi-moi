@@ -1,8 +1,8 @@
-import { copySync, ensureDirSync, existsSync, walkSync } from "@std/fs";
-import { basename, join, relative } from "@std/path";
-import { zipSync } from "fflate";
+import { copySync, ensureDirSync, existsSync, walkSync } from "jsr:@std/fs@1";
+import { basename, dirname, join, relative } from "jsr:@std/path@1";
+import { zipSync } from "npm:fflate@0.8";
 import { Basket } from "../basket.ts";
-import { replacePlaceholders, Yaml } from "../utilities.ts";
+import { replacePlaceholders, studentFiles, Yaml } from "../utilities.ts";
 import { Action, Placeholders } from "./action.ts";
 
 // An entry of `add`: a path, or a path with a new name
@@ -26,10 +26,23 @@ export class Archive extends Action {
     for (const entry of this.add) {
       const [source, newName] = typeof entry === "string" ? [entry, undefined] : Object.entries(entry)[0];
       const target = join(archive, replacePlaceholders(newName ?? basename(source), placeholders));
-      for (const path of sources(basket, source)) copySync(path, target, { overwrite: true });
+      for (const path of sources(basket, source)) copy(path, target);
     }
     zipFolder(archive, folder);
     Deno.removeSync(archive, { recursive: true });
+  }
+}
+
+// A folder only with its files for students; a file as it is, even if its name starts with `_`
+function copy(source: string, target: string): void {
+  if (Deno.statSync(source).isDirectory) {
+    for (const file of studentFiles(source)) {
+      const path = join(target, relative(source, file));
+      ensureDirSync(dirname(path));
+      copySync(file, path, { overwrite: true });
+    }
+  } else {
+    copySync(source, target, { overwrite: true });
   }
 }
 

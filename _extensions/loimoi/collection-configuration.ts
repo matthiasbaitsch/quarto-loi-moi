@@ -1,13 +1,13 @@
-import { basename, dirname, join } from "@std/path";
+import { basename, dirname, join } from "jsr:@std/path@1";
 import { BuildingBlockTree } from "./building-block-tree.ts";
 import { ProductConfiguration } from "./product-configuration.ts";
 import { Recipe } from "./recipe.ts";
-import { configFile, gitHubPages, mergeYamlAlongPath, readYaml, Yaml } from "./utilities.ts";
+import { configFile, conventions, gitHubPages, mergeYamlAlongPath, Yaml } from "./utilities.ts";
 
 export class CollectionConfiguration {
   private readonly collectionFolder: string;
 
-  private readonly mappings: Yaml;
+  private readonly conventions: Yaml;
   private readonly settings: Yaml;
 
   private readonly firstNumber: number;
@@ -16,7 +16,7 @@ export class CollectionConfiguration {
 
   constructor(collectionFolder: string, tree: BuildingBlockTree) {
     this.collectionFolder = collectionFolder;
-    this.mappings = readYaml(configFile("mappings.yml", this.learningMaterialFolder()));
+    this.conventions = conventions();
     this.settings = mergeYamlAlongPath(this.learningMaterialFolder(), this.collectionFolderName(), "loimoi.yml");
     this.firstNumber = (this.settings["first-number"] ?? 1) as number;
     this.outputFolderName = (this.settings.output ?? "c") as string;
@@ -52,10 +52,10 @@ export class CollectionConfiguration {
   }
 
   private ingredientFolderName(): string {
-    const mappings = (this.mappings["ingredient-folders"] ?? {}) as Record<string, Record<string, string>>;
-    const name = mappings[this.recipeName()]?.[this.collectionFolderName()];
+    const folders = (this.conventions["ingredient-folders"] ?? {}) as Record<string, Record<string, string>>;
+    const name = folders[this.recipeName()]?.[this.collectionFolderName()];
     if (name === undefined) {
-      throw new Error(`No ingredient folder for collection ${this.collectionFolderName()} in mappings.yml`);
+      throw new Error(`No ingredient folder for collection ${this.collectionFolderName()} in conventions.yml`);
     }
     return name;
   }
@@ -69,9 +69,9 @@ export class CollectionConfiguration {
   }
 
   private recipeName(): string {
-    const collectionRecipes = (this.mappings["collection-recipes"] ?? {}) as Record<string, string>;
+    const collectionRecipes = (this.conventions["collection-recipes"] ?? {}) as Record<string, string>;
     const name = (this.settings.recipe as string | undefined) ?? collectionRecipes[this.collectionFolderName()];
-    if (name === undefined) throw new Error(`No recipe for collection ${this.collectionFolderName()} in mappings.yml`);
+    if (name === undefined) throw new Error(`No recipe for collection ${this.collectionFolderName()} in conventions.yml`);
     return name;
   }
 }

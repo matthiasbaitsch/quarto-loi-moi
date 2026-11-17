@@ -1,40 +1,39 @@
 ```{python}
 #| label: setup
 #| include: false
+import csv
 import math
+
+with open("daten/fibonacci.csv") as file:
+    F = [int(row["F"]) for row in csv.DictReader(file)]
 ```
 
 ::: {#exr-fibonacci}
 ## How fast do the ratios converge?
 
-1. Implement the function `fibonacci_ratios(n)`, which returns the list of the ratios $q_1, \ldots, q_n$ from
-   @exr-golden-ratio.
+The file `daten/fibonacci.csv` contains the first $30$ Fibonacci numbers $F_n$, the list `F` holds them.
 
-1. Compute the ratios for $n = 20$ together with their errors. By which factor does the error fall in each step?
+1. Implement the function `fibonacci_ratios(F)`, which returns the list of the ratios $q_n = F_{n+1} / F_n$ from @exr-golden-ratio for a list `F` of Fibonacci numbers.
+
+1. Compute the ratios together with their errors. By which factor does the error fall in each step?
 
 ::: {.lm-scaffold}
 ```{python}
-def fibonacci_ratios(n):
+def fibonacci_ratios(F):
     ...
 ```
 :::
 
 ::: {.lm-solution}
 ```{python}
-def fibonacci_ratios(n):
-    a, b = 1, 1
-    ratios = []
-    for k in range(n):
-        ratios.append(b / a)
-        a, b = b, a + b
-    return ratios
+def fibonacci_ratios(F):
+    return [b / a for a, b in zip(F, F[1:])]
 
 phi = (1 + math.sqrt(5)) / 2
-for q in fibonacci_ratios(20):
+for q in fibonacci_ratios(F)[:20]:
     print(q, abs(q - phi))
 ```
 
-The error falls by the factor $\varphi^2 \approx 2.6$ in each step, and its sign alternates: the ratios lie
-alternately above and below $\varphi$.
+The error falls by the factor $\varphi^2 \approx 2.6$ in each step, and its sign alternates: the ratios lie alternately above and below $\varphi$.
 :::
 :::

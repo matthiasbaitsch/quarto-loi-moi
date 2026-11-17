@@ -122,7 +122,10 @@ Remarks:
 - Building blocks identified by path
 - Leading numbers in names stripped
 - Folder names in English or German, e.g. `exercises/` or `aufgaben/`
-- Folders starting with `_` ignored
+- Folders and files starting with `_` or `.` ignored, also Quarto's `…_files` folders
+- Folders of an ingredient (e.g. `images/`, `data/`, `src/`) copied next to each file of the product (a
+  zipped notebook contains only the notebook, work files never get `src/`, the code of the solution); error if a
+  file of the same name differs
 
 ## Learning material
 
@@ -170,6 +173,30 @@ Remarks:
 - Product `name` used in file names; `product-title` and `group-title` used in titles; all default to the first
   building block
 
+### Quarto configuration
+
+Each collection is a Quarto project of its own type (e.g. `default` for exercises, `book` for course notes), with
+`_extensions` as a symlink to the extensions folder at the top (Quarto finds extensions only inside the project).
+Settings shared by collections in a file, e.g. `learning-material/_common.yml`:
+
+```yml
+project:
+  pre-render: _extensions/loimoi/pre-render.ts
+  render:
+    - c/**/*.qmd
+lang: en
+```
+
+`learning-material/exercises/_quarto.yml`:
+
+```yml
+project:
+  type: default
+  output-dir: ../../__output/learning-material/exercises
+metadata-files:
+  - ../_common.yml
+```
+
 ### Recipes
 
 A recipe is a YAML file with the actions that make a product from its ingredients. 
@@ -205,8 +232,11 @@ quarto-files:
 
 Remarks:
 
-- Recipe and ingredient folder of each collection from `mappings.yml` (e.g. `aufgaben/` uses the recipe
-  `exercises` and the ingredient folders `aufgaben/`); own mappings in `_loimoi/mappings.yml`
+- Recipe and ingredient folder of each collection from `conventions.yml` (e.g. `aufgaben/` uses the recipe
+  `exercises` and the ingredient folders `aufgaben/`); own conventions in `_loimoi/conventions.yml`, the first one
+  found upward from the collection folder
+- Building blocks folder found upward from the collection folder, named after one of the names in `conventions.yml`
+  (`building-blocks/` or `bausteine/`)
 - Predefined recipes come with loi-moi; own recipes in `learning-material/_loimoi/recipes/` override them by name
 - A recipe might declare options
 - Use options with care (readability, maintenance)
@@ -224,7 +254,7 @@ learning-material/exercises/c/
 ├── 01-convergence-sequences-exercises-solution-2094a057.qmd     reference solution
 ├── 02-convergence-series-exercises.qmd                          exercise sheet
 ├── …
-├── images/sequence.svg                                          used by exercise sheet
+├── images/sequence.svg                                          folders of the ingredients
 └── …
 ```
 
@@ -259,7 +289,7 @@ quarto-files:
 
   - name: "${nn-name}-exercises-solution-${hash}"
     title: "Solutions to exercise sheet ${n}"
-    process: [exercise-solution]
+    process: [exercise-solution, attach-src]
 
   - when: {work-files: notebook}                 # single Jupyter notebook
     name: "${nn-name}-exercises"
@@ -277,15 +307,13 @@ archives:                                        # folder deleted after zip
     name: "${nn-name}-exercises"
     provides: work-files
     add:                                         # see "Paths in add"
-      - data/
       - /_templates/exercises/_quarto.yml
       - /_templates/exercises/exercises.code-workspace: "${name}-exercises.code-workspace"
 ```
 
 ## Usage
 
-- `quarto render learning-material` prepares and renders all collections.
-- `quarto render learning-material/<collection>` prepares and renders only that collection.
+- `quarto render` in a collection folder prepares and renders that collection.
 - loi-moi runs before every render, also for a single file or a preview, so nothing is stale.
 - `c/` is cleared first.
 - An error stops processing with a message naming the file.
@@ -299,8 +327,8 @@ archives:                                        # folder deleted after zip
 | `output` | folder for the prepared material | `c` |
 | `first-number` | number of the first product | `1` |
 | `site` | URL of the published site | from the Git remote |
-| `products` | one entry per product: `ingredients`, optional `name`, `product-title`, `group-title` | one product per building block with the ingredient folder from `mappings.yml`, in folder order |
-| `recipe` | recipe that makes the products | from `mappings.yml` |
+| `products` | one entry per product: `ingredients`, optional `name`, `product-title`, `group-title` | one product per building block with the ingredient folder from `conventions.yml`, in folder order |
+| `recipe` | recipe that makes the products | from `conventions.yml` |
 | `options` | options of the recipe | see the recipe |
 
 ### Actions
@@ -314,7 +342,8 @@ Defined by the recipe, run per product in this order:
 
 Paths in `add`:
 
-- `data/`: relative to the ingredients of the product, i.e. `data/` from every ingredient folder that has one
+- `path`: relative to the ingredients of the product, i.e. `path` from every ingredient folder that has one (the
+  folders of the ingredients are already there)
 - `/_templates/…`: a leading `/` means relative to `building-blocks/`, for files shared by all products
 - `path: new-name` copies under a new name
 
@@ -325,7 +354,7 @@ Processing steps (`process`):
 | `exercise-sheet` | keeps what belongs on the exercise sheet |
 | `exercise-scaffold` | keeps what belongs into the work files |
 | `exercise-solution` | keeps what belongs into the solution |
-| `attach-src` | adds the files of `src/` as code cells in an appendix |
+| `attach-src` | adds the files of `src/` as code blocks (not executed) in an appendix |
 | `jupyter` | converts to a Jupyter notebook, without running it |
 | `zip` | zips the file and deletes it |
 
