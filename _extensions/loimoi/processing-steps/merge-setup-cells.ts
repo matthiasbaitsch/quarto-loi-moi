@@ -9,6 +9,11 @@ export class MergeSetupCells implements ProcessingStep {
     doc.forEach((node) => {
       if (isSetup(node)) setupCells.push(node as QmdCodeCell);
     });
+    setupCells.forEach(checkSingleLines);
+    const other = setupCells.find((cell) => cell.language !== setupCells[0].language);
+    if (other !== undefined) {
+      throw new Error(`Setup cells in different languages: ${setupCells[0].language} and ${other.language}`);
+    }
     if (setupCells.length < 2) return doc;
 
     const merged = merge(setupCells);
@@ -19,6 +24,16 @@ export class MergeSetupCells implements ProcessingStep {
       first = false;
       return replacement;
     });
+  }
+}
+
+// Merging keeps each line once, which is only right for single-line statements; indented lines and lines that only
+// close something (`end`, `)`, …) are a sign of a statement over several lines
+function checkSingleLines(cell: QmdCodeCell): void {
+  const code = cell.lines.slice(1, -1);
+  const multiLine = code.find((line) => /^\s+\S/.test(line) || /^\s*(end|\)|\]|\})\s*$/.test(line));
+  if (multiLine !== undefined) {
+    throw new Error(`Setup cell: only single-line statements allowed: \`${multiLine}\``);
   }
 }
 

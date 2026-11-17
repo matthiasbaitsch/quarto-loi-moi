@@ -1,4 +1,4 @@
-import { assert } from "@std/assert";
+import { assert, assertThrows } from "@std/assert";
 import { QmdDocument } from "../_extensions/loimoi/qmd-document.ts";
 import { ExerciseScaffold } from "../_extensions/loimoi/processing-steps/exercise-scaffold.ts";
 import { ExerciseSheet } from "../_extensions/loimoi/processing-steps/exercise-sheet.ts";
@@ -44,6 +44,76 @@ Deno.test("exercise scaffold: julia-parts, only programming exercises, with thei
   assert(!text.includes("golden ratio"));
   assert(!text.includes("lm-solution"));
   assert(!text.includes("fibonacci_ratios(20)"));
+});
+
+Deno.test("markers outside exercises: .lm-solution only in the solution, .lm-scaffold only in the scaffold", () => {
+  const text = [
+    "::: {.lm-solution}",
+    "```{python}",
+    "#| eval: false",
+    "from src.truss import *",
+    "```",
+    ":::",
+    "",
+    "::: {.lm-scaffold}",
+    "Notes for the notebook",
+    ":::",
+    "",
+    "::: {#exr-a}",
+    "## A",
+    "",
+    "::: {.lm-scaffold}",
+    "```{python}",
+    "x = 1",
+    "```",
+    ":::",
+    ":::",
+    "",
+  ].join("\n");
+  const doc = () => QmdDocument.parse(text);
+  assert(new ExerciseSolution().run(doc()).text().includes("from src.truss import *"));
+  assert(!new ExerciseSheet().run(doc()).text().includes("from src.truss import *"));
+  assert(!new ExerciseScaffold().run(doc()).text().includes("from src.truss import *"));
+  assert(new ExerciseScaffold().run(doc()).text().includes("Notes for the notebook"));
+  assert(!new ExerciseSheet().run(doc()).text().includes("Notes for the notebook"));
+  assert(!new ExerciseSolution().run(doc()).text().includes("Notes for the notebook"));
+});
+
+Deno.test("nested markers are an error", () => {
+  const text = "::: {.lm-sheet}\nOn the sheet\n\n::: {.lm-solution}\nSolution\n:::\n:::\n";
+  for (const step of [new ExerciseSheet(), new ExerciseScaffold(), new ExerciseSolution()]) {
+    assertThrows(() => step.run(QmdDocument.parse(text)), Error, ".lm-solution");
+  }
+});
+
+Deno.test("exercise scaffold: an exercise with given code only is a programming exercise", () => {
+  const text = "::: {#exr-a}\n## A\n\n```{python}\nx = load()\n```\n\n::: {.lm-solution}\nIn words.\n:::\n:::\n";
+  const scaffold = new ExerciseScaffold().run(QmdDocument.parse(text)).text();
+  assert(scaffold.includes("## A"));
+  assert(scaffold.includes("x = load()"));
+});
+
+Deno.test("exercise solution and scaffold: only the first heading of an exercise, the title", () => {
+  const text = "::: {#exr-a}\n## A\n\nText\n\n### Part\n\nMore\n\n```{python}\nx = 1\n```\n:::\n";
+  for (const step of [new ExerciseScaffold(), new ExerciseSolution()]) {
+    const result = step.run(QmdDocument.parse(text)).text();
+    assert(result.includes("## A"));
+    assert(!result.includes("### Part"));
+  }
+});
+
+Deno.test("setup cell inside a marker is an error", () => {
+  const text = "::: {.lm-solution}\n```{python}\n#| label: setup\nimport numpy\n```\n:::\n";
+  for (const step of [new ExerciseSheet(), new ExerciseScaffold(), new ExerciseSolution()]) {
+    assertThrows(() => step.run(QmdDocument.parse(text)), Error, "Setup cell");
+  }
+});
+
+Deno.test("exercise inside another div is an error", () => {
+  const text = "::: {.columns}\n::: {#exr-a}\n## A\n:::\n:::\n";
+  for (const step of [new ExerciseSheet(), new ExerciseScaffold(), new ExerciseSolution()]) {
+    assertThrows(() => step.run(QmdDocument.parse(text)), Error, "exr-a");
+  }
 });
 
 Deno.test("exercise scaffold: python-flat, empty code cell for a solution with code and no scaffold", () => {

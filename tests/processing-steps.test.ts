@@ -41,6 +41,18 @@ Deno.test("attach src: heading without _lm_step", () => {
   assertEquals(doc.text(), "Text\n\n## Appendix\n\n### `src/truss.py`\n\n```{.python}\nx = 1\n```\n");
 });
 
+Deno.test("setup cells: only single-line statements", () => {
+  const cell = (body: string) => `\`\`\`{julia}\n#| label: setup\n${body}\n\`\`\`\n`;
+  assertThrows(() => new MergeSetupCells().run(QmdDocument.parse(cell("f(x) = 2x\nfunction g(x)\n  2x\nend"))), Error, "  2x");
+  assertThrows(() => new MergeSetupCells().run(QmdDocument.parse(cell("a = [\n1, 2]\n]"))), Error, "]");
+  new MergeSetupCells().run(QmdDocument.parse(cell("# comment\n\nusing Plots")));
+});
+
+Deno.test("setup cells in different languages are an error", () => {
+  const text = "```{python}\n#| label: setup\nimport numpy\n```\n\n```{r}\n#| label: setup\nlibrary(ggplot2)\n```\n";
+  assertThrows(() => new MergeSetupCells().run(QmdDocument.parse(text)), Error, "r");
+});
+
 Deno.test("merge setup cells: one cell at the place of the first, lines once", () => {
   const text = [
     "```{julia}",

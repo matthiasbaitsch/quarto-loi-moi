@@ -4,8 +4,7 @@
 import csv
 import math
 
-with open("daten/fibonacci.csv") as file:
-    F = [int(row["F"]) for row in csv.DictReader(file)]
+F = [int(row["F"]) for row in csv.DictReader(open("daten/fibonacci.csv"))]
 ```
 
 ::: {#exr-fibonacci}

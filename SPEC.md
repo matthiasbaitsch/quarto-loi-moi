@@ -364,14 +364,23 @@ What the three exercise steps keep:
 
 | Content | `exercise-sheet` | `exercise-scaffold` | `exercise-solution` |
 |---|---|---|---|
-| exercise title | ✓ | ✓ | ✓ |
+| exercise title (its first heading; further headings count as exercise text) | ✓ | ✓ | ✓ |
 | `setup` cell | ✓ | ✓ | ✓ |
-| text outside exercises (e.g. headings) | ✓ | – | – |
-| unmarked text (exercise text) | ✓ | – | – |
-| unmarked code (given code, e.g. loading data) | – | ✓ | ✓ |
+| text and divs outside exercises (e.g. headings) | ✓ | – | – |
+| unmarked text and divs (exercise text, callouts) | ✓ | – | – |
+| unmarked code, also outside exercises (given code, e.g. loading data) | – | ✓ | ✓ |
 | `.lm-sheet` | ✓ | – | – |
 | `.lm-scaffold` | – | ✓ | – |
 | `.lm-solution` | – | empty code cell (1) | ✓ |
+
+Setup cells (`#| label: setup`) are merged into one at the beginning, each line once, with the options of the first.
+They must be in the same language, contain only single-line statements (no indented lines, no lines like `end` or
+`)`) and not be inside a marker.
+
+Markers apply inside and outside exercises (e.g. `.lm-solution` before the first exercise for imports to show); a
+marker inside another marker is an error. Exercises only at the top level, not inside another div.
+
+The scaffold contains only exercises with code (given code, `.lm-scaffold` or code in `.lm-solution`).
 
 (1) Only if the solution has code and the exercise has no scaffold.
 
