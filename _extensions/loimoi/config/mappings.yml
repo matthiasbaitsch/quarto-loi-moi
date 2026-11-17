@@ -1,7 +1,10 @@
-# Collection folder → recipe; without an entry, the recipe is named like the collection
+# Collection folder → recipe
 collection-recipes:
+  exercises: exercises
   aufgaben: exercises
 
-# Recipe → collection folder → ingredient folder; without an entry, the ingredient folder is named like the
-# collection
-ingredient-folders: {}
+# Recipe → collection folder → ingredient folder
+ingredient-folders:
+  exercises:
+    exercises: exercises
+    aufgaben: aufgaben

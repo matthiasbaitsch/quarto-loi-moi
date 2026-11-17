@@ -32,21 +32,20 @@ classDiagram
   Basket "1" --> "*" BuildingBlock
   Folder <|-- BuildingBlock
   class BuildingBlockTree {
-    root: string
-    ingredientTypes() string[]
+    rootFolder: string
     ingredients(paths: string[]) Basket
-    defaultPaths(ingredientType) string[][]
+    defaultPaths(folderName: string) string[][]
   }
   class Folder {
-    root: string
+    rootFolder: string
     path: string
     name(options) string
     files(pattern, options) string[]
     folders(pattern, options) string[]
   }
   class BuildingBlock {
-    title() string?
-    groupTitle() string?
+    title: string?
+    groupTitle: string?
   }
   class Basket {
     name(options) string
@@ -62,10 +61,10 @@ Remarks:
 
 - `Basket`: the ingredients for one product; `name()`, `title()`, `groupTitle()` are the defaults for the product,
   from the first building block
-- `root`: absolute path to building block tree; `Folder` needs it to read from disk and to return paths
+- `rootFolder`: absolute path to building block tree; `Folder` needs it to read from disk and to return paths
   relative to it
 - `name(options)`: derived from file system path, leading numbers stripped, options `full`, `sep`
-- `files(pattern, options)`, `folders(pattern, options)`: paths relative to `root`, option `absolute`
+- `files(pattern, options)`, `folders(pattern, options)`: paths relative to `rootFolder`, option `absolute`
 
 ### Quarto document processing
 
@@ -165,35 +164,46 @@ Remarks:
 
 The pre-render script runs the whole process:
 
-1. Create `CollectionSettings` object from `loimoi.yml` and building block tree
-1. Collect list of `Basket` objects from building block source tree
-1. Create `Recipe` object
-1. Clear `c/` folder
-1. Run actions in recipe for each basket
+1. Create `CollectionConfiguration` from the collection folder and the building block tree
+1. Clear the `c/` folder
+1. For each product:
+    1. get its `Basket` from the building block tree
+    1. compute the placeholders: `n`, `nn-name`, `name`, `hash`, `product-title`, `group-title`, `site`
+    1. run the recipe
 
 In detail.
 
-### Settings for one collection
+### Configuration of one collection
 
 ```mermaid
 classDiagram
-  class CollectionSettings {
-    site: string
-    output: string
-    firstNumber: number
-    products: ingredients, name?, productTitle?, groupTitle?
-    recipe: name, options
-    read(collection: string, tree: BuildingBlockTree)$ CollectionSettings
+  direction LR
+  CollectionConfiguration "1" --> "*" ProductConfiguration
+  class CollectionConfiguration {
+    constructor(collectionFolder: string, tree: BuildingBlockTree)
+    outputFolder() string
+    site() string?
+    recipe() Recipe
+    productConfigurations() ProductConfiguration[]
+  }
+  class ProductConfiguration {
+    number: number
+    name: string
+    title: string
+    groupTitle: string?
+    ingredients: string[]
+    constructor(entry: Record, number: number, tree: BuildingBlockTree)
   }
 ```
 
-The `read` method 
-  1. sets fixed defaults (`output`, `firstNumber`)
-  1. merges `loimoi.yml` files along the path over them
-  1. derives what's missing from defaults
+The constructor merges the `loimoi.yml` files along the path and reads `mappings.yml`. The methods derive what
+is missing:
 
-YAML configuration (e.g. `recipes/exercises.yml`) in `_extensions/loimoi/config/`; a file with the same path in
-`learning-material/_loimoi/` replaces it (`configFile()` in `utilities.ts`).
+- `site()`: from the Git remote
+- `recipe()`: either from `recipe` in `loimoi.yml` or default via `mappings.yml`
+- `productConfigurations()`: either from `products` in `loimoi.yml` or one per ingredient via `mappings.yml`
+
+YAML configuration (e.g. `recipes/exercises.yml`) in `_extensions/loimoi/config/`; a file with the same path in `learning-material/_loimoi/` replaces it (`configFile()` in `utilities.ts`).
 
 ### Recipe and Action classes
 
@@ -245,7 +255,9 @@ Remarks:
 ## Development
 
 - One file per class, named after the class (`qmd-document.ts`); free functions in `utilities.ts`
+- Names for paths: `…Folder`, `…File` absolute (`outputFolder`); `path`, `…Path` relative to a base folder named in
+  the class or a comment (`Folder.path`); `…Name` only the last part (`collectionFolderName`); always "folder", not "dir"
 - Tests: assertion first; unit tests for `BuildingBlockTree`, `QmdDocument` and the steps; each example one test,
   each aspect in one example only
 - `deno task test`, `deno task check`, `make examples`
-- Simple and commented; no `continue`/`break`; no environment variables
+- Simple; comments sparingly, only where the code doesn't say it; no `continue`/`break`; no environment variables

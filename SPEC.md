@@ -205,9 +205,8 @@ quarto-files:
 
 Remarks:
 
-- Default recipe selected by the name of the collection
-- Mappings from collection to recipe and to ingredient folder in `_loimoi/mappings.yml` (e.g. `aufgaben/` uses
-  the recipe `exercises`)
+- Recipe and ingredient folder of each collection from `mappings.yml` (e.g. `aufgaben/` uses the recipe
+  `exercises` and the ingredient folders `aufgaben/`); own mappings in `_loimoi/mappings.yml`
 - Predefined recipes come with loi-moi; own recipes in `learning-material/_loimoi/recipes/` override them by name
 - A recipe might declare options
 - Use options with care (readability, maintenance)
@@ -300,8 +299,8 @@ archives:                                        # folder deleted after zip
 | `output` | folder for the prepared material | `c` |
 | `first-number` | number of the first product | `1` |
 | `site` | URL of the published site | from the Git remote |
-| `products` | one entry per product: `ingredients`, optional `name`, `product-title`, `group-title` | one product per building block with an ingredient named like the collection, in folder order |
-| `recipe` | recipe that makes the products | name of the collection |
+| `products` | one entry per product: `ingredients`, optional `name`, `product-title`, `group-title` | one product per building block with the ingredient folder from `mappings.yml`, in folder order |
+| `recipe` | recipe that makes the products | from `mappings.yml` |
 | `options` | options of the recipe | see the recipe |
 
 ### Actions
