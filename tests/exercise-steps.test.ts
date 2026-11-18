@@ -95,6 +95,34 @@ Deno.test("exercise scaffold: an exercise with given code only is kept, one with
   assert(!new ExerciseScaffold().run(QmdDocument.parse(paper)).text().includes("## B"));
 });
 
+Deno.test("exercise solution: given code runs but is not shown, unless it sets include itself", () => {
+  const text = [
+    "::: {#exr-a}",
+    "## A",
+    "",
+    "```{python}",
+    "x = load()",
+    "```",
+    "",
+    "```{python}",
+    "#| include: true",
+    "plot(x)",
+    "```",
+    "",
+    "::: {.lm-solution}",
+    "```{python}",
+    "y = 2 * x",
+    "```",
+    ":::",
+    ":::",
+    "",
+  ].join("\n");
+  const solution = new ExerciseSolution().run(QmdDocument.parse(text)).text();
+  assert(solution.includes("```{python}\n#| include: false\nx = load()"));
+  assert(solution.includes("```{python}\n#| include: true\nplot(x)"));
+  assert(solution.includes("```{python}\ny = 2 * x"));
+});
+
 Deno.test("exercise solution and scaffold: all headings of an exercise, without their text", () => {
   const text = "::: {#exr-a}\n## A\n\nText\n\n### Part\n\nMore\n\n```{python}\nx = 1\n```\n:::\n";
   for (const step of [new ExerciseScaffold(), new ExerciseSolution()]) {
