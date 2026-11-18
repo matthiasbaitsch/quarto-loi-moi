@@ -135,6 +135,7 @@ classDiagram
   ProcessingStep <|-- ExerciseSolution
   ProcessingStep <|-- AttachSrc
   ProcessingStep <|-- RemoveLmStep
+  ProcessingStep <|-- ShowMarkers
   class Pipeline {
     steps: ProcessingStep[]
     addStep(step: ProcessingStep)

@@ -39,6 +39,13 @@ Deno.test("attach src: heading without _lm_step", () => {
   assertEquals(doc.text(), "Text\n\n## Appendix\n\n### `src/truss.py`\n\n```{.python .number-lines}\nx = 1\n```\n");
 });
 
+Deno.test("show markers: the filter of loi-moi added to the filters in the header", () => {
+  const pipeline = new Pipeline();
+  pipeline.addStep("show-markers");
+  const doc = pipeline.run(QmdDocument.parse("---\nfilters: [other]\n---\n\nText\n"));
+  assertEquals(doc.header.filters, ["other", "loimoi"]);
+});
+
 Deno.test("setup cells: only single-line statements", () => {
   const cell = (body: string) => `\`\`\`{julia}\n#| label: setup\n${body}\n\`\`\`\n`;
   assertThrows(

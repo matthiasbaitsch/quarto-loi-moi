@@ -296,7 +296,7 @@ quarto-files:
   - name: "${nn-name}-${exercises}-${preview}-${hash}"   # what the teacher writes, scaffold and solution marked
     title: "${exercise-sheet} ${n}"
     subtitle: "${group-title}: ${product-title}"
-    process: [attach-src]
+    process: [attach-src, show-markers]
 
   - when: {work-files: notebook}                 # single Jupyter notebook
     name: "${nn-name}-${exercises}"
@@ -367,6 +367,7 @@ Processing steps (`process`):
 | `exercise-solution` | keeps what belongs into the solution |
 | `attach-src` | adds the files of `src/` as code blocks (not executed, with line numbers) in an appendix, headed e.g. `src/truss.py` (without `_lm_step…`); not the files marked with `lm-copy` (see below) |
 | `remove-lm-step` | removes `_lm_step` and the number after it, e.g. `truss_lm_step04` → `truss` (see below) |
+| `show-markers` | marks in HTML what goes into the scaffold, the solution, or both (given code): a colored line on the left with a label |
 
 What the three exercise steps keep:
 
