@@ -372,7 +372,7 @@ What the three exercise steps keep:
 
 **Principle:** text is for the sheet, code is for the scaffold and the solution, headings in exercises are for all
 three. Markers override this: `.lm-sheet`, `.lm-scaffold`, `.lm-solution` put their content into exactly that
-document, wherever they are.
+document, wherever they are. Unmarked code is *given code*: students run it but don't write it.
 
 - The setup cell (`#| label: setup`) goes into all three. Setup cells are merged into one, each line once, so they may
   only contain single-line statements in one language.
