@@ -6,7 +6,7 @@ import { ProcessingStep } from "./processing-step.ts";
 export class ExerciseSheet implements ProcessingStep {
   run(doc: QmdDocument): QmdDocument {
     checkStructure(doc.nodes);
-    return new QmdDocument(doc.header, tidy(sheet(doc.nodes)), { ...doc.output });
+    return new QmdDocument(doc.header, tidy(sheet(doc.nodes)));
   }
 }
 

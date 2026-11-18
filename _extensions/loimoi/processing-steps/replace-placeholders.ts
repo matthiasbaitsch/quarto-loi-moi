@@ -12,7 +12,6 @@ export class ReplacePlaceholders implements ProcessingStep {
   // Parsed again, so that ids, classes and cell options with placeholders are right
   run(doc: QmdDocument): QmdDocument {
     const text = replacePlaceholders(doc.text(), this.values);
-    const parsed = QmdDocument.parse(text);
-    return new QmdDocument(parsed.header, parsed.nodes, { ...doc.output });
+    return QmdDocument.parse(text);
   }
 }

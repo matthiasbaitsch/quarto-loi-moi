@@ -13,19 +13,21 @@ quarto-files:
     title: "${solutions-to-exercise-sheet} ${n}"
     process: [exercise-solution, attach-src]
 
-  - when: {work-files: notebook}
+  - when: { work-files: notebook }
     name: "${nn-name}-${exercises}"
     title: "${exercise-sheet} ${n}"
-    process: [exercise-scaffold, remove-lm-step, jupyter, zip]
+    process: [exercise-scaffold, remove-lm-step]
+    format: ipynb
+    zip: true
     provides: work-files
 
-  - when: {work-files: folder}
+  - when: { work-files: folder }
     name: "${nn-name}-${exercises}/${name}-${exercises}"
     title: "${exercise-sheet} ${n}"
     process: [exercise-scaffold, remove-lm-step]
 
 archives:
-  - when: {work-files: folder}
+  - when: { work-files: folder }
     name: "${nn-name}-${exercises}"
     provides: work-files
     add:

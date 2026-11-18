@@ -2,7 +2,6 @@ import { Folder } from "./folder.ts";
 import { mergeYamlAlongPath } from "./utilities.ts";
 
 export class BuildingBlock extends Folder {
-  
   readonly title?: string;
   readonly groupTitle?: string;
 

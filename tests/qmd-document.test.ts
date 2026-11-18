@@ -73,21 +73,15 @@ Deno.test("read: files combined in order, headers merged, clash is an error", ()
   assertThrows(() => QmdDocument.read(a, c), Error, "title");
 });
 
-Deno.test("read and write: julia-parts as qmd, ipynb and zipped", () => {
+Deno.test("read and write: julia-parts as qmd and ipynb, by the extension", () => {
   const exercises = examples + "julia-parts/building-blocks/10-convergence/10-sequences/exercises/";
   const doc = QmdDocument.read(exercises + "10-golden-ratio.qmd", exercises + "20-fibonacci.qmd");
   const folder = Deno.makeTempDirSync();
 
-  doc.write(join(folder, "sheet"));
+  doc.write(join(folder, "sheet.qmd"));
   assertEquals(Deno.readTextFileSync(join(folder, "sheet.qmd")), doc.text());
 
-  doc.output.format = "ipynb";
-  doc.write(join(folder, "notebook"));
+  doc.write(join(folder, "notebook.ipynb"));
   const notebook = JSON.parse(Deno.readTextFileSync(join(folder, "notebook.ipynb")));
   assertEquals(notebook.cells.some((cell: { cell_type: string }) => cell.cell_type === "code"), true);
-
-  doc.output.zip = true;
-  doc.write(join(folder, "zipped"));
-  assertEquals(existsSync(join(folder, "zipped.zip")), true);
-  assertEquals(existsSync(join(folder, "zipped.ipynb")), false);
 });

@@ -1,25 +1,16 @@
-import { basename } from "jsr:@std/path@1";
 import { stringify as stringifyYaml } from "jsr:@std/yaml@1";
-import { zipSync } from "npm:fflate@0.8";
 import { jupyterNotebook } from "./jupyter-notebook.ts";
 import { QmdNode } from "./qmd-node.ts";
 import { parseBody, splitHeader } from "./qmd-parser.ts";
 import { Yaml } from "./utilities.ts";
 
-export interface Output {
-  format: "qmd" | "ipynb";
-  zip: boolean;
-}
-
 export class QmdDocument {
   readonly header: Yaml;
   readonly nodes: QmdNode[];
-  readonly output: Output;
 
-  constructor(header: Yaml, nodes: QmdNode[], output: Output = { format: "qmd", zip: false }) {
+  constructor(header: Yaml, nodes: QmdNode[]) {
     this.header = header;
     this.nodes = nodes;
-    this.output = output;
   }
 
   static parse(text: string): QmdDocument {
@@ -60,16 +51,11 @@ export class QmdDocument {
   }
 
   map(f: (node: QmdNode) => QmdNode[]): QmdDocument {
-    return new QmdDocument(this.header, this.nodes.flatMap((node) => node.map(f)), { ...this.output });
+    return new QmdDocument(this.header, this.nodes.flatMap((node) => node.map(f)));
   }
 
-  // `file` without extension; the extension comes from `output.format`
+  // A Jupyter notebook for `.ipynb`, otherwise Quarto
   write(file: string): void {
-    const path = `${file}.${this.output.format}`;
-    Deno.writeTextFileSync(path, this.output.format === "qmd" ? this.text() : this.ipynb());
-    if (this.output.zip) {
-      Deno.writeFileSync(`${file}.zip`, zipSync({ [basename(path)]: Deno.readFileSync(path) }));
-      Deno.removeSync(path);
-    }
+    Deno.writeTextFileSync(file, file.endsWith(".ipynb") ? this.ipynb() : this.text());
   }
 }

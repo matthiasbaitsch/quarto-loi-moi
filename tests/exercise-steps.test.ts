@@ -86,19 +86,22 @@ Deno.test("nested markers are an error", () => {
   }
 });
 
-Deno.test("exercise scaffold: an exercise with given code only is a programming exercise", () => {
+Deno.test("exercise scaffold: an exercise with given code only is kept, one with nothing left but headings is dropped", () => {
   const text = "::: {#exr-a}\n## A\n\n```{python}\nx = load()\n```\n\n::: {.lm-solution}\nIn words.\n:::\n:::\n";
   const scaffold = new ExerciseScaffold().run(QmdDocument.parse(text)).text();
   assert(scaffold.includes("## A"));
   assert(scaffold.includes("x = load()"));
+  const paper = "::: {#exr-b}\n## B\n\nOn paper.\n\n::: {.lm-solution}\nIn words.\n:::\n:::\n";
+  assert(!new ExerciseScaffold().run(QmdDocument.parse(paper)).text().includes("## B"));
 });
 
-Deno.test("exercise solution and scaffold: only the first heading of an exercise, the title", () => {
+Deno.test("exercise solution and scaffold: all headings of an exercise, without their text", () => {
   const text = "::: {#exr-a}\n## A\n\nText\n\n### Part\n\nMore\n\n```{python}\nx = 1\n```\n:::\n";
   for (const step of [new ExerciseScaffold(), new ExerciseSolution()]) {
     const result = step.run(QmdDocument.parse(text)).text();
     assert(result.includes("## A"));
-    assert(!result.includes("### Part"));
+    assert(result.includes("### Part"));
+    assert(!result.includes("More"));
   }
 });
 
@@ -116,7 +119,7 @@ Deno.test("exercise inside another div is an error", () => {
   }
 });
 
-Deno.test("exercise scaffold: python-flat, empty code cell for a solution with code and no scaffold", () => {
+Deno.test("exercise scaffold: python-flat, an empty code cell for the students as .lm-scaffold", () => {
   const file = blocks("python-flat") + "40-continuity/aufgaben/11-bisection.qmd";
   const text = new ExerciseScaffold().run(QmdDocument.read(file)).text();
   assert(text.includes("## Bisection"));

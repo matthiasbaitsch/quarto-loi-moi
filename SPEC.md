@@ -282,33 +282,35 @@ options:
     default: notebook
 
 quarto-files:
-  - name: "${nn-name}-exercises"
-    title: "Exercise sheet ${n}"
+  - name: "${nn-name}-${exercises}"
+    title: "${exercise-sheet} ${n}"
     subtitle: "${group-title}: ${product-title}"
     process: [exercise-sheet]
 
-  - name: "${nn-name}-exercises-solution-${hash}"
-    title: "Solutions to exercise sheet ${n}"
+  - name: "${nn-name}-${exercises}-${solution}-${hash}"
+    title: "${solutions-to-exercise-sheet} ${n}"
     process: [exercise-solution, attach-src]
 
   - when: {work-files: notebook}                 # single Jupyter notebook
-    name: "${nn-name}-exercises"
-    title: "Exercise sheet ${n}"
-    process: [exercise-scaffold, remove-lm-step, jupyter, zip]   # source deleted after zip
+    name: "${nn-name}-${exercises}"
+    title: "${exercise-sheet} ${n}"
+    process: [exercise-scaffold, remove-lm-step]
+    format: ipynb
+    zip: true                                    # notebook deleted after zip
     provides: work-files
 
   - when: {work-files: folder}                   # folder, e.g. a project
-    name: "${nn-name}-exercises/${name}-exercises"
-    title: "Exercise sheet ${n}"
+    name: "${nn-name}-${exercises}/${name}-${exercises}"
+    title: "${exercise-sheet} ${n}"
     process: [exercise-scaffold, remove-lm-step]
 
 archives:                                        # folder deleted after zip
   - when: {work-files: folder}
-    name: "${nn-name}-exercises"
+    name: "${nn-name}-${exercises}"
     provides: work-files
     add:                                         # see "Paths in add"
       - /_templates/exercises/_quarto.yml
-      - /_templates/exercises/exercises.code-workspace: "${name}-exercises.code-workspace"
+      - /_templates/exercises/exercises.code-workspace: "${name}-${exercises}.code-workspace"
 ```
 
 ## Usage
@@ -338,7 +340,7 @@ Defined by the recipe, run per product in this order:
 
 | Action | Makes | Keys |
 |---|---|---|
-| `quarto-files` | Quarto files | `name`, `title`, `subtitle`, `process`, `when`, `provides` |
+| `quarto-files` | Quarto files or Jupyter notebooks | `name`, `title`, `subtitle`, `process`, `format` (`qmd`, `ipynb`), `zip`, `when`, `provides` |
 | `archives` | zip files from a folder | `name`, `add`, `when`, `provides` |
 
 Paths in `add`:
@@ -357,32 +359,17 @@ Processing steps (`process`):
 | `exercise-solution` | keeps what belongs into the solution |
 | `attach-src` | adds the files of `src/` as code blocks (not executed) in an appendix, headed e.g. `src/truss.py` (without `_lm_step…`) |
 | `remove-lm-step` | removes `_lm_step` and the number after it, e.g. `truss_lm_step04` → `truss` (see below) |
-| `jupyter` | converts to a Jupyter notebook, without running it |
-| `zip` | zips the file and deletes it |
 
 What the three exercise steps keep:
 
-| Content | `exercise-sheet` | `exercise-scaffold` | `exercise-solution` |
-|---|---|---|---|
-| exercise title (its first heading; further headings count as exercise text) | ✓ | ✓ | ✓ |
-| `setup` cell | ✓ | ✓ | ✓ |
-| text and divs outside exercises (e.g. headings) | ✓ | – | – |
-| unmarked text and divs (exercise text, callouts) | ✓ | – | – |
-| unmarked code, also outside exercises (given code, e.g. loading data) | – | ✓ | ✓ |
-| `.lm-sheet` | ✓ | – | – |
-| `.lm-scaffold` | – | ✓ | – |
-| `.lm-solution` | – | empty code cell (1) | ✓ |
+**Principle:** text is for the sheet, code is for the scaffold and the solution, headings in exercises are for all
+three. Markers override this: `.lm-sheet`, `.lm-scaffold`, `.lm-solution` put their content into exactly that
+document, wherever they are.
 
-Setup cells (`#| label: setup`) are merged into one at the beginning, each line once, with the options of the first.
-They must be in the same language, contain only single-line statements (no indented lines, no lines like `end` or
-`)`) and not be inside a marker.
-
-Markers apply inside and outside exercises (e.g. `.lm-solution` before the first exercise for imports to show); a
-marker inside another marker is an error. Exercises only at the top level, not inside another div.
-
-The scaffold contains only exercises with code (given code, `.lm-scaffold` or code in `.lm-solution`).
-
-(1) Only if the solution has code and the exercise has no scaffold.
+- The setup cell (`#| label: setup`) goes into all three. Setup cells are merged into one, each line once, so they may
+  only contain single-line statements in one language.
+- In the scaffold, an exercise with nothing left but headings is dropped.
+- Errors: a marker or setup cell inside a marker, an exercise inside another div.
 
 Code in `src/` growing from sheet to sheet: one versioned file per change, e.g. `src/truss_lm_step02.py`,
 `src/truss_lm_step04.py`; the solution imports the version it needs, the work files get `src.truss` (step

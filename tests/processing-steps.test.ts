@@ -10,12 +10,10 @@ const examples = new URL("../examples/", import.meta.url).pathname;
 
 Deno.test("pipeline: steps by name and as objects, unknown name is an error", () => {
   const pipeline = new Pipeline();
-  pipeline.addStep("jupyter");
-  pipeline.addStep("zip");
   pipeline.addStep(new ReplacePlaceholders({ n: "1" }));
-  const doc = pipeline.run(QmdDocument.parse("Sheet ${n}\n"));
-  assertEquals(doc.output, { format: "ipynb", zip: true });
-  assertEquals(doc.text(), "Sheet 1\n");
+  pipeline.addStep("remove-lm-step");
+  const doc = pipeline.run(QmdDocument.parse("Sheet ${n}, truss_lm_step04\n"));
+  assertEquals(doc.text(), "Sheet 1, truss\n");
   assertThrows(() => pipeline.addStep("unknown"), Error, "unknown");
 });
 
@@ -43,7 +41,11 @@ Deno.test("attach src: heading without _lm_step", () => {
 
 Deno.test("setup cells: only single-line statements", () => {
   const cell = (body: string) => `\`\`\`{julia}\n#| label: setup\n${body}\n\`\`\`\n`;
-  assertThrows(() => new MergeSetupCells().run(QmdDocument.parse(cell("f(x) = 2x\nfunction g(x)\n  2x\nend"))), Error, "  2x");
+  assertThrows(
+    () => new MergeSetupCells().run(QmdDocument.parse(cell("f(x) = 2x\nfunction g(x)\n  2x\nend"))),
+    Error,
+    "  2x",
+  );
   assertThrows(() => new MergeSetupCells().run(QmdDocument.parse(cell("a = [\n1, 2]\n]"))), Error, "]");
   new MergeSetupCells().run(QmdDocument.parse(cell("# comment\n\nusing Plots")));
 });

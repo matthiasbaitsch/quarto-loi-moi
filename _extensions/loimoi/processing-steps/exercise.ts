@@ -33,20 +33,13 @@ export function checkStructure(nodes: QmdNode[], inDiv = false, inMarker = false
   }
 }
 
-export function hasCode(div: QmdDiv): boolean {
-  return div.children.some(isExecutable);
-}
-
 export function withChildren(div: QmdDiv, children: QmdNode[]): QmdDiv {
   return new QmdDiv(div.open, div.close, div.id, div.classes, children);
 }
 
-// Text in an exercise reduced to the title, the first heading line of the first text; blank lines keep the remaining
-// parts apart
-export function title(text: QmdText, children: QmdNode[]): QmdText {
-  if (text !== children.find((node) => node instanceof QmdText)) return blankLines(text);
-  const index = text.lines.findIndex((line) => line.startsWith("#"));
-  return new QmdText(text.lines.filter((line, i) => i === index || isBlank(line)));
+// Text in an exercise reduced to its headings, the title and subheadings; blank lines keep the remaining parts apart
+export function headings(text: QmdText): QmdText {
+  return new QmdText(text.lines.filter((line) => line.startsWith("#") || isBlank(line)));
 }
 
 export function blankLines(text: QmdText): QmdText {

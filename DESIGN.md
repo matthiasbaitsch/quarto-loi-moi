@@ -75,7 +75,7 @@ Make processing of Quarto files simple
 
 ```mermaid
 classDiagram
-  direction LR
+  direction TD
   QmdDocument "1" --> "*" QmdNode
   QmdNode <|-- QmdText
   QmdNode <|-- QmdDiv
@@ -83,7 +83,6 @@ classDiagram
   QmdDiv "1" --> "*" QmdNode
   class QmdDocument {
     header: Record
-    output: Record
     nodes: QmdNode[]
     parse(text: string)$ QmdDocument
     read(...files: string[])$ QmdDocument
@@ -120,7 +119,7 @@ classDiagram
 Remarks:
 
 - `read(...files)`: headers merged, error if values clash
-- `output`: `format` (`qmd` or `ipynb`, default `qmd`) and `zip` (default `false`)
+- `write(file)`: a Jupyter notebook for `.ipynb`, otherwise Quarto
 - `map(f)`: each node replaced by `f(node)` (none, itself, or several); a `QmdDiv` maps its children first
 
 #### Processing steps
@@ -136,8 +135,6 @@ classDiagram
   ProcessingStep <|-- ExerciseSolution
   ProcessingStep <|-- AttachSrc
   ProcessingStep <|-- RemoveLmStep
-  ProcessingStep <|-- Jupyter
-  ProcessingStep <|-- Zip
   class Pipeline {
     steps: ProcessingStep[]
     addStep(step: ProcessingStep)
@@ -240,6 +237,8 @@ classDiagram
     title: string
     subtitle: string
     process: string[]
+    format: string
+    zip: boolean
   }
   class Archive {
     add: Record[]
@@ -266,6 +265,7 @@ Remarks:
   to contribute something: loi-moi contributes the metadata `loimoi: true`.
 - **Code runs on copies.** The folders of the ingredients are copied into `c/`, so code reading `data/…` runs there
   as in the work files; no folder name fixed, no working directory changed per language (as in the prototype).
+- **Steps only change content.** How a file is written (`format`, `zip`) is a setting of `QuartoFile`, not a step.
 - **Jupyter notebooks written as JSON, not with `quarto convert`.** `quarto convert` needs a Jupyter kernel for
   the language installed on the machine (Julia and R run with other engines in Quarto) and has no option to set
   it; without one, code cells end up as text.

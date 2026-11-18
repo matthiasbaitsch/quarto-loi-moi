@@ -22,7 +22,6 @@ export class AttachSrc implements ProcessingStep {
       const code = Deno.readTextFileSync(file).replace(/\n?$/, "\n");
       return `### \`src/${removeLmStep(basename(file))}\`\n\n\`\`\`{.${language}}\n${code}\`\`\``;
     });
-    const parsed = QmdDocument.parse(`${doc.text()}\n## ${this.heading}\n\n${sections.join("\n\n")}\n`);
-    return new QmdDocument(parsed.header, parsed.nodes, { ...doc.output });
+    return QmdDocument.parse(`${doc.text()}\n## ${this.heading}\n\n${sections.join("\n\n")}\n`);
   }
 }

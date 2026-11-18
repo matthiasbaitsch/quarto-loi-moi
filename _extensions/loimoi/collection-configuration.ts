@@ -79,7 +79,9 @@ export class CollectionConfiguration {
   private recipeName(): string {
     const collectionRecipes = (this.conventions["collection-recipes"] ?? {}) as Record<string, string>;
     const name = (this.settings.recipe as string | undefined) ?? collectionRecipes[this.collectionFolderName()];
-    if (name === undefined) throw new Error(`No recipe for collection ${this.collectionFolderName()} in conventions.yml`);
+    if (name === undefined) {
+      throw new Error(`No recipe for collection ${this.collectionFolderName()} in conventions.yml`);
+    }
     return name;
   }
 }

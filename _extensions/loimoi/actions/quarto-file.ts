@@ -1,5 +1,5 @@
 import { copySync, ensureDirSync, existsSync } from "jsr:@std/fs@1";
-import { dirname, join, relative } from "jsr:@std/path@1";
+import { basename, dirname, join, relative } from "jsr:@std/path@1";
 import { unzipSync, zipSync } from "npm:fflate@0.8";
 import { Basket } from "../basket.ts";
 import { AttachSrc } from "../processing-steps/attach-src.ts";
@@ -14,18 +14,20 @@ export class QuartoFile extends Action {
   readonly title?: string;
   readonly subtitle?: string;
   readonly process: string[];
+  readonly format: string; // `qmd` or `ipynb`
+  readonly zip: boolean; // the file zipped and deleted
 
   constructor(settings: Yaml) {
     super(settings);
     this.title = settings.title as string | undefined;
     this.subtitle = settings.subtitle as string | undefined;
     this.process = (settings.process ?? []) as string[];
+    this.format = (settings.format ?? "qmd") as string;
+    this.zip = (settings.zip ?? false) as boolean;
   }
 
   file(placeholders: Placeholders): string {
-    const zipped = this.process.includes("zip");
-    const extension = zipped ? "zip" : this.process.includes("jupyter") ? "ipynb" : "qmd";
-    return `${replacePlaceholders(this.name, placeholders)}.${extension}`;
+    return `${replacePlaceholders(this.name, placeholders)}.${this.zip ? "zip" : this.format}`;
   }
 
   run(basket: Basket, placeholders: Placeholders, folder: string): void {
@@ -44,7 +46,12 @@ export class QuartoFile extends Action {
     if (this.subtitle !== undefined) header.subtitle = replacePlaceholders(this.subtitle, placeholders);
     const path = join(folder, replacePlaceholders(this.name, placeholders));
     ensureDirSync(dirname(path));
-    new QmdDocument(header, doc.nodes, doc.output).write(path);
+    const file = `${path}.${this.format}`;
+    new QmdDocument(header, doc.nodes).write(file);
+    if (this.zip) {
+      Deno.writeFileSync(`${path}.zip`, zipSync({ [basename(file)]: Deno.readFileSync(file) }));
+      Deno.removeSync(file);
+    }
     copyImages(doc, basket, dirname(path));
     copyFolders(basket, dirname(path), this.process.includes("exercise-scaffold"));
   }
