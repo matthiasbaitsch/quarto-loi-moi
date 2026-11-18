@@ -74,6 +74,22 @@ Deno.test("exercises recipe, folder: r-topics, project with qmd, data and templa
   assert(!existsSync(join(folder, "zip")));
 });
 
+Deno.test("lm-copy: a copy in src/ not attached, copied without the marker", () => {
+  const root = Deno.makeTempDirSync();
+  for (const [name, code] of [["a", "x = 1\n"], ["b", "# lm-copy\nx = 1\n"]]) {
+    ensureDirSync(join(root, name, "exercises/src"));
+    Deno.writeTextFileSync(join(root, name, "exercises/text.qmd"), `Text ${name}\n`);
+    Deno.writeTextFileSync(join(root, name, "exercises/src/truss_lm_step01.py"), code);
+  }
+  const tree = new BuildingBlockTree(root);
+  const folder = Deno.makeTempDirSync();
+  new QuartoFile({ name: "a", process: ["attach-src"] }).run(tree.ingredients(["a/exercises"]), placeholders, folder);
+  new QuartoFile({ name: "b", process: ["attach-src"] }).run(tree.ingredients(["b/exercises"]), placeholders, folder);
+  assert(Deno.readTextFileSync(join(folder, "a.qmd")).includes("### `src/truss.py`"));
+  assert(!Deno.readTextFileSync(join(folder, "b.qmd")).includes("### `src/truss.py`"));
+  assertEquals(Deno.readTextFileSync(join(folder, "src/truss_lm_step01.py")), "x = 1\n");
+});
+
 Deno.test("files of the same name with different content are an error", () => {
   const root = Deno.makeTempDirSync();
   for (const [name, content] of [["a", "1\n"], ["b", "2\n"]]) {

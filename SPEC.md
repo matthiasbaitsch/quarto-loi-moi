@@ -365,7 +365,7 @@ Processing steps (`process`):
 | `exercise-sheet` | keeps what belongs on the exercise sheet |
 | `exercise-scaffold` | keeps what belongs into the work files |
 | `exercise-solution` | keeps what belongs into the solution |
-| `attach-src` | adds the files of `src/` as code blocks (not executed, with line numbers) in an appendix, headed e.g. `src/truss.py` (without `_lm_step…`) |
+| `attach-src` | adds the files of `src/` as code blocks (not executed, with line numbers) in an appendix, headed e.g. `src/truss.py` (without `_lm_step…`); not the files marked with `lm-copy` (see below) |
 | `remove-lm-step` | removes `_lm_step` and the number after it, e.g. `truss_lm_step04` → `truss` (see below) |
 
 What the three exercise steps keep:
@@ -382,7 +382,8 @@ document, wherever they are.
 Code in `src/` growing from sheet to sheet: one versioned file per change, e.g. `src/truss_lm_step02.py`,
 `src/truss_lm_step04.py`; the solution imports the version it needs, the work files get `src.truss` (step
 `remove-lm-step`), as the students keep one file `src/truss.py`. A version changed by mistake is an error (files of
-the same name must not differ).
+the same name must not differ). To work on a solution in its building block, the versions it imports are copied into
+its `src/`, marked with `lm-copy` in the first line (e.g. `# lm-copy`): not attached, the line removed when copied.
 
 ### Placeholders
 
