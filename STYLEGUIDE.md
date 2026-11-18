@@ -49,11 +49,12 @@ Text of the exercise.
 |----------------------------------|:-----:|:--------:|:--------:|
 | Headings (`##`, `###`) in an exercise | ✓ | ✓        | ✓        |
 | Text, images, non-executed code  | ✓     |          |          |
-| Executed code cells              |       | ✓        | ✓        |
+| Executed code cells (given code) |       | ✓        | runs, hidden |
 | Setup cell                       | ✓     | ✓        | ✓        |
 | `.lm-sheet` / `.lm-scaffold` / `.lm-solution` | only there | only there | only there |
 
-- Code the students start from (signature, `...`) goes into `.lm-scaffold`; code they get unchanged needs no marker.
+- Code the students start from (signature, `...`) goes into `.lm-scaffold`; code they get unchanged is *given code* and needs no marker. The preview labels it "Given"; in the solution it
+  runs but is hidden.
 - Text for the work files (e.g. "Complete the function") goes into `.lm-scaffold`.
 - Exercises done on paper have no executed code: they are dropped from the scaffold.
 
