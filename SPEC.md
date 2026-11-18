@@ -365,7 +365,7 @@ Processing steps (`process`):
 | `exercise-sheet` | keeps what belongs on the exercise sheet |
 | `exercise-scaffold` | keeps what belongs into the work files |
 | `exercise-solution` | keeps what belongs into the solution |
-| `attach-src` | adds the files of `src/` as code blocks (not executed) in an appendix, headed e.g. `src/truss.py` (without `_lm_step…`) |
+| `attach-src` | adds the files of `src/` as code blocks (not executed, with line numbers) in an appendix, headed e.g. `src/truss.py` (without `_lm_step…`) |
 | `remove-lm-step` | removes `_lm_step` and the number after it, e.g. `truss_lm_step04` → `truss` (see below) |
 
 What the three exercise steps keep:

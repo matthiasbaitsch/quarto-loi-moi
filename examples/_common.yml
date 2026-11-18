@@ -21,3 +21,4 @@ format:
         :lang(de) .lm-solution::before { content: "Lösung"; }
         :lang(de) .lm-scaffold::before { content: "Gerüst"; }
         </style>
+  typst: default

@@ -65,12 +65,17 @@ Deno.test("read: files combined in order, headers merged, clash is an error", ()
   const c = join(folder, "c.qmd");
   Deno.writeTextFileSync(a, "---\ntitle: A\n---\n\nText A\n");
   Deno.writeTextFileSync(b, "---\nauthor: B\n---\n\nText B\n");
+  const d = join(folder, "d.qmd");
+  const e = join(folder, "e.qmd");
   Deno.writeTextFileSync(c, "---\ntitle: C\n---\n\nText C\n");
+  Deno.writeTextFileSync(d, "Text D\n");
+  Deno.writeTextFileSync(e, "::: {#exr-e}\nText E\n:::\n");
 
   const doc = QmdDocument.read(a, b);
   assertEquals(doc.header, { title: "A", author: "B" });
   assertEquals(doc.text(), "---\ntitle: A\nauthor: B\n---\n\nText A\n\nText B\n");
   assertThrows(() => QmdDocument.read(a, c), Error, "title");
+  assertEquals(QmdDocument.read(d, e).body(), "Text D\n\n::: {#exr-e}\nText E\n:::\n");
 });
 
 Deno.test("read and write: julia-parts as qmd and ipynb, by the extension", () => {
