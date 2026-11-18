@@ -18,6 +18,7 @@ Deno.test("julia-parts: everything from defaults", () => {
   assertEquals(configuration.recipe().actions.map((action) => action.name), [
     "${nn-name}-${exercises}",
     "${nn-name}-${exercises}-${solution}-${hash}",
+    "${nn-name}-${exercises}-${preview}-${hash}",
     "${nn-name}-${exercises}",
   ]);
   assertEquals(configuration.words()["exercise-sheet"], "Exercise sheet");
@@ -42,7 +43,7 @@ Deno.test("julia-parts: everything from defaults", () => {
 
 Deno.test("python-flat: recipe from the conventions, lang from loimoi.yml, ingredient folders named like the collection", () => {
   const configuration = read("python-flat", "aufgaben");
-  assertEquals(configuration.recipe().actions.length, 4);
+  assertEquals(configuration.recipe().actions.length, 5);
   assertEquals(configuration.words()["exercise-sheet"], "Exercise sheet");
   assertEquals(configuration.productConfigurations().map((product) => product.ingredients), [
     ["10-sequences/aufgaben"],
@@ -56,6 +57,7 @@ Deno.test("r-topics: loimoi.yml files merged along the path", () => {
   const configuration = read("r-topics", "exercises");
   assertEquals(configuration.site(), "https://teacher.github.io/calculus");
   assertEquals(configuration.recipe().actions.map((action) => action.constructor.name), [
+    "QuartoFile",
     "QuartoFile",
     "QuartoFile",
     "QuartoFile",

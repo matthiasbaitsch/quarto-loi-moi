@@ -252,6 +252,7 @@ learning-material/exercises/c/
 ├── 01-convergence-sequences-exercises.qmd                       exercise sheet
 ├── 01-convergence-sequences-exercises.zip                       work files
 ├── 01-convergence-sequences-exercises-solution-2094a057.qmd     reference solution
+├── 01-convergence-sequences-exercises-preview-2094a057.qmd      preview for the teacher
 ├── 02-convergence-series-exercises.qmd                          exercise sheet
 ├── …
 ├── images/sequence.svg                                          folders of the ingredients
@@ -290,6 +291,11 @@ quarto-files:
   - name: "${nn-name}-${exercises}-${solution}-${hash}"
     title: "${solutions-to-exercise-sheet} ${n}"
     process: [exercise-solution, attach-src]
+
+  - name: "${nn-name}-${exercises}-${preview}-${hash}"   # what the teacher writes, scaffold and solution marked
+    title: "${exercise-sheet} ${n}"
+    subtitle: "${group-title}: ${product-title}"
+    process: []
 
   - when: {work-files: notebook}                 # single Jupyter notebook
     name: "${nn-name}-${exercises}"

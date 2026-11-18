@@ -22,7 +22,7 @@ const placeholders = {
   "product-title": "Sequences",
 };
 
-Deno.test("exercises recipe, notebook: julia-parts, sheet, solution, zipped notebook only, images", () => {
+Deno.test("exercises recipe, notebook: julia-parts, sheet, solution, preview, zipped notebook only, images", () => {
   const folder = Deno.makeTempDirSync();
   const tree = new BuildingBlockTree(examples + "julia-parts/building-blocks");
   const basket = tree.ingredients(["10-convergence/10-sequences/exercises"]);
@@ -34,6 +34,10 @@ Deno.test("exercises recipe, notebook: julia-parts, sheet, solution, zipped note
   assert(sheet.includes("[work files](01-convergence-sequences-exercises.zip)"));
   const solution = Deno.readTextFileSync(join(folder, "01-convergence-sequences-exercises-solution-2094a057.qmd"));
   assert(solution.includes("function fibonacci_ratios(n)"));
+  const preview = Deno.readTextFileSync(join(folder, "01-convergence-sequences-exercises-preview-2094a057.qmd"));
+  assert(preview.includes("Compute $q_1, \\ldots, q_5$"));
+  assert(preview.includes("::: {.lm-scaffold}"));
+  assert(preview.includes("::: {.lm-solution}"));
   assert(existsSync(join(folder, "images/sequence.svg")));
 
   const zip = unzipSync(Deno.readFileSync(join(folder, "01-convergence-sequences-exercises.zip")));

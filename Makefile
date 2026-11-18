@@ -9,6 +9,11 @@ examples:
 		mkdir -p $$example/_extensions; \
 		cp -R _extensions/loimoi $$example/_extensions/; \
 	done
+	# nummat: tinh from the symlink examples/nummat/tinh (to quarto-tinh/_extensions), if there
+	if [ -d examples/nummat/tinh ]; then \
+		rm -rf examples/nummat/_extensions/matthiasbaitsch; \
+		cp -R examples/nummat/tinh/ examples/nummat/_extensions/matthiasbaitsch; \
+	fi
 
 # Render the public examples; nummat needs numMat on this machine
 render: render-python-flat render-julia-parts render-r-topics

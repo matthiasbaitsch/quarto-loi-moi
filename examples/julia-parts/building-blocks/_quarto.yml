@@ -1,11 +1,6 @@
-# Project for writing the exercises: a single exercise rendered here gets these settings. The project one folder
-# up only renders learning-material/.
+# Project for writing the exercises: a single exercise rendered here gets these settings.
 project:
   type: default
 
 engine: julia
 lang: en
-
-filters:
-  - path: ../_extensions/loimoi/markers.lua
-    at: pre-ast
