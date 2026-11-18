@@ -11,9 +11,9 @@ include("src/fibonacci.jl")
 ::: {#exr-fibonacci}
 ## How fast do the ratios converge?
 
-1. Implement the function `fibonacci_ratios(n)`, which returns the vector of the ratios $q_1, \ldots, q_n$ from @exr-golden-ratio.
+### Implementation
 
-1. Compute the ratios for $n = 20$ together with their errors. By which factor does the error fall in each step?
+Implement the function `fibonacci_ratios(n)`, which returns the vector of the ratios $q_1, \ldots, q_n$ from @exr-golden-ratio.
 
 ::: {.lm-scaffold}
 ```{julia}
@@ -25,7 +25,13 @@ include("src/fibonacci.jl")
 
 ::: {.lm-solution}
 The function is in `src/fibonacci.jl` (see the appendix).
+:::
 
+### Errors
+
+Compute the ratios for $n = 20$ together with their errors. By which factor does the error fall in each step?
+
+::: {.lm-solution}
 ```{julia}
 φ = (1 + sqrt(5)) / 2
 ratios = fibonacci_ratios(20)

@@ -10,9 +10,9 @@ import matplotlib.pyplot as plt
 
 If $f$ is continuous on $[a, b]$ and $f(a)$ and $f(b)$ have opposite signs, $f$ has a zero in $[a, b]$ (intermediate value theorem). Bisection halves the interval in each step and keeps the half in which the sign changes.
 
-1. Implement the function `bisection(f, a, b, n)`, which returns the list of the midpoints of the first $n$ intervals.
+### Implementation
 
-1. Find the zero of $\cos x - x$ in $[0, 1]$ with $n = 50$. Take the last midpoint as the exact zero and plot the errors of the first $40$ midpoints in a semi-log diagram. How many steps are needed for ten correct digits?
+Implement the function `bisection(f, a, b, n)`, which returns the list of the midpoints of the first $n$ intervals.
 
 ::: {.lm-scaffold}
 ```{python}
@@ -31,7 +31,15 @@ def bisection(f, a, b, n):
         else:
             b = m
     return midpoints
+```
+:::
 
+### Errors
+
+Find the zero of $\cos x - x$ in $[0, 1]$ with $n = 50$. Take the last midpoint as the exact zero and plot the errors of the first $40$ midpoints in a semi-log diagram. How many steps are needed for ten correct digits?
+
+::: {.lm-solution}
+```{python}
 midpoints = bisection(lambda x: np.cos(x) - x, 0.0, 1.0, 50)
 errors = np.abs(np.array(midpoints[:40]) - midpoints[-1])
 plt.semilogy(range(1, 41), errors, "o-")

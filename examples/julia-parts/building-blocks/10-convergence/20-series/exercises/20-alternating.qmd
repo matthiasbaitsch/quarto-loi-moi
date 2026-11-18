@@ -16,9 +16,9 @@ $$
   \sum_{k=1}^{\infty} \frac{(-1)^{k+1}}{k} = 1 - \frac{1}{2} + \frac{1}{3} - \ldots = \ln 2.
 $$
 
-1. Implement the function `partial_sums(n)`, which returns the vector of the partial sums $s_1, \ldots, s_n$.
+### Implementation
 
-1. Compute the errors of $s_{10}$, $s_{100}$ and $s_{1000}$. How many terms are needed for one more correct digit? Compare with the geometric series from @exr-geometric.
+Implement the function `partial_sums(n)`, which returns the vector of the partial sums $s_1, \ldots, s_n$.
 
 ::: {.lm-scaffold}
 ```{julia}
@@ -30,7 +30,13 @@ $$
 
 ::: {.lm-solution}
 The function is in `src/partial_sums.jl` (see the appendix).
+:::
 
+### Errors
+
+Compute the errors of $s_{10}$, $s_{100}$ and $s_{1000}$. How many terms are needed for one more correct digit? Compare with the geometric series from @exr-geometric.
+
+::: {.lm-solution}
 ```{julia}
 sums = partial_sums(1000)
 ns = [10, 100, 1000]

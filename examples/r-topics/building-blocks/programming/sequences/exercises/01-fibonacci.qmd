@@ -13,9 +13,9 @@ fibonacci <- read.csv("data/fibonacci.csv")
 
 The file `data/fibonacci.csv` contains the first $30$ Fibonacci numbers $F_n$.
 
-1. Implement the function `fibonacci_ratios(F)`, which returns the ratios $q_n = F_{n+1} / F_n$ from @exr-golden-ratio for a vector `F` of Fibonacci numbers. Test it with $F_1, \ldots, F_6$.
+### Implementation
 
-1. Add the columns `q` and `error` to the data frame `fibonacci`: the ratio $q_n$, and its distance to the golden ratio. By which factor does the error fall in each step?
+Implement the function `fibonacci_ratios(F)`, which returns the ratios $q_n = F_{n+1} / F_n$ from @exr-golden-ratio for a vector `F` of Fibonacci numbers. Test it with $F_1, \ldots, F_6$.
 
 ::: {.lm-scaffold}
 ```{r}
@@ -33,7 +33,13 @@ fibonacci_ratios <- function(F) {
 
 fibonacci_ratios(c(1, 1, 2, 3, 5, 8))
 ```
+:::
 
+### Errors
+
+Add the columns `q` and `error` to the data frame `fibonacci`: the ratio $q_n$, and its distance to the golden ratio. By which factor does the error fall in each step?
+
+::: {.lm-solution}
 ```{r}
 fibonacci$q <- c(fibonacci_ratios(fibonacci$F), NA)
 fibonacci$error <- abs(fibonacci$q - (1 + sqrt(5)) / 2)

@@ -59,9 +59,9 @@ Text of the exercise.
 
 ### Short or long
 
-- **Short:** subtasks as a numbered list, one solution at the end, numbered the same way.
-- **Long:** when a subtask has its own text, code or solution, make it a `###` part.
-- Don't mix: either a list or `###` parts. No numbered list inside a part; a part with subtasks becomes several parts.
+- **Short:** one task, no substructure, one solution at the end.
+- **Long:** subtasks as `###` parts, no numbered lists of subtasks. A part with subtasks becomes several parts.
+- Exercises on paper may deviate, e.g. a numbered list of small subtasks.
 
 ### Long exercises
 

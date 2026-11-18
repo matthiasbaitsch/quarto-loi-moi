@@ -16,9 +16,9 @@ $$
   T_n(x) = \sum_{k=0}^{n} \frac{x^k}{k!}.
 $$
 
-1. Implement the function `taylor_exp(x, n)`, which returns $T_n(x)$.
+### Implementation
 
-1. Compute the errors of $T_1(1), \ldots, T_{15}(1)$. How does the error fall?
+Implement the function `taylor_exp(x, n)`, which returns $T_n(x)$.
 
 ::: {.lm-scaffold}
 ```{r}
@@ -39,7 +39,15 @@ taylor_exp <- function(x, n) {
   }
   total
 }
+```
+:::
 
+### Errors
+
+Compute the errors of $T_1(1), \ldots, T_{15}(1)$. How does the error fall?
+
+::: {.lm-solution}
+```{r}
 ns <- 1:15
 errors <- abs(sapply(ns, function(n) taylor_exp(1, n)) - exp(1))
 kable(data.frame(n = ns, error = format(errors, digits = 3)))

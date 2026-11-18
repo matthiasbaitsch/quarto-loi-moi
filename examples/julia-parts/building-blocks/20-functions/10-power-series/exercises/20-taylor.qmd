@@ -16,9 +16,9 @@ $$
   T_n(x) = \sum_{k=0}^{n} \frac{x^k}{k!}.
 $$
 
-1. Implement the function `taylor_exp(x, n)`, which returns $T_n(x)$.
+### Implementation
 
-1. Compute the errors of $T_1(1), \ldots, T_{15}(1)$. How does the error fall?
+Implement the function `taylor_exp(x, n)`, which returns $T_n(x)$.
 
 ::: {.lm-scaffold}
 ```{julia}
@@ -30,7 +30,13 @@ $$
 
 ::: {.lm-solution}
 The function is in `src/taylor_exp.jl` (see the appendix).
+:::
 
+### Errors
+
+Compute the errors of $T_1(1), \ldots, T_{15}(1)$. How does the error fall?
+
+::: {.lm-solution}
 ```{julia}
 ns = 1:15
 [ns abs.(taylor_exp.(1.0, ns) .- exp(1.0))]

@@ -12,9 +12,9 @@ F = [int(row["F"]) for row in csv.DictReader(open("daten/fibonacci.csv"))]
 
 The file `daten/fibonacci.csv` contains the first $30$ Fibonacci numbers $F_n$, the list `F` holds them.
 
-1. Implement the function `fibonacci_ratios(F)`, which returns the list of the ratios $q_n = F_{n+1} / F_n$ from @exr-golden-ratio for a list `F` of Fibonacci numbers.
+### Implementation
 
-1. Compute the ratios together with their errors. By which factor does the error fall in each step?
+Implement the function `fibonacci_ratios(F)`, which returns the list of the ratios $q_n = F_{n+1} / F_n$ from @exr-golden-ratio for a list `F` of Fibonacci numbers.
 
 ::: {.lm-scaffold}
 ```{python}
@@ -27,7 +27,15 @@ def fibonacci_ratios(F):
 ```{python}
 def fibonacci_ratios(F):
     return [b / a for a, b in zip(F, F[1:])]
+```
+:::
 
+### Errors
+
+Compute the ratios together with their errors. By which factor does the error fall in each step?
+
+::: {.lm-solution}
+```{python}
 phi = (1 + math.sqrt(5)) / 2
 for q in fibonacci_ratios(F)[:20]:
     print(q, abs(q - phi))

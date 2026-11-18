@@ -12,9 +12,9 @@ $$
   T_n(x) = \sum_{k=0}^{n} \frac{x^k}{k!}.
 $$
 
-1. Implement the function `taylor_exp(x, n)`, which returns $T_n(x)$.
+### Implementation
 
-1. Compute the errors of $T_1(1), \ldots, T_{15}(1)$. How does the error fall?
+Implement the function `taylor_exp(x, n)`, which returns $T_n(x)$.
 
 ::: {.lm-scaffold}
 ```{python}
@@ -32,7 +32,15 @@ def taylor_exp(x, n):
         term *= x / k
         total += term
     return total
+```
+:::
 
+### Errors
+
+Compute the errors of $T_1(1), \ldots, T_{15}(1)$. How does the error fall?
+
+::: {.lm-solution}
+```{python}
 for n in range(1, 16):
     print(n, abs(taylor_exp(1.0, n) - math.e))
 ```
