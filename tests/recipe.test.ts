@@ -38,6 +38,7 @@ Deno.test("exercises recipe, notebook: julia-parts, sheet, solution, preview, zi
   assert(preview.includes("Compute $q_1, \\ldots, q_5$"));
   assert(preview.includes("::: {.lm-scaffold}"));
   assert(preview.includes("::: {.lm-solution}"));
+  assert(preview.includes("### `src/fibonacci.jl`"));
   assert(existsSync(join(folder, "images/sequence.svg")));
 
   const zip = unzipSync(Deno.readFileSync(join(folder, "01-convergence-sequences-exercises.zip")));

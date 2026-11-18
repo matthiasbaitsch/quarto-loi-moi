@@ -1,7 +1,12 @@
 import { assertEquals, assertThrows } from "@std/assert";
 import { ensureDirSync } from "@std/fs";
 import { join } from "@std/path";
-import { configFile, resolve } from "../_extensions/loimoi/utilities.ts";
+import { configFile, resolve, slug } from "../_extensions/loimoi/utilities.ts";
+
+Deno.test("slug: lowercase, umlauts, other characters as one hyphen", () => {
+  assertEquals(slug("Stabtragwerke", "Stabendkräfte"), "stabtragwerke-stabendkraefte");
+  assertEquals(slug("Größe & Maß: Übung!"), "groesse-mass-uebung");
+});
 
 const builtIn = new URL("../_extensions/loimoi/config/", import.meta.url).pathname;
 

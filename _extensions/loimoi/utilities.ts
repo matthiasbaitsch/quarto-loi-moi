@@ -31,6 +31,16 @@ export function removeLmStep(text: string): string {
   return text.replace(/_lm_step\d+/g, "");
 }
 
+const umlauts: Record<string, string> = { "ä": "ae", "ö": "oe", "ü": "ue", "ß": "ss" };
+
+// `Stabtragwerke`, `Stabendkräfte` becomes `stabtragwerke-stabendkraefte`
+export function slug(...parts: string[]): string {
+  return parts.join(" ").toLowerCase()
+    .replace(/[äöüß]/g, (letter) => umlauts[letter])
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
 // `${key}` replaced by its value; unknown keys stay unchanged
 export function replacePlaceholders(text: string, values: Record<string, string>): string {
   return text.replace(/\$\{([\w-]+)\}/g, (match, key) => values[key] ?? match);

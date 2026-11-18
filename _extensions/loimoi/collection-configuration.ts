@@ -1,6 +1,6 @@
 import { basename, dirname, join } from "jsr:@std/path@1";
 import { BuildingBlockTree } from "./building-block-tree.ts";
-import { ProductConfiguration } from "./product-configuration.ts";
+import { ProductConfiguration, ProductNaming } from "./product-configuration.ts";
 import { Recipe } from "./recipe.ts";
 import { configFile, conventions, gitHubPages, mergeYamlAlongPath, readYaml, Yaml } from "./utilities.ts";
 
@@ -12,6 +12,7 @@ export class CollectionConfiguration {
 
   private readonly firstNumber: number;
   private readonly outputFolderName: string;
+  private readonly productNaming: ProductNaming;
   private readonly tree: BuildingBlockTree;
 
   constructor(collectionFolder: string, tree: BuildingBlockTree) {
@@ -20,6 +21,10 @@ export class CollectionConfiguration {
     this.settings = mergeYamlAlongPath(this.learningMaterialFolder(), this.collectionFolderName(), "loimoi.yml");
     this.firstNumber = (this.settings["first-number"] ?? 1) as number;
     this.outputFolderName = (this.settings.output ?? "c") as string;
+    this.productNaming = (this.settings["product-naming"] ?? "path") as ProductNaming;
+    if (this.productNaming !== "path" && this.productNaming !== "titles") {
+      throw new Error(`product-naming must be path or titles, not ${this.productNaming}`);
+    }
     this.tree = tree;
   }
 
@@ -47,7 +52,9 @@ export class CollectionConfiguration {
 
   productConfigurations(): ProductConfiguration[] {
     const entries = this.productEntries();
-    return entries.map((entry, i) => new ProductConfiguration(entry, this.firstNumber + i, this.tree));
+    return entries.map((entry, i) =>
+      new ProductConfiguration(entry, this.firstNumber + i, this.tree, this.productNaming)
+    );
   }
 
   private productEntries(): Yaml[] {

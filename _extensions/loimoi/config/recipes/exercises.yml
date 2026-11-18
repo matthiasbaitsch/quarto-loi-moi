@@ -13,10 +13,10 @@ quarto-files:
     title: "${solutions-to-exercise-sheet} ${n}"
     process: [exercise-solution, attach-src]
 
-  - name: "${nn-name}-${exercises}-${preview}-${hash}"   # what the teacher writes, scaffold and solution marked
+  - name: "${nn-name}-${exercises}-${preview}-${hash}" 
     title: "${exercise-sheet} ${n}"
     subtitle: "${group-title}: ${product-title}"
-    process: []
+    process: [attach-src]
 
   - when: { work-files: notebook }
     name: "${nn-name}-${exercises}"

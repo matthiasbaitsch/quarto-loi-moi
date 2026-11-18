@@ -41,7 +41,7 @@ Deno.test("julia-parts: everything from defaults", () => {
   });
 });
 
-Deno.test("python-flat: recipe from the conventions, lang from loimoi.yml, ingredient folders named like the collection", () => {
+Deno.test("python-flat: recipe from the conventions, lang from loimoi.yml, ingredient folders named like the collection, product names from the titles", () => {
   const configuration = read("python-flat", "aufgaben");
   assertEquals(configuration.recipe().actions.length, 5);
   assertEquals(configuration.words()["exercise-sheet"], "Exercise sheet");
@@ -51,6 +51,7 @@ Deno.test("python-flat: recipe from the conventions, lang from loimoi.yml, ingre
     ["30-power-series/aufgaben"],
     ["40-continuity/aufgaben"],
   ]);
+  assertEquals(configuration.productConfigurations()[1].name, "infinite-series");
 });
 
 Deno.test("r-topics: loimoi.yml files merged along the path", () => {

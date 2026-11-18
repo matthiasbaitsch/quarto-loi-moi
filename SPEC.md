@@ -171,7 +171,8 @@ Remarks:
 - Sensible defaults for all settings
 - `.qmd` files of an ingredient combined in name order, ingredients of a product in the given order
 - Product `name` used in file names; `product-title` and `group-title` used in titles; all default to the first
-  building block
+  building block, the name from its path or, with `product-naming: titles`, as slug of `group-title` and
+  `product-title` (`Stabtragwerke`, `Stabendkräfte`: `stabtragwerke-stabendkraefte`)
 
 ### Quarto configuration
 
@@ -295,7 +296,7 @@ quarto-files:
   - name: "${nn-name}-${exercises}-${preview}-${hash}"   # what the teacher writes, scaffold and solution marked
     title: "${exercise-sheet} ${n}"
     subtitle: "${group-title}: ${product-title}"
-    process: []
+    process: [attach-src]
 
   - when: {work-files: notebook}                 # single Jupyter notebook
     name: "${nn-name}-${exercises}"
@@ -337,6 +338,7 @@ archives:                                        # folder deleted after zip
 | `lang` | language of the words in file names and titles (`en`, `de`) | from the collection's name via `conventions.yml` (`aufgaben`: `de`), otherwise `en` |
 | `site` | URL of the published site | from the Git remote |
 | `products` | one entry per product: `ingredients`, optional `name`, `product-title`, `group-title` | one product per building block with the ingredient folder from `conventions.yml`, in folder order |
+| `product-naming` | default product names from the path of the first building block (`path`) or from the titles (`titles`) | `path` |
 | `recipe` | recipe that makes the products | from `conventions.yml` |
 | `options` | options of the recipe | see the recipe |
 
