@@ -14,8 +14,9 @@ export class AttachSrc implements ProcessingStep {
   }
 
   run(doc: QmdDocument): QmdDocument {
-    if (this.files.length === 0) return doc;
-    const sections = this.files.map((file) => {
+    const files = this.files.filter((file) => !Deno.readTextFileSync(file).split("\n", 1)[0].includes("lm-no-attach"));
+    if (files.length === 0) return doc;
+    const sections = files.map((file) => {
       const language = languages[extname(file)];
       if (language === undefined) throw new Error(`Unknown language of ${file}`);
       const code = Deno.readTextFileSync(file).replace(/\n?$/, "\n");

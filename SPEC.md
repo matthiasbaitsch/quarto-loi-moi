@@ -387,7 +387,7 @@ Processing steps (`process`):
 | `exercise-sheet` | keeps what belongs on the exercise sheet |
 | `exercise-scaffold` | keeps what belongs into the work files |
 | `exercise-solution` | keeps what belongs into the solution |
-| `attach-src` | adds the files of `src/` as code blocks (not executed, with line numbers) in an appendix, headed e.g. `src/truss.py` |
+| `attach-src` | adds the files of `src/` as code blocks (not executed, with line numbers) in an appendix, headed e.g. `src/truss.py`; not the files with `lm-no-attach` in the first line (e.g. `# lm-no-attach`), such as copies of code from an earlier sheet |
 | `show-markers` | marks in HTML what goes into the scaffold, the solution, or both (given code): a colored line on the left with a label |
 
 What the three exercise steps keep:

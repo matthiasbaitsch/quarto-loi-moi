@@ -24,10 +24,13 @@ Deno.test("replace placeholders: in header, text and code; unknown ones unchange
   assertEquals(step.run(QmdDocument.parse(text)).text(), expected);
 });
 
-Deno.test("attach src: code blocks in an appendix, headed with the file name", () => {
-  const src = join(Deno.makeTempDirSync(), "truss.py");
+Deno.test("attach src: code blocks in an appendix, headed with the file name; not files marked lm-no-attach", () => {
+  const folder = Deno.makeTempDirSync();
+  const src = join(folder, "truss.py");
   Deno.writeTextFileSync(src, "x = 1\n");
-  const doc = new AttachSrc([src], "Appendix").run(QmdDocument.parse("Text\n"));
+  const copy = join(folder, "structures.py");
+  Deno.writeTextFileSync(copy, "# lm-no-attach\ny = 2\n");
+  const doc = new AttachSrc([src, copy], "Appendix").run(QmdDocument.parse("Text\n"));
   assertEquals(doc.text(), "Text\n\n## Appendix\n\n### `src/truss.py`\n\n```{.python .number-lines}\nx = 1\n```\n");
 });
 
