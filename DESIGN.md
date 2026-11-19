@@ -134,7 +134,6 @@ classDiagram
   ProcessingStep <|-- ExerciseScaffold
   ProcessingStep <|-- ExerciseSolution
   ProcessingStep <|-- AttachSrc
-  ProcessingStep <|-- RemoveLmStep
   ProcessingStep <|-- ShowMarkers
   class Pipeline {
     steps: ProcessingStep[]
@@ -168,8 +167,9 @@ The pre-render script runs the whole process:
 1. Clear the `c/` folder
 1. For each product:
     1. get its `Basket` from the building block tree
-    1. compute the placeholders: `n`, `nn-name`, `name`, `hash`, `product-title`, `group-title`, `site`
-    1. run the recipe
+    1. compute the placeholders: `n`, `nn-name`, `name`, `hash`, `product-title`, `group-title`, `full-title`, `site`
+    1. run the recipe in the folder of the product, `c/${nn-name}/`
+1. Write the link pages for all collections of the learning material (`LinkPages`)
 
 In detail.
 
@@ -186,12 +186,14 @@ classDiagram
     recipe() Recipe
     words() Record
     productConfigurations() ProductConfiguration[]
+    renderFolder() string
   }
   class ProductConfiguration {
     number: number
     name: string
     title: string
     groupTitle: string?
+    fullTitle: string
     ingredients: string[]
     constructor(entry: Record, number: number, tree: BuildingBlockTree)
   }
@@ -240,6 +242,7 @@ classDiagram
     process: string[]
     format: string
     zip: boolean
+    link: string?
   }
   class Archive {
     add: Record[]
@@ -251,9 +254,33 @@ Remarks:
 - `QuartoFile` copies the folders of the ingredients next to the written file (not into a zip; special folders
   `src/` and `zip/<name>/` → `<name>.zip`, both not into work files), without names starting with `_` or `.` and
   `…_files` (`studentFiles()` in `utilities.ts`); an `Archive` copies folders in `add` the same way
-- `QuartoFile` copies the files referenced in the document (e.g. `images/a.svg` to `c/images/a.svg`); error if a
-  file of the same name differs
-- `Recipe.run`: adds the placeholders from `provides` (`file()` of the action), runs the actions in order
+- `QuartoFile` copies the files referenced in the document (e.g. `images/a.svg` to
+  `c/01-convergence-sequences/images/a.svg`); error if a file of the same name differs (possible when a product has
+  several building blocks)
+- `Recipe.run`: creates the folder of the product (`folder` plus `${nn-name}`), adds the placeholders from `provides`
+  (`file()` of the action), runs the actions in order in that folder
+
+### Link pages
+
+```mermaid
+classDiagram
+  direction LR
+  LinkPages ..> CollectionConfiguration : creates
+  class LinkPages {
+    learningMaterialFolder: string
+    tree: BuildingBlockTree
+    localPage() string
+    sitePage() string
+    write()
+  }
+```
+
+Remarks:
+
+- Collections: the folders in `learningMaterialFolder` with a `_quarto.yml`; a `CollectionConfiguration` for each
+- Per product: the actions of the recipe with a `link` (label, with placeholders), the path from `file()` (`.qmd` becomes `.html`) in `c/${nn-name}/`
+- `CollectionConfiguration.renderFolder()`: `output-dir` from `_quarto.yml`, absolute (`outputFolder()` is `c/`, where loi-moi writes); `links.html` links relative to it, `links-site.html` uses `site` plus the part after `__output/`
+- Error if `output-dir` is missing, or if `links-site.html` needs `site` and there is none
 
 ## Decisions
 
@@ -264,7 +291,7 @@ Remarks:
 - **No project type.** A Quarto project has one type, collections need different ones (`book` for course notes);
   so `_quarto.yml` names the pre-render script, shared settings via `metadata-files`. Quarto requires an extension
   to contribute something: loi-moi contributes the metadata `loimoi: true`.
-- **Code runs on copies.** The folders of the ingredients are copied into `c/`, so code reading `data/…` runs there
+- **Code runs on copies.** The folders of the ingredients are copied into the folder of the product in `c/`, so code reading `data/…` runs there
   as in the work files; no folder name fixed, no working directory changed per language (as in the prototype).
 - **Steps only change content.** How a file is written (`format`, `zip`) is a setting of `QuartoFile`, not a step.
 - **Jupyter notebooks written as JSON, not with `quarto convert`.** `quarto convert` needs a Jupyter kernel for

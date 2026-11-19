@@ -1,6 +1,6 @@
 project:
   type: default
-  output-dir: ../../../../__output/julia-parts/learning-material/exercises
+  output-dir: ../../../../__output/julia-parts/exercises
 
 metadata-files:
   - ../../../_common.yml

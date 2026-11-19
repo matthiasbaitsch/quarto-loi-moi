@@ -40,8 +40,9 @@ Git repository, public on GitHub: `matthiasbaitsch/quarto-loi-moi`.
 - Informal (*du* in German). Conversation and texts in English.
 - For questions, only explain first; change files only when explicitly asked; before every change, explain what
   is planned and wait for approval. Don't rush: the user reviews and approves step by step. One decision per step,
-  one question at a time, also when the task is wide.
+  one question at a time, also when the task is wide: never more than one question per message.
 - Be critical: if something seems a bad idea, say so directly and explain why – before doing it.
 - Concise answers; documents short, not verbose.
+- No line breaks within paragraphs or list items in Markdown documents (one line each).
 - Do nothing that was not asked for. No memory directory, notes go into this file.
 - No Git commits, no GitHub repository without being asked.

@@ -37,11 +37,12 @@ Deno.test("julia-parts: everything from defaults", () => {
     "hash": "2094a057",
     "product-title": "Sequences",
     "group-title": "Convergence",
+    "full-title": "Convergence: Sequences",
     "site": "https://teacher.github.io/calculus",
   });
 });
 
-Deno.test("python-flat: recipe from the conventions, lang from loimoi.yml, ingredient folders named like the collection, product names from the titles", () => {
+Deno.test("python-flat: recipe from the conventions, lang from loimoi.yml, ingredient folders named like the collection, product names from the titles, full title without group title", () => {
   const configuration = read("python-flat", "aufgaben");
   assertEquals(configuration.recipe().actions.length, 5);
   assertEquals(configuration.words()["exercise-sheet"], "Exercise sheet");
@@ -52,6 +53,7 @@ Deno.test("python-flat: recipe from the conventions, lang from loimoi.yml, ingre
     ["40-continuity/aufgaben"],
   ]);
   assertEquals(configuration.productConfigurations()[1].name, "infinite-series");
+  assertEquals(configuration.productConfigurations()[1].placeholders()["full-title"], "Infinite series");
 });
 
 Deno.test("r-topics: loimoi.yml files merged along the path", () => {

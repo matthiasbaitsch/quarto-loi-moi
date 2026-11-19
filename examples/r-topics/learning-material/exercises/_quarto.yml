@@ -1,6 +1,6 @@
 project:
   type: default
-  output-dir: ../../../../__output/r-topics/learning-material/exercises
+  output-dir: ../../../../__output/r-topics/exercises
 
 metadata-files:
   - ../../../_common.yml

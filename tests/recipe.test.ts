@@ -20,6 +20,7 @@ const placeholders = {
   "hash": "2094a057",
   "group-title": "Convergence",
   "product-title": "Sequences",
+  "full-title": "Convergence: Sequences",
 };
 
 Deno.test("exercises recipe, notebook: julia-parts, sheet, solution, preview, zipped notebook only, images", () => {
@@ -27,28 +28,29 @@ Deno.test("exercises recipe, notebook: julia-parts, sheet, solution, preview, zi
   const tree = new BuildingBlockTree(examples + "julia-parts/building-blocks");
   const basket = tree.ingredients(["10-convergence/10-sequences/exercises"]);
   Recipe.read(exercises, {}, folder).run(basket, placeholders);
+  const product = join(folder, "01-convergence-sequences");
 
-  const sheet = Deno.readTextFileSync(join(folder, "01-convergence-sequences-exercises.qmd"));
+  const sheet = Deno.readTextFileSync(join(product, "01-convergence-sequences-exercises.qmd"));
   assert(sheet.includes("title: Exercise sheet 1"));
   assert(sheet.includes("subtitle: 'Convergence: Sequences'"));
   assert(sheet.includes("[work files](01-convergence-sequences-exercises.zip)"));
-  const solution = Deno.readTextFileSync(join(folder, "01-convergence-sequences-exercises-solution-2094a057.qmd"));
+  const solution = Deno.readTextFileSync(join(product, "01-convergence-sequences-exercises-solution-2094a057.qmd"));
   assert(solution.includes("function fibonacci_ratios(n)"));
-  const preview = Deno.readTextFileSync(join(folder, "01-convergence-sequences-exercises-preview-2094a057.qmd"));
+  const preview = Deno.readTextFileSync(join(product, "01-convergence-sequences-exercises-preview-2094a057.qmd"));
   assert(preview.includes("Compute $q_1, \\ldots, q_5$"));
   assert(preview.includes("::: {.lm-scaffold}"));
   assert(preview.includes("::: {.lm-solution}"));
   assert(preview.includes("### `src/fibonacci.jl`"));
-  assert(existsSync(join(folder, "images/sequence.svg")));
+  assert(existsSync(join(product, "images/sequence.svg")));
 
-  const zip = unzipSync(Deno.readFileSync(join(folder, "01-convergence-sequences-exercises.zip")));
+  const zip = unzipSync(Deno.readFileSync(join(product, "01-convergence-sequences-exercises.zip")));
   assertEquals(Object.keys(zip), ["01-convergence-sequences-exercises.ipynb"]);
 
   const scaffold = new QuartoFile({ name: "work-files/exercises", process: ["exercise-scaffold"] });
-  scaffold.run(basket, placeholders, folder);
-  assert(existsSync(join(folder, "src/fibonacci.jl")));
-  assert(existsSync(join(folder, "work-files/images/sequence.svg")));
-  assert(!existsSync(join(folder, "work-files/src")));
+  scaffold.run(basket, placeholders, product);
+  assert(existsSync(join(product, "src/fibonacci.jl")));
+  assert(existsSync(join(product, "work-files/images/sequence.svg")));
+  assert(!existsSync(join(product, "work-files/src")));
 });
 
 Deno.test("exercises recipe, folder: r-topics, project with qmd, data and templates, extra download", () => {
@@ -57,37 +59,22 @@ Deno.test("exercises recipe, folder: r-topics, project with qmd, data and templa
   const basket = tree.ingredients(["theory/sequences/exercises", "programming/sequences/exercises"]);
   const values = { ...placeholders, "nn-name": "01-sequences", "name": "sequences" };
   Recipe.read(exercises, { "work-files": "folder" }, folder).run(basket, values);
+  const product = join(folder, "01-sequences");
 
-  const zip = unzipSync(Deno.readFileSync(join(folder, "01-sequences-exercises.zip")));
+  const zip = unzipSync(Deno.readFileSync(join(product, "01-sequences-exercises.zip")));
   assertEquals(Object.keys(zip).sort(), [
     "01-sequences-exercises/_quarto.yml",
     "01-sequences-exercises/data/fibonacci.csv",
     "01-sequences-exercises/sequences-exercises.code-workspace",
     "01-sequences-exercises/sequences-exercises.qmd",
   ]);
-  assert(!existsSync(join(folder, "01-sequences-exercises")));
-  assert(existsSync(join(folder, "data/fibonacci.csv")));
-  assert(!existsSync(join(folder, "data/_fibonacci.R")));
+  assert(!existsSync(join(product, "01-sequences-exercises")));
+  assert(existsSync(join(product, "data/fibonacci.csv")));
+  assert(!existsSync(join(product, "data/_fibonacci.R")));
 
-  const extra = unzipSync(Deno.readFileSync(join(folder, "fibonacci-table.zip")));
+  const extra = unzipSync(Deno.readFileSync(join(product, "fibonacci-table.zip")));
   assertEquals(Object.keys(extra), ["fibonacci-table/fibonacci-table.txt"]);
-  assert(!existsSync(join(folder, "zip")));
-});
-
-Deno.test("lm-copy: a copy in src/ not attached, copied without the marker", () => {
-  const root = Deno.makeTempDirSync();
-  for (const [name, code] of [["a", "x = 1\n"], ["b", "# lm-copy\nx = 1\n"]]) {
-    ensureDirSync(join(root, name, "exercises/src"));
-    Deno.writeTextFileSync(join(root, name, "exercises/text.qmd"), `Text ${name}\n`);
-    Deno.writeTextFileSync(join(root, name, "exercises/src/truss_lm_step01.py"), code);
-  }
-  const tree = new BuildingBlockTree(root);
-  const folder = Deno.makeTempDirSync();
-  new QuartoFile({ name: "a", process: ["attach-src"] }).run(tree.ingredients(["a/exercises"]), placeholders, folder);
-  new QuartoFile({ name: "b", process: ["attach-src"] }).run(tree.ingredients(["b/exercises"]), placeholders, folder);
-  assert(Deno.readTextFileSync(join(folder, "a.qmd")).includes("### `src/truss.py`"));
-  assert(!Deno.readTextFileSync(join(folder, "b.qmd")).includes("### `src/truss.py`"));
-  assertEquals(Deno.readTextFileSync(join(folder, "src/truss_lm_step01.py")), "x = 1\n");
+  assert(!existsSync(join(product, "zip")));
 });
 
 Deno.test("files of the same name with different content are an error", () => {

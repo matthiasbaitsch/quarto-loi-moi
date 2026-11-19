@@ -16,4 +16,5 @@
 - Vendor the imports into the extension, so no network is needed.
 - Snapshot tests: per example the expected `c/` in `tests/expected/<example>/` (zips compared by content),
   `deno task update-expected`; error cases stay unit tests; steps maybe as `input.qmd` → `expected.qmd`.
+- Check for files kept identical on purpose (e.g. `src/` code across building blocks), error if they diverge; as in Informatik (`skripte/duplikate.txt`, pre-commit hook).
 - SPEC introduction: sharpen the core idea (two axes, topic and form, decoupled by loi-moi).

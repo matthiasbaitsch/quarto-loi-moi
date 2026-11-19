@@ -11,9 +11,9 @@ const examples = new URL("../examples/", import.meta.url).pathname;
 Deno.test("pipeline: steps by name and as objects, unknown name is an error", () => {
   const pipeline = new Pipeline();
   pipeline.addStep(new ReplacePlaceholders({ n: "1" }));
-  pipeline.addStep("remove-lm-step");
-  const doc = pipeline.run(QmdDocument.parse("Sheet ${n}, truss_lm_step04\n"));
-  assertEquals(doc.text(), "Sheet 1, truss\n");
+  pipeline.addStep("show-markers");
+  const doc = pipeline.run(QmdDocument.parse("---\ntitle: Sheet ${n}\n---\n\nText\n"));
+  assertEquals(doc.header, { title: "Sheet 1", filters: ["loimoi"] });
   assertThrows(() => pipeline.addStep("unknown"), Error, "unknown");
 });
 
@@ -24,16 +24,8 @@ Deno.test("replace placeholders: in header, text and code; unknown ones unchange
   assertEquals(step.run(QmdDocument.parse(text)).text(), expected);
 });
 
-Deno.test("remove lm-step: versioned file names become the students' file name", () => {
-  const text = "Use `src/truss.py`.\n\n```{python}\nfrom src.truss_lm_step04 import *\nstep_size = 2\n```\n";
-  const expected = "Use `src/truss.py`.\n\n```{python}\nfrom src.truss import *\nstep_size = 2\n```\n";
-  const pipeline = new Pipeline();
-  pipeline.addStep("remove-lm-step");
-  assertEquals(pipeline.run(QmdDocument.parse(text)).text(), expected);
-});
-
-Deno.test("attach src: heading without _lm_step", () => {
-  const src = join(Deno.makeTempDirSync(), "truss_lm_step04.py");
+Deno.test("attach src: code blocks in an appendix, headed with the file name", () => {
+  const src = join(Deno.makeTempDirSync(), "truss.py");
   Deno.writeTextFileSync(src, "x = 1\n");
   const doc = new AttachSrc([src], "Appendix").run(QmdDocument.parse("Text\n"));
   assertEquals(doc.text(), "Text\n\n## Appendix\n\n### `src/truss.py`\n\n```{.python .number-lines}\nx = 1\n```\n");

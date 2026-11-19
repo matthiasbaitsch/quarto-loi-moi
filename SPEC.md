@@ -47,12 +47,13 @@ building-blocks/                                     learning-material/
 
 learning-material/
 ├── exercises/c/
-│   ├── 01-convergence-sequences-exercises.qmd                    ┐
-│   ├── 01-convergence-sequences-exercises.zip                    │ product
-│   ├── 01-convergence-sequences-exercises-solution-2094a057.qmd  ┘
-│   ├── 02-convergence-series-exercises.qmd                       ┐ product
-│   ├── …
-│   ├── images/sequence.svg
+│   ├── 01-convergence-sequences/                                    ┐
+│   │   ├── 01-convergence-sequences-exercises.qmd                   │
+│   │   ├── 01-convergence-sequences-exercises.zip                   │ product
+│   │   ├── 01-convergence-sequences-exercises-solution-2094a057.qmd │
+│   │   └── images/sequence.svg                                      ┘
+│   ├── 02-convergence-series/                                       ┐ product
+│   │   └── …                                                        ┘
 │   └── …
 ├── slides/c/
 │   └── …
@@ -63,7 +64,9 @@ learning-material/
                                 ▼
 
 …/__output/c/
-├── 01-convergence-sequences-exercises.html
+├── 01-convergence-sequences/
+│   ├── 01-convergence-sequences-exercises.html
+│   └── …
 └── …
 ```
 
@@ -80,7 +83,7 @@ Prepared for the students:
 
 - **Learning material** (`learning-material/`): all collections for one course
 - **Collection** (`exercises/`): set of products of one form
-- **Product** (in `c/`): set of related files
+- **Product** (a folder in `c/`): set of related files
 - **Work files** (e.g. `…-exercises.zip`): material students work with
 
 Exercises:
@@ -123,8 +126,8 @@ Remarks:
 - Leading numbers in names stripped
 - Folder names in English or German, e.g. `exercises/` or `aufgaben/`
 - Folders and files starting with `_` or `.` ignored, also Quarto's `…_files` folders
-- Folders of an ingredient (e.g. `images/`, `data/`) copied next to each file of the product (a zipped notebook
-  contains only the notebook); error if a file of the same name differs. Special folders, not in work files:
+- Folders of an ingredient (e.g. `images/`, `data/`) copied into the folder of the product (a zipped notebook
+  contains only the notebook); error if two ingredients of the product have a file of the same name that differs. Special folders, not in work files:
   `src/` (code of the solution, copied) and `zip/<name>/` (extra download, becomes `<name>.zip`)
 
 ## Learning material
@@ -193,9 +196,23 @@ lang: en
 ```yml
 project:
   type: default
-  output-dir: ../../__output/learning-material/exercises
+  output-dir: ../../__output/exercises
 metadata-files:
   - ../_common.yml
+```
+
+### Link pages
+
+On every render of a collection, loi-moi writes two pages with the links to the products of all collections of the learning material (folders with a `_quarto.yml`), not published, in `.gitignore`:
+
+- `links.html`: links into the rendered output (`output-dir` of each collection), to check locally
+- `links-site.html`: the published URLs written out, to copy into Moodle; `site` is the folder `__output/` in `output-dir`, e.g. `__output/aufgaben/c/…` becomes `<site>/aufgaben/c/…`
+
+Grouped by collection and product (number and `${full-title}`); per product the files of the recipe with a `link`, e.g. in `exercises.yml`:
+
+```yml
+  - name: "${nn-name}-${exercises}-${solution}-${hash}"
+    link: "${solution-label}"
 ```
 
 ### Recipes
@@ -240,6 +257,7 @@ Remarks:
   (`building-blocks/` or `bausteine/`)
 - Predefined recipes come with loi-moi; own recipes in `learning-material/_loimoi/recipes/` override them by name
 - A recipe might declare options
+- `name` is relative to the folder of the product (`${nn-name}/`)
 - Use options with care (readability, maintenance)
 
 ### Exercises
@@ -250,13 +268,14 @@ Example for exercise series
 
 ```
 learning-material/exercises/c/
-├── 01-convergence-sequences-exercises.qmd                       exercise sheet
-├── 01-convergence-sequences-exercises.zip                       work files
-├── 01-convergence-sequences-exercises-solution-2094a057.qmd     reference solution
-├── 01-convergence-sequences-exercises-preview-2094a057.qmd      preview for the teacher
-├── 02-convergence-series-exercises.qmd                          exercise sheet
-├── …
-├── images/sequence.svg                                          folders of the ingredients
+├── 01-convergence-sequences/                                        product
+│   ├── 01-convergence-sequences-exercises.qmd                       exercise sheet
+│   ├── 01-convergence-sequences-exercises.zip                       work files
+│   ├── 01-convergence-sequences-exercises-solution-2094a057.qmd     reference solution
+│   ├── 01-convergence-sequences-exercises-preview-2094a057.qmd      preview for the teacher
+│   └── images/sequence.svg                                          folders of the ingredients
+├── 02-convergence-series/                                           product
+│   └── …
 └── …
 ```
 
@@ -286,22 +305,25 @@ options:
 quarto-files:
   - name: "${nn-name}-${exercises}"
     title: "${exercise-sheet} ${n}"
-    subtitle: "${group-title}: ${product-title}"
+    subtitle: "${full-title}"
     process: [exercise-sheet]
+    link: "${exercise-sheet}"
 
   - name: "${nn-name}-${exercises}-${solution}-${hash}"
     title: "${solutions-to-exercise-sheet} ${n}"
     process: [exercise-solution, attach-src]
+    link: "${solution-label}"
 
   - name: "${nn-name}-${exercises}-${preview}-${hash}"   # what the teacher writes, scaffold and solution marked
     title: "${exercise-sheet} ${n}"
-    subtitle: "${group-title}: ${product-title}"
+    subtitle: "${full-title}"
     process: [attach-src, show-markers]
+    link: "${preview-label}"
 
   - when: {work-files: notebook}                 # single Jupyter notebook
     name: "${nn-name}-${exercises}"
     title: "${exercise-sheet} ${n}"
-    process: [exercise-scaffold, remove-lm-step]
+    process: [exercise-scaffold]
     format: ipynb
     zip: true                                    # notebook deleted after zip
     provides: work-files
@@ -309,7 +331,7 @@ quarto-files:
   - when: {work-files: folder}                   # folder, e.g. a project
     name: "${nn-name}-${exercises}/${name}-${exercises}"
     title: "${exercise-sheet} ${n}"
-    process: [exercise-scaffold, remove-lm-step]
+    process: [exercise-scaffold]
 
 archives:                                        # folder deleted after zip
   - when: {work-files: folder}
@@ -348,7 +370,7 @@ Defined by the recipe, run per product in this order:
 
 | Action | Makes | Keys |
 |---|---|---|
-| `quarto-files` | Quarto files or Jupyter notebooks | `name`, `title`, `subtitle`, `process`, `format` (`qmd`, `ipynb`), `zip`, `when`, `provides` |
+| `quarto-files` | Quarto files or Jupyter notebooks | `name`, `title`, `subtitle`, `process`, `format` (`qmd`, `ipynb`), `zip`, `when`, `provides`, `link` |
 | `archives` | zip files from a folder | `name`, `add`, `when`, `provides` |
 
 Paths in `add`:
@@ -365,8 +387,7 @@ Processing steps (`process`):
 | `exercise-sheet` | keeps what belongs on the exercise sheet |
 | `exercise-scaffold` | keeps what belongs into the work files |
 | `exercise-solution` | keeps what belongs into the solution |
-| `attach-src` | adds the files of `src/` as code blocks (not executed, with line numbers) in an appendix, headed e.g. `src/truss.py` (without `_lm_step…`); not the files marked with `lm-copy` (see below) |
-| `remove-lm-step` | removes `_lm_step` and the number after it, e.g. `truss_lm_step04` → `truss` (see below) |
+| `attach-src` | adds the files of `src/` as code blocks (not executed, with line numbers) in an appendix, headed e.g. `src/truss.py` |
 | `show-markers` | marks in HTML what goes into the scaffold, the solution, or both (given code): a colored line on the left with a label |
 
 What the three exercise steps keep:
@@ -381,11 +402,7 @@ shown (`include: false`, unless the cell sets `include` itself).
 - In the scaffold, an exercise with nothing left but headings is dropped.
 - Errors: a marker or setup cell inside a marker, an exercise inside another div.
 
-Code in `src/` growing from sheet to sheet: one versioned file per change, e.g. `src/truss_lm_step02.py`,
-`src/truss_lm_step04.py`; the solution imports the version it needs, the work files get `src.truss` (step
-`remove-lm-step`), as the students keep one file `src/truss.py`. A version changed by mistake is an error (files of
-the same name must not differ). To work on a solution in its building block, the versions it imports are copied into
-its `src/`, marked with `lm-copy` in the first line (e.g. `# lm-copy`): not attached, the line removed when copied.
+Code in `src/` growing from sheet to sheet: each building block has the code as of its point in the course (e.g. `src/truss.py`), the students extend their own copy from sheet to sheet.
 
 ### Placeholders
 
@@ -399,6 +416,7 @@ Filled in per product when the recipe runs:
 | `${hash}` | first 8 hex digits of `sha1("87362-" + nn-name)`, for names that cannot be guessed | `2094a057` |
 | `${group-title}` | `group-title` of the product, default: `group-title` of the first building block | `Convergence` |
 | `${product-title}` | `product-title` of the product, default: `block-title` of the first building block | `Sequences` |
+| `${full-title}` | `${group-title}: ${product-title}`, or only `${product-title}` if the product has no group title | `Convergence: Sequences` |
 | `${site}` | URL of the published site | `https://teacher.github.io/calculus` |
-| `${work-files}` | URL of the file of the action with `provides: work-files` | `…/01-convergence-sequences-exercises.zip` |
+| `${work-files}` | URL of the file of the action with `provides: work-files` | `…/01-convergence-sequences/01-convergence-sequences-exercises.zip` |
 | `${exercise-sheet}`, `${exercises}`, … | words in the language of the collection (`collection-languages` in `conventions.yml`, `aufgaben` German, otherwise English), from `words/<language>.yml` | `Aufgabenblatt`, `aufgaben` |
