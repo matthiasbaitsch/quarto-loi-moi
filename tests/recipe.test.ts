@@ -36,6 +36,7 @@ Deno.test("exercises recipe, notebook: julia-parts, sheet, solution, preview, zi
   assert(sheet.includes("[work files](01-convergence-sequences-exercises.zip)"));
   const solution = Deno.readTextFileSync(join(product, "01-convergence-sequences-exercises-solution-2094a057.qmd"));
   assert(solution.includes("function fibonacci_ratios(n)"));
+  assert(solution.includes("filters:\n  - loimoi"));
   const preview = Deno.readTextFileSync(join(product, "01-convergence-sequences-exercises-preview-2094a057.qmd"));
   assert(preview.includes("Compute $q_1, \\ldots, q_5$"));
   assert(preview.includes("::: {.lm-scaffold}"));

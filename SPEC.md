@@ -311,7 +311,7 @@ quarto-files:
 
   - name: "${nn-name}-${exercises}-${solution}-${hash}"
     title: "${solutions-to-exercise-sheet} ${n}"
-    process: [exercise-solution, attach-src]
+    process: [exercise-solution, attach-src, show-markers]
     link: "${solution-label}"
 
   - name: "${nn-name}-${exercises}-${preview}-${hash}"   # what the teacher writes, scaffold and solution marked
