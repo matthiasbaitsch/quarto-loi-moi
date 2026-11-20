@@ -15,6 +15,6 @@ Deno.test("link pages: r-topics, files with a link, local and published", () => 
   assert(!local.includes(".zip"));
 
   const site = pages.sitePage();
-  assert(site.includes(`https://teacher.github.io/calculus/${path}`));
+  assert(site.includes(`<a href="https://teacher.github.io/calculus/${path}">Solution</a>`));
   assert(!site.includes(".zip"));
 });

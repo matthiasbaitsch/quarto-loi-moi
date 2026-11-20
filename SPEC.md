@@ -206,7 +206,7 @@ metadata-files:
 On every render of a collection, loi-moi writes two pages with the links to the products of all collections of the learning material (folders with a `_quarto.yml`), not published, in `.gitignore`:
 
 - `links.html`: links into the rendered output (`output-dir` of each collection), to check locally
-- `links-site.html`: the published URLs written out, to copy into Moodle; `site` is the folder `__output/` in `output-dir`, e.g. `__output/aufgaben/c/…` becomes `<site>/aufgaben/c/…`
+- `links-site.html`: the same with the published URLs, to copy into Moodle; `site` is the folder `__output/` in `output-dir`, e.g. `__output/aufgaben/c/…` becomes `<site>/aufgaben/c/…`
 
 Grouped by collection and product (number and `${full-title}`); per product the files of the recipe with a `link`, e.g. in `exercises.yml`:
 
