@@ -1,6 +1,7 @@
 import { existsSync } from "jsr:@std/fs@1";
 import { basename, dirname, isAbsolute, join } from "jsr:@std/path@1";
 import { BuildingBlockTree } from "./building-block-tree.ts";
+import { CodeReplacement } from "./code-replacement.ts";
 import { ProductConfiguration, ProductNaming } from "./product-configuration.ts";
 import { Recipe } from "./recipe.ts";
 import { configFile, conventions, gitHubPages, mergeYamlAlongPath, readYaml, resolve, Yaml } from "./utilities.ts";
@@ -40,7 +41,8 @@ export class CollectionConfiguration {
   recipe(): Recipe {
     const file = configFile(`recipes/${this.recipeName()}.yml`, this.learningMaterialFolder());
     const options = (this.settings.options ?? {}) as Record<string, string>;
-    return Recipe.read(file, options, this.outputFolder());
+    const replacements = CodeReplacement.read(configFile("code-replacements.yml", this.learningMaterialFolder()));
+    return Recipe.read(file, options, this.outputFolder(), replacements);
   }
 
   // Words for recipes and steps from `words/<language>.yml`; the language from `lang` in `loimoi.yml`, otherwise

@@ -135,6 +135,8 @@ classDiagram
   ProcessingStep <|-- ExerciseSolution
   ProcessingStep <|-- AttachSrc
   ProcessingStep <|-- ShowMarkers
+  ProcessingStep <|-- ReplaceCode
+  ReplaceCode "1" --> "*" CodeReplacement
   class Pipeline {
     steps: ProcessingStep[]
     addStep(step: ProcessingStep)
@@ -151,6 +153,18 @@ classDiagram
   class AttachSrc {
     files: string[]
   }
+  class ReplaceCode {
+    step: string
+    replacements: CodeReplacement[]
+  }
+  class CodeReplacement {
+    steps: string[]?
+    languages: string[]?
+    replace: string
+    with: string
+    read(file: string)$ CodeReplacement[]
+    applies(step: string, language: string) boolean
+  }
 ```
 
 Remarks:
@@ -158,6 +172,7 @@ Remarks:
 - `ReplacePlaceholders` also replaces in the header
 - `AttachSrc` puts the files of `src/` into an appendix of the document, as code blocks (not executed); `files` from
   `basket.files("src/*")`
+- `QuartoFile` adds a `ReplaceCode` after each step of `process`; the replacements from `code-replacements.yml`, read in `CollectionConfiguration.recipe()` and passed via `Recipe.read` to each `QuartoFile`
 
 ## Process
 
@@ -226,7 +241,7 @@ classDiagram
   class Recipe {
     folder: string
     actions: Action[]
-    read(file: string, options: Record, folder: string)$ Recipe
+    read(file: string, options: Record, folder: string, replacements: CodeReplacement[])$ Recipe
     run(basket: Basket, placeholders: Record)
   }
   class Action {

@@ -3,12 +3,17 @@ import { ensureDirSync, existsSync } from "@std/fs";
 import { join } from "@std/path";
 import { unzipSync } from "fflate";
 import { BuildingBlockTree } from "../_extensions/loimoi/building-block-tree.ts";
+import { CodeReplacement } from "../_extensions/loimoi/code-replacement.ts";
 import { QuartoFile } from "../_extensions/loimoi/actions/quarto-file.ts";
 import { Recipe } from "../_extensions/loimoi/recipe.ts";
 import { readYaml } from "../_extensions/loimoi/utilities.ts";
 
 const examples = new URL("../examples/", import.meta.url).pathname;
 const exercises = new URL("../_extensions/loimoi/config/recipes/exercises.yml", import.meta.url).pathname;
+
+const replacements = CodeReplacement.read(
+  new URL("../_extensions/loimoi/config/code-replacements.yml", import.meta.url).pathname,
+);
 
 const words = readYaml(new URL("../_extensions/loimoi/config/words/en.yml", import.meta.url).pathname);
 
@@ -23,11 +28,11 @@ const placeholders = {
   "full-title": "Convergence: Sequences",
 };
 
-Deno.test("exercises recipe, notebook: julia-parts, sheet, solution, preview, zipped notebook only, images", () => {
+Deno.test("exercises recipe, notebook: julia-parts, sheet, solution, preview, zipped notebook only, images, code replacements", () => {
   const folder = Deno.makeTempDirSync();
   const tree = new BuildingBlockTree(examples + "julia-parts/building-blocks");
   const basket = tree.ingredients(["10-convergence/10-sequences/exercises"]);
-  Recipe.read(exercises, {}, folder).run(basket, placeholders);
+  Recipe.read(exercises, {}, folder, replacements).run(basket, placeholders);
   const product = join(folder, "01-convergence-sequences");
 
   const sheet = Deno.readTextFileSync(join(product, "01-convergence-sequences-exercises.qmd"));
@@ -37,6 +42,7 @@ Deno.test("exercises recipe, notebook: julia-parts, sheet, solution, preview, zi
   const solution = Deno.readTextFileSync(join(product, "01-convergence-sequences-exercises-solution-2094a057.qmd"));
   assert(solution.includes("function fibonacci_ratios(n)"));
   assert(solution.includes("filters:\n  - loimoi"));
+  assert(solution.includes('include("src/fibonacci.jl")'));
   const preview = Deno.readTextFileSync(join(product, "01-convergence-sequences-exercises-preview-2094a057.qmd"));
   assert(preview.includes("Compute $q_1, \\ldots, q_5$"));
   assert(preview.includes("::: {.lm-scaffold}"));
@@ -46,8 +52,10 @@ Deno.test("exercises recipe, notebook: julia-parts, sheet, solution, preview, zi
 
   const zip = unzipSync(Deno.readFileSync(join(product, "01-convergence-sequences-exercises.zip")));
   assertEquals(Object.keys(zip), ["01-convergence-sequences-exercises.ipynb"]);
+  const notebook = new TextDecoder().decode(zip["01-convergence-sequences-exercises.ipynb"]);
+  assert(notebook.includes('# includet(\\"src/fibonacci.jl\\")'));
 
-  const scaffold = new QuartoFile({ name: "work-files/exercises", process: ["exercise-scaffold"] });
+  const scaffold = new QuartoFile({ name: "work-files/exercises", process: ["exercise-scaffold"] }, []);
   scaffold.run(basket, placeholders, product);
   assert(existsSync(join(product, "src/fibonacci.jl")));
   assert(existsSync(join(product, "work-files/images/sequence.svg")));
@@ -59,7 +67,7 @@ Deno.test("exercises recipe, folder: r-topics, project with qmd, data and templa
   const tree = new BuildingBlockTree(examples + "r-topics/building-blocks");
   const basket = tree.ingredients(["theory/sequences/exercises", "programming/sequences/exercises"]);
   const values = { ...placeholders, "nn-name": "01-sequences", "name": "sequences" };
-  Recipe.read(exercises, { "work-files": "folder" }, folder).run(basket, values);
+  Recipe.read(exercises, { "work-files": "folder" }, folder, []).run(basket, values);
   const product = join(folder, "01-sequences");
 
   const zip = unzipSync(Deno.readFileSync(join(product, "01-sequences-exercises.zip")));
@@ -86,12 +94,12 @@ Deno.test("files of the same name with different content are an error", () => {
     Deno.writeTextFileSync(join(root, name, "exercises/data/values.csv"), content);
   }
   const basket = new BuildingBlockTree(root).ingredients(["a/exercises", "b/exercises"]);
-  const sheet = new QuartoFile({ name: "sheet", process: [] });
+  const sheet = new QuartoFile({ name: "sheet", process: [] }, []);
   assertThrows(() => sheet.run(basket, placeholders, Deno.makeTempDirSync()), Error, "data/values.csv");
 });
 
 Deno.test("exercises recipe: unknown option or value is an error", () => {
-  assertThrows(() => Recipe.read(exercises, { "work-files": "project" }, "."), Error, "project");
-  assertThrows(() => Recipe.read(exercises, { "format": "a" }, "."), Error, "format");
-  assertThrows(() => Recipe.read(exercises.replace("exercises.yml", "slides.yml"), {}, "."), Error, "not found");
+  assertThrows(() => Recipe.read(exercises, { "work-files": "project" }, ".", []), Error, "project");
+  assertThrows(() => Recipe.read(exercises, { "format": "a" }, ".", []), Error, "format");
+  assertThrows(() => Recipe.read(exercises.replace("exercises.yml", "slides.yml"), {}, ".", []), Error, "not found");
 });

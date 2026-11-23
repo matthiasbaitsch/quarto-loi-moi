@@ -390,6 +390,17 @@ Processing steps (`process`):
 | `attach-src` | adds the files of `src/` as code blocks (not executed, with line numbers) in an appendix, headed e.g. `src/truss.py`; not the files with `lm-no-attach` in the first line (e.g. `# lm-no-attach`), such as copies of code from an earlier sheet |
 | `show-markers` | marks in HTML what goes into the scaffold, the solution, or both (given code): a colored line on the left with a label |
 
+After each step, the code replacements from `code-replacements.yml` for that step and the language of the cell, in the code of executable cells. Predefined: for Julia in the scaffold, `include("src/` becomes `# includet("src/` (Quarto renders with `include`, students use Revise). Own replacements in `learning-material/_loimoi/code-replacements.yml` replace the predefined ones:
+
+```yml
+replacements:
+  - scope:                      # all steps or all languages if missing
+      steps: [exercise-scaffold]
+      languages: [julia]
+    replace: 'include("src/'
+    with: '# includet("src/'
+```
+
 What the three exercise steps keep:
 
 **Principle:** text is for the sheet, code is for the scaffold and the solution, headings in exercises are for all
