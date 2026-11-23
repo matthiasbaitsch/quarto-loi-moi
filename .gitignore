@@ -7,8 +7,10 @@
 # Copies of the extension in the examples (make examples)
 examples/*/_extensions/
 
-# numMat's building blocks via a symlink to a local path, to find problems
+# numMat and numPDE, to find problems: building blocks with `building-blocks` in loimoi.yml, environments via
+# symlinks, all local paths
 examples/nummat/
+examples/numpde/
 
 # Quarto output
 .quarto/
