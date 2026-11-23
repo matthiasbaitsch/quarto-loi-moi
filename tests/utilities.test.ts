@@ -20,21 +20,15 @@ Deno.test("config file: the user's file overrides the built-in one", () => {
   assertEquals(configFile("recipes/exercises.yml", learningMaterialFolder), own);
 });
 
-Deno.test("resolve: upward from the working directory, exactly one of the candidates", () => {
+Deno.test("resolve: upward from the given folder, exactly one of the candidates", () => {
   const course = Deno.realPathSync(Deno.makeTempDirSync());
   const collectionFolder = join(course, "lernpfad/aufgaben");
   ensureDirSync(collectionFolder);
-  const workingFolder = Deno.cwd();
-  Deno.chdir(collectionFolder);
-  try {
-    assertThrows(() => resolve("building-blocks"), Error, "found 0");
+  assertThrows(() => resolve("building-blocks", collectionFolder), Error, "found 0");
 
-    ensureDirSync(join(course, "bausteine"));
-    assertEquals(resolve("building-blocks"), join(course, "bausteine"));
+  ensureDirSync(join(course, "bausteine"));
+  assertEquals(resolve("building-blocks", collectionFolder), join(course, "bausteine"));
 
-    ensureDirSync(join(course, "building-blocks"));
-    assertThrows(() => resolve("building-blocks"), Error, "found 2");
-  } finally {
-    Deno.chdir(workingFolder);
-  }
+  ensureDirSync(join(course, "building-blocks"));
+  assertThrows(() => resolve("building-blocks", collectionFolder), Error, "found 2");
 });

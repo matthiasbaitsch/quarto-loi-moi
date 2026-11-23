@@ -1,12 +1,10 @@
 import { assert } from "@std/assert";
-import { BuildingBlockTree } from "../_extensions/loimoi/building-block-tree.ts";
 import { LinkPages } from "../_extensions/loimoi/link-pages.ts";
 
 const examples = new URL("../examples/", import.meta.url).pathname;
 
 Deno.test("link pages: r-topics, files with a link, local and published", () => {
-  const tree = new BuildingBlockTree(`${examples}r-topics/building-blocks`);
-  const pages = new LinkPages(`${examples}r-topics/learning-material`, tree);
+  const pages = new LinkPages(`${examples}r-topics/learning-material`);
   const path = "r-topics/exercises/c/01-sequences/01-sequences-exercises-solution-50eb9d34.html";
 
   const local = pages.localPage();

@@ -1,15 +1,12 @@
 import { assertEquals, assertObjectMatch, assertThrows } from "@std/assert";
 import { ensureDirSync } from "@std/fs";
 import { join } from "@std/path";
-import { BuildingBlockTree } from "../_extensions/loimoi/building-block-tree.ts";
 import { CollectionConfiguration } from "../_extensions/loimoi/collection-configuration.ts";
 
 const examples = new URL("../examples/", import.meta.url).pathname;
 
-const read = (example: string, collection: string) => {
-  const tree = new BuildingBlockTree(`${examples}${example}/building-blocks`);
-  return new CollectionConfiguration(`${examples}${example}/learning-material/${collection}`, tree);
-};
+const read = (example: string, collection: string) =>
+  new CollectionConfiguration(`${examples}${example}/learning-material/${collection}`);
 
 Deno.test("julia-parts: everything from defaults", () => {
   const configuration = read("julia-parts", "exercises");
@@ -77,14 +74,27 @@ Deno.test("r-topics: loimoi.yml files merged along the path", () => {
 Deno.test("product without product-title and without block-title is an error", () => {
   const collection = join(Deno.makeTempDirSync(), "learning-material/exercises");
   ensureDirSync(collection);
-  Deno.writeTextFileSync(join(collection, "loimoi.yml"), "products:\n  - ingredients: [theory/sequences/exercises]\n");
-  const tree = new BuildingBlockTree(`${examples}r-topics/building-blocks`);
-  assertThrows(() => new CollectionConfiguration(collection, tree).productConfigurations(), Error, "theory-sequences");
+  Deno.writeTextFileSync(
+    join(collection, "loimoi.yml"),
+    `building-blocks: ${examples}r-topics/building-blocks\nproducts:\n  - ingredients: [theory/sequences/exercises]\n`,
+  );
+  assertThrows(() => new CollectionConfiguration(collection).productConfigurations(), Error, "theory-sequences");
 });
 
 Deno.test("collection aufgaben without lang: German words", () => {
   const collection = join(Deno.makeTempDirSync(), "learning-material/aufgaben");
   ensureDirSync(collection);
-  const tree = new BuildingBlockTree(`${examples}python-flat/building-blocks`);
-  assertEquals(new CollectionConfiguration(collection, tree).words()["exercise-sheet"], "Aufgabenblatt");
+  Deno.writeTextFileSync(join(collection, "loimoi.yml"), `building-blocks: ${examples}python-flat/building-blocks\n`);
+  assertEquals(new CollectionConfiguration(collection).words()["exercise-sheet"], "Aufgabenblatt");
+});
+
+Deno.test("building-blocks in loimoi.yml: relative to the learning material folder, error if missing", () => {
+  const course = Deno.realPathSync(Deno.makeTempDirSync());
+  const collection = join(course, "learning-material/exercises");
+  ensureDirSync(collection);
+  Deno.writeTextFileSync(join(course, "learning-material/loimoi.yml"), "building-blocks: ../shared/blocks\n");
+  assertThrows(() => new CollectionConfiguration(collection), Error, "no folder");
+
+  ensureDirSync(join(course, "shared/blocks"));
+  assertEquals(new CollectionConfiguration(collection).tree.rootFolder, join(course, "shared/blocks"));
 });

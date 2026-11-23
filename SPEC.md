@@ -253,8 +253,7 @@ Remarks:
 - Recipe and ingredient folder of each collection from `conventions.yml` (e.g. `aufgaben/` uses the recipe
   `exercises` and the ingredient folders `aufgaben/`); own conventions in `_loimoi/conventions.yml`, the first one
   found upward from the collection folder
-- Building blocks folder found upward from the collection folder, named after one of the names in `conventions.yml`
-  (`building-blocks/` or `bausteine/`)
+- Building blocks folder set with `building-blocks` in `loimoi.yml`, otherwise found upward from the collection folder, named after one of the names in `conventions.yml` (`building-blocks/` or `bausteine/`)
 - Predefined recipes come with loi-moi; own recipes in `learning-material/_loimoi/recipes/` override them by name
 - A recipe might declare options
 - `name` is relative to the folder of the product (`${nn-name}/`)
@@ -359,6 +358,7 @@ archives:                                        # folder deleted after zip
 | `first-number` | number of the first product | `1` |
 | `lang` | language of the words in file names and titles (`en`, `de`) | from the collection's name via `conventions.yml` (`aufgaben`: `de`), otherwise `en` |
 | `site` | URL of the published site | from the Git remote |
+| `building-blocks` | path to the building blocks folder, relative to the learning material folder | found upward from the collection folder |
 | `products` | one entry per product: `ingredients`, optional `name`, `product-title`, `group-title` | one product per building block with the ingredient folder from `conventions.yml`, in folder order |
 | `product-naming` | default product names from the path of the first building block (`path`) or from the titles (`titles`) | `path` |
 | `recipe` | recipe that makes the products | from `conventions.yml` |

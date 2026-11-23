@@ -163,7 +163,7 @@ Remarks:
 
 The pre-render script runs the whole process:
 
-1. Create `CollectionConfiguration` from the collection folder and the building block tree
+1. Create `CollectionConfiguration` from the collection folder, which makes the building block tree
 1. Clear the `c/` folder
 1. For each product:
     1. get its `Basket` from the building block tree
@@ -180,7 +180,8 @@ classDiagram
   direction LR
   CollectionConfiguration "1" --> "*" ProductConfiguration
   class CollectionConfiguration {
-    constructor(collectionFolder: string, tree: BuildingBlockTree)
+    tree: BuildingBlockTree
+    constructor(collectionFolder: string)
     outputFolder() string
     site() string?
     recipe() Recipe
@@ -199,8 +200,7 @@ classDiagram
   }
 ```
 
-The constructor merges the `loimoi.yml` files along the path and reads `conventions.yml`. The methods derive what
-is missing:
+The constructor merges the `loimoi.yml` files along the path, reads `conventions.yml` and makes the building block tree: its folder from `building-blocks` in `loimoi.yml`, relative to the learning material folder, otherwise `resolve("building-blocks", collectionFolder)`. The methods derive what is missing:
 
 - `site()`: from the Git remote
 - `recipe()`: either from `recipe` in `loimoi.yml` or default via `conventions.yml`
@@ -211,8 +211,8 @@ is missing:
 YAML configuration (e.g. `recipes/exercises.yml`) in `_extensions/loimoi/config/`; a file with the same path in `learning-material/_loimoi/` replaces it (`configFile()` in `utilities.ts`). Exception: `conventions.yml`, the first
 `_loimoi/conventions.yml` upward from the working directory (`conventions()`).
 
-`resolve(logicalName)` in `utilities.ts` finds a file or folder by a logical name (e.g. `building-blocks`): upward
-from the working directory, the first folder containing one of the names listed under `names` in
+`resolve(logicalName, folder)` in `utilities.ts` finds a file or folder by a logical name (e.g. `building-blocks`): upward
+from `folder`, the first folder containing one of the names listed under `names` in
 `conventions.yml`; error if none or several in the same folder.
 
 ### Recipe and Action classes
@@ -268,7 +268,6 @@ classDiagram
   LinkPages ..> CollectionConfiguration : creates
   class LinkPages {
     learningMaterialFolder: string
-    tree: BuildingBlockTree
     localPage() string
     sitePage() string
     write()
