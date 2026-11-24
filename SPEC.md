@@ -302,26 +302,26 @@ options:
     default: notebook
 
 quarto-files:
-  - name: "${nn-name}-${exercises}"
+  - name: "${file-name}"
     title: "${exercise-sheet} ${n}"
     subtitle: "${full-title}"
     process: [exercise-sheet]
     link: "${exercise-sheet}"
 
-  - name: "${nn-name}-${exercises}-${solution}-${hash}"
+  - name: "${file-name}-${solution}-${hash}"
     title: "${solutions-to-exercise-sheet} ${n}"
     subtitle: "${full-title}"
     process: [exercise-solution, attach-src, show-markers]
     link: "${solution-label}"
 
-  - name: "${nn-name}-${exercises}-${preview}-${hash}"   # what the teacher writes, scaffold and solution marked
+  - name: "${file-name}-${preview}-${hash}"   # what the teacher writes, scaffold and solution marked
     title: "${exercise-sheet} ${n}"
     subtitle: "${full-title}"
     process: [attach-src, show-markers]
     link: "${preview-label}"
 
   - when: {work-files: notebook}                 # single Jupyter notebook
-    name: "${nn-name}-${exercises}"
+    name: "${file-name}"
     title: "${exercise-sheet} ${n}"
     process: [exercise-scaffold]
     format: ipynb
@@ -329,13 +329,13 @@ quarto-files:
     provides: work-files
 
   - when: {work-files: folder}                   # folder, e.g. a project
-    name: "${nn-name}-${exercises}/${name}-${exercises}"
+    name: "${file-name}/${name}-${exercises}"
     title: "${exercise-sheet} ${n}"
     process: [exercise-scaffold]
 
 archives:                                        # folder deleted after zip
   - when: {work-files: folder}
-    name: "${nn-name}-${exercises}"
+    name: "${file-name}"
     provides: work-files
     add:                                         # see "Paths in add"
       - /_templates/exercises/_quarto.yml
@@ -361,9 +361,12 @@ archives:                                        # folder deleted after zip
 | `site` | URL of the published site | from the Git remote |
 | `building-blocks` | path to the building blocks folder, relative to the learning material folder | found upward from the collection folder |
 | `products` | one entry per product: `ingredients`, optional `name`, `product-title`, `group-title` | one product per building block with the ingredient folder from `conventions.yml`, in folder order |
+| `file-name` | base name of the product's files, with placeholders (e.g. `aufgabenblatt-${nn}`) | `${nn-name}-${exercises}` |
 | `product-naming` | default product names from the path of the first building block (`path`) or from the titles (`titles`) | `path` |
 | `recipe` | recipe that makes the products | from `conventions.yml` |
 | `options` | options of the recipe | see the recipe |
+
+Other keys are an error, as is a setting with an invalid value or a missing recipe; checked when `loimoi.yml` is read.
 
 ### Actions
 
@@ -424,11 +427,13 @@ Filled in per product when the recipe runs:
 |---|---|---|
 | `${n}` | number of the product | `1` |
 | `${name}` | identifies the product in file names; `name` of the product, default: path of the first building block, leading numbers stripped, `/` as `-` | `convergence-sequences` |
-| `${nn-name}` | `${n}` with two digits, then `${name}` | `01-convergence-sequences` |
+| `${nn}` | `${n}` with two digits | `01` |
+| `${nn-name}` | `${nn}-${name}` | `01-convergence-sequences` |
 | `${hash}` | first 8 hex digits of `sha1("87362-" + nn-name)`, for names that cannot be guessed | `2094a057` |
 | `${group-title}` | `group-title` of the product, default: `group-title` of the first building block | `Convergence` |
 | `${product-title}` | `product-title` of the product, default: `block-title` of the first building block | `Sequences` |
 | `${full-title}` | `${group-title}: ${product-title}`, or only `${product-title}` if the product has no group title | `Convergence: Sequences` |
+| `${file-name}` | `file-name` from `loimoi.yml`, its placeholders replaced | `01-convergence-sequences-exercises` |
 | `${site}` | URL of the published site | `https://teacher.github.io/calculus` |
 | `${work-files}` | URL of the file of the action with `provides: work-files` | `…/01-convergence-sequences/01-convergence-sequences-exercises.zip` |
 | `${exercise-sheet}`, `${exercises}`, … | words in the language of the collection (`collection-languages` in `conventions.yml`, `aufgaben` German, otherwise English), from `words/<language>.yml` | `Aufgabenblatt`, `aufgaben` |

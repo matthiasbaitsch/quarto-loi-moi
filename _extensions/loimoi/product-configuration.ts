@@ -32,19 +32,21 @@ export class ProductConfiguration {
     this.name = name ?? (productNaming === "titles" ? slug(...titles) : basket.name());
   }
 
-  // Without `group-title` and `site` if they are missing, so `${site}` stays visible in the output
-  placeholders(site?: string): Placeholders {
-    const nnName = `${String(this.number).padStart(2, "0")}-${this.name}`;
+  // Without `group-title` if the product has none
+  placeholders(site: string): Placeholders {
+    const nn = String(this.number).padStart(2, "0");
+    const nnName = `${nn}-${this.name}`;
     const values: Placeholders = {
       "n": String(this.number),
+      "nn": nn,
       "name": this.name,
       "nn-name": nnName,
       "hash": createHash("sha1").update(`87362-${nnName}`).digest("hex").slice(0, 8),
       "product-title": this.title,
       "full-title": this.fullTitle,
+      "site": site,
     };
     if (this.groupTitle !== undefined) values["group-title"] = this.groupTitle;
-    if (site !== undefined) values["site"] = site;
     return values;
   }
 }

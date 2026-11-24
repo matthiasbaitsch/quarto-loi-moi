@@ -172,17 +172,17 @@ Remarks:
 - `ReplacePlaceholders` also replaces in the header
 - `AttachSrc` puts the files of `src/` into an appendix of the document, as code blocks (not executed); `files` from
   `basket.files("src/*")`
-- `QuartoFile` adds a `ReplaceCode` after each step of `process`; the replacements from `code-replacements.yml`, read in `CollectionConfiguration.recipe()` and passed via `Recipe.read` to each `QuartoFile`
+- `QuartoFile` adds a `ReplaceCode` after each step of `process`; the replacements from `code-replacements.yml`, read in `Collection.recipe()` and passed via `Recipe.read` to each `QuartoFile`
 
 ## Process
 
 The pre-render script runs the whole process:
 
-1. Create `CollectionConfiguration` from the collection folder, which makes the building block tree
+1. Create `Collection` from the collection folder, which makes the building block tree
 1. Clear the `c/` folder
 1. For each product:
     1. get its `Basket` from the building block tree
-    1. compute the placeholders: `n`, `nn-name`, `name`, `hash`, `product-title`, `group-title`, `full-title`, `site`
+    1. compute the placeholders (`Collection.placeholders()`): words, `n`, `nn`, `nn-name`, `name`, `hash`, `product-title`, `group-title`, `full-title`, `site`, then `file-name` from these
     1. run the recipe in the folder of the product, `c/${nn-name}/`
 1. Write the link pages for all collections of the learning material (`LinkPages`)
 
@@ -193,16 +193,31 @@ In detail.
 ```mermaid
 classDiagram
   direction LR
-  CollectionConfiguration "1" --> "*" ProductConfiguration
-  class CollectionConfiguration {
+  Collection "1" --> "1" CollectionConfiguration
+  Collection "1" --> "*" ProductConfiguration
+  class Collection {
+    configuration: CollectionConfiguration
     tree: BuildingBlockTree
     constructor(collectionFolder: string)
     outputFolder() string
-    site() string?
+    renderFolder() string
     recipe() Recipe
     words() Record
+    placeholders(product: ProductConfiguration) Record
     productConfigurations() ProductConfiguration[]
-    renderFolder() string
+  }
+  class CollectionConfiguration {
+    output: string
+    firstNumber: number
+    fileName: string
+    productNaming: string
+    options: Record
+    lang: string
+    site: string
+    buildingBlocksFolder: string
+    recipe: string
+    products: Record[]
+    constructor(collectionFolder: string)
   }
   class ProductConfiguration {
     number: number
@@ -215,13 +230,7 @@ classDiagram
   }
 ```
 
-The constructor merges the `loimoi.yml` files along the path, reads `conventions.yml` and makes the building block tree: its folder from `building-blocks` in `loimoi.yml`, relative to the learning material folder, otherwise `resolve("building-blocks", collectionFolder)`. The methods derive what is missing:
-
-- `site()`: from the Git remote
-- `recipe()`: either from `recipe` in `loimoi.yml` or default via `conventions.yml`
-- `words()`: words for recipes and steps from `words/<language>.yml`, the language of the collection via
-  `conventions.yml`; added to the placeholders
-- `productConfigurations()`: either from `products` in `loimoi.yml` or one per ingredient via `conventions.yml`
+`CollectionConfiguration`: the `loimoi.yml` files merged along the path, every default filled in; all checks of the settings here, so the methods of `Collection` need none. The allowed settings and their fixed defaults in `config/settings.yml` (not replaceable); the other defaults computed, some via `conventions.yml` or the Git remote.
 
 YAML configuration (e.g. `recipes/exercises.yml`) in `_extensions/loimoi/config/`; a file with the same path in `learning-material/_loimoi/` replaces it (`configFile()` in `utilities.ts`). Exception: `conventions.yml`, the first
 `_loimoi/conventions.yml` upward from the working directory (`conventions()`).
@@ -280,7 +289,7 @@ Remarks:
 ```mermaid
 classDiagram
   direction LR
-  LinkPages ..> CollectionConfiguration : creates
+  LinkPages ..> Collection : creates
   class LinkPages {
     learningMaterialFolder: string
     localPage() string
@@ -291,10 +300,9 @@ classDiagram
 
 Remarks:
 
-- Collections: the folders in `learningMaterialFolder` with a `_quarto.yml`; a `CollectionConfiguration` for each
+- Collections: the folders in `learningMaterialFolder` with a `_quarto.yml`; a `Collection` for each
 - Per product: the actions of the recipe with a `link` (label, with placeholders), the path from `file()` (`.qmd` becomes `.html`) in `c/${nn-name}/`
-- `CollectionConfiguration.renderFolder()`: `output-dir` from `_quarto.yml`, absolute (`outputFolder()` is `c/`, where loi-moi writes); `links.html` links relative to it, `links-site.html` uses `site` plus the part after `__output/`
-- Error if `output-dir` is missing, or if `links-site.html` needs `site` and there is none
+- `Collection.renderFolder()`: `output-dir` from `_quarto.yml`, absolute (`outputFolder()` is `c/`, where loi-moi writes); `links.html` links relative to it, `links-site.html` uses `site` plus the part after `__output/`
 
 ## Decisions
 

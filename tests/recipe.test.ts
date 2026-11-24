@@ -20,7 +20,9 @@ const words = readYaml(new URL("../_extensions/loimoi/config/words/en.yml", impo
 const placeholders = {
   ...words as Record<string, string>,
   "n": "1",
+  "nn": "01",
   "nn-name": "01-convergence-sequences",
+  "file-name": "01-convergence-sequences-exercises",
   "name": "convergence-sequences",
   "hash": "2094a057",
   "group-title": "Convergence",
@@ -67,7 +69,12 @@ Deno.test("exercises recipe, folder: r-topics, project with qmd, data and templa
   const folder = Deno.makeTempDirSync();
   const tree = new BuildingBlockTree(examples + "r-topics/building-blocks");
   const basket = tree.ingredients(["theory/sequences/exercises", "programming/sequences/exercises"]);
-  const values = { ...placeholders, "nn-name": "01-sequences", "name": "sequences" };
+  const values = {
+    ...placeholders,
+    "nn-name": "01-sequences",
+    "name": "sequences",
+    "file-name": "01-sequences-exercises",
+  };
   Recipe.read(exercises, { "work-files": "folder" }, folder, []).run(basket, values);
   const product = join(folder, "01-sequences");
 
