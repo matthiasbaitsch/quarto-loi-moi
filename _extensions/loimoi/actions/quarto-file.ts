@@ -2,7 +2,6 @@ import { ensureDirSync, existsSync } from "jsr:@std/fs@1";
 import { basename, dirname, relative } from "jsr:@std/path@1";
 import { Basket } from "../basket.ts";
 import { CodeReplacement } from "../code-replacement.ts";
-import { AttachSrc } from "../processing-steps/attach-src.ts";
 import { MergeSetupCells } from "../processing-steps/merge-setup-cells.ts";
 import { Pipeline } from "../processing-steps/pipeline.ts";
 import { ReplaceCode } from "../processing-steps/replace-code.ts";
@@ -37,13 +36,14 @@ export class QuartoFile extends Action {
   }
 
   run(basket: Basket, placeholders: Placeholders, folder: ProductFolder): void {
-    const pipeline = new Pipeline();
+    const pipeline = new Pipeline({
+      srcFiles: basket.files("src/*", { absolute: true }),
+      appendix: placeholders.appendix,
+    });
     pipeline.addStep(new ReplacePlaceholders(placeholders));
     pipeline.addStep(new MergeSetupCells());
     for (const step of this.process) {
-      pipeline.addStep(
-        step === "attach-src" ? new AttachSrc(basket.files("src/*", { absolute: true }), placeholders.appendix) : step,
-      );
+      pipeline.addStep(step);
       pipeline.addStep(new ReplaceCode(step, this.replacements));
     }
     const doc = pipeline.run(QmdDocument.read(...basket.files("*.qmd", { absolute: true })));

@@ -139,6 +139,7 @@ classDiagram
   ReplaceCode "1" --> "*" CodeReplacement
   class Pipeline {
     steps: ProcessingStep[]
+    context: StepContext
     addStep(step: ProcessingStep)
     addStep(name: string)
     run(doc: QmdDocument) QmdDocument
@@ -170,8 +171,8 @@ classDiagram
 Remarks:
 
 - `ReplacePlaceholders` also replaces in the header
-- `AttachSrc` puts the files of `src/` into an appendix of the document, as code blocks (not executed); `files` from
-  `basket.files("src/*")`
+- `AttachSrc` puts the files of `src/` into an appendix of the document, as code blocks (not executed)
+- `Pipeline`: steps added by their name are created with what they need from its context (`StepContext`: the files of `src/`, the heading of the appendix)
 - `QuartoFile` adds a `ReplaceCode` after each step of `process`; the replacements from `code-replacements.yml`, read in `Collection.recipe()` and passed via `Recipe.read` to each `QuartoFile`
 
 ## Process

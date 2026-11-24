@@ -1,4 +1,4 @@
-import { assertEquals, assertThrows } from "@std/assert";
+import { assert, assertEquals, assertThrows } from "@std/assert";
 import { join } from "@std/path";
 import { QmdDocument } from "../_extensions/loimoi/qmd-document.ts";
 import { Pipeline } from "../_extensions/loimoi/processing-steps/pipeline.ts";
@@ -8,12 +8,16 @@ import { ReplacePlaceholders } from "../_extensions/loimoi/processing-steps/repl
 
 const examples = new URL("../examples/", import.meta.url).pathname;
 
-Deno.test("pipeline: steps by name and as objects, unknown name is an error", () => {
-  const pipeline = new Pipeline();
+Deno.test("pipeline: steps by name, also attach-src with the files of the context, and as objects; unknown name is an error", () => {
+  const src = join(Deno.makeTempDirSync(), "truss.py");
+  Deno.writeTextFileSync(src, "x = 1\n");
+  const pipeline = new Pipeline({ srcFiles: [src], appendix: "Appendix" });
   pipeline.addStep(new ReplacePlaceholders({ n: "1" }));
   pipeline.addStep("show-markers");
+  pipeline.addStep("attach-src");
   const doc = pipeline.run(QmdDocument.parse("---\ntitle: Sheet ${n}\n---\n\nText\n"));
   assertEquals(doc.header, { title: "Sheet 1", filters: ["loimoi"] });
+  assert(doc.text().includes("### `src/truss.py`"));
   assertThrows(() => pipeline.addStep("unknown"), Error, "unknown");
 });
 
@@ -35,7 +39,7 @@ Deno.test("attach src: code blocks in an appendix, headed with the file name; no
 });
 
 Deno.test("show markers: the filter of loi-moi added to the filters in the header", () => {
-  const pipeline = new Pipeline();
+  const pipeline = new Pipeline({ srcFiles: [], appendix: "Appendix" });
   pipeline.addStep("show-markers");
   const doc = pipeline.run(QmdDocument.parse("---\nfilters: [other]\n---\n\nText\n"));
   assertEquals(doc.header.filters, ["other", "loimoi"]);
