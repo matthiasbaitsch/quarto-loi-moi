@@ -4,6 +4,8 @@
 
 - numPDE: groups by topic in folders, `about.yml`, `.lm-` markers, code from `notebook.qmd` into the
   exercises, `${notebook}` → `${work-files}`; compare `c/` with today's.
+- Mathe B, solutions: headings inside exercises now shown (old: only title and solution).
+- Mathe B: move from `examples/mathe-b` into the real `lernpfad/aufgaben`; commit loi-moi and the `loimoi` branches of the submodules.
 
 ## Later
 

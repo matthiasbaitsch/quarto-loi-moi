@@ -1,7 +1,7 @@
-COURSES = examples/nummat examples/numpde
+COURSES = examples/nummat examples/numpde examples/mathe-b
 EXAMPLES = examples/python-flat examples/julia-parts examples/r-topics $(COURSES)
 COLLECTIONS = examples/python-flat/learning-material/aufgaben examples/julia-parts/learning-material/exercises \
-	examples/r-topics/learning-material/exercises examples/nummat/lernpfad/aufgaben examples/numpde/lernpfad/aufgaben
+	examples/r-topics/learning-material/exercises examples/nummat/lernpfad/aufgaben examples/numpde/lernpfad/aufgaben examples/mathe-b/lernpfad/aufgaben
 
 # Copy the extension into the example projects (Quarto does not follow a symlink to an extension)
 examples:
@@ -39,10 +39,14 @@ render-nummat: examples
 render-numpde: examples
 	quarto render examples/numpde/lernpfad/aufgaben
 
+# R packages from the R installation, as in Mathematik B
+render-mathe-b: examples
+	quarto render examples/mathe-b/lernpfad/aufgaben
+
 # Remove what loi-moi, Quarto and `make examples` produced in the examples
 clean:
 	rm -rf __output
 	for example in $(EXAMPLES); do rm -rf $$example/_extensions/loimoi; done
 	for collection in $(COLLECTIONS); do rm -rf $$collection/c $$collection/.quarto; done
 
-.PHONY: examples render render-python-flat render-julia-parts render-r-topics render-nummat render-numpde clean
+.PHONY: examples render render-python-flat render-julia-parts render-r-topics render-nummat render-numpde render-mathe-b clean

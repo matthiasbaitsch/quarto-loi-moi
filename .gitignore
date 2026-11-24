@@ -11,6 +11,7 @@ examples/*/_extensions/
 # symlinks, all local paths
 examples/nummat/
 examples/numpde/
+examples/mathe-b/
 
 # Quarto output
 .quarto/
