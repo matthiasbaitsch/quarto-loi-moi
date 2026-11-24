@@ -2,7 +2,7 @@ import { existsSync } from "jsr:@std/fs@1";
 import { join, relative } from "jsr:@std/path@1";
 import { QuartoFile } from "./actions/quarto-file.ts";
 import { Collection } from "./collection.ts";
-import { replacePlaceholders } from "./utilities.ts";
+import { conventions, replacePlaceholders } from "./utilities.ts";
 
 interface LinkedFile {
   label: string;
@@ -71,11 +71,14 @@ ${sections.join("\n\n")}
 `;
   }
 
-  // Collections: the folders with a `_quarto.yml`, in name order
+  // Collections: the folders with a `_quarto.yml` and a recipe in `conventions.yml`, in name order; other Quarto
+  // projects (e.g. a book made without loi-moi) are skipped
   private collections(): CollectionLinks[] {
+    const recipes = (conventions()["collection-recipes"] ?? {}) as Record<string, string>;
     const names = [...Deno.readDirSync(this.learningMaterialFolder)]
       .filter((entry) => entry.isDirectory && existsSync(join(this.learningMaterialFolder, entry.name, "_quarto.yml")))
       .map((entry) => entry.name)
+      .filter((name) => name in recipes)
       .sort();
     return names.map((name) => this.collection(name));
   }
