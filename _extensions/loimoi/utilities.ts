@@ -26,7 +26,7 @@ export function studentFiles(folder: string): string[] {
   return [...walkSync(folder, { includeDirs: false, skip: [excluded] })].map((entry) => entry.path);
 }
 
-const umlauts: Record<string, string> ={ "ä": "ae", "ö": "oe", "ü": "ue", "ß": "ss" };
+const umlauts: Record<string, string> = { "ä": "ae", "ö": "oe", "ü": "ue", "ß": "ss" };
 
 // `Stabtragwerke`, `Stabendkräfte` becomes `stabtragwerke-stabendkraefte`
 export function slug(...parts: string[]): string {

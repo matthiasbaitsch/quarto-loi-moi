@@ -95,7 +95,8 @@ Deno.test("merge setup cells: one cell at the place of the first, lines once", (
 Deno.test("attach src: julia-parts, files of src/ as code blocks in an appendix", () => {
   const src = examples + "julia-parts/building-blocks/10-convergence/10-sequences/exercises/src/fibonacci.jl";
   const doc = new AttachSrc([src], "Appendix").run(QmdDocument.parse("Text\n"));
-  const expected = "Text\n\n## Appendix\n\n### `src/fibonacci.jl`\n\n```{.julia .number-lines}\n" + Deno.readTextFileSync(src) +
+  const expected = "Text\n\n## Appendix\n\n### `src/fibonacci.jl`\n\n```{.julia .number-lines}\n" +
+    Deno.readTextFileSync(src) +
     "```\n";
   assertEquals(doc.text(), expected);
 });
