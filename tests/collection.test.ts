@@ -31,7 +31,8 @@ Deno.test("julia-parts: everything from defaults", () => {
     title: "Sequences",
     groupTitle: "Convergence",
   });
-  assertEquals(collection.configuration.products[0].placeholders("https://teacher.github.io/calculus"), {
+  assertObjectMatch(collection.placeholders(collection.configuration.products[0]), {
+    "exercise-sheet": "Exercise sheet",
     "n": "1",
     "nn": "01",
     "name": "convergence-sequences",
@@ -40,12 +41,9 @@ Deno.test("julia-parts: everything from defaults", () => {
     "product-title": "Sequences",
     "group-title": "Convergence",
     "full-title": "Convergence: Sequences",
-    "site": "https://teacher.github.io/calculus",
+    "site": "https://matthiasbaitsch.github.io/quarto-loi-moi",
+    "file-name": "01-convergence-sequences-exercises",
   });
-  assertEquals(
-    collection.placeholders(collection.configuration.products[0])["file-name"],
-    "01-convergence-sequences-exercises",
-  );
 });
 
 Deno.test("python-flat: recipe from the conventions, lang from loimoi.yml, ingredient folders named like the collection, product names from the titles, full title without group title, file-name from loimoi.yml", () => {
@@ -59,11 +57,10 @@ Deno.test("python-flat: recipe from the conventions, lang from loimoi.yml, ingre
     ["40-continuity/aufgaben"],
   ]);
   assertEquals(collection.configuration.products[1].name, "infinite-series");
-  assertEquals(
-    collection.configuration.products[1].placeholders("https://teacher.github.io/calculus")["full-title"],
-    "Infinite series",
-  );
-  assertEquals(collection.placeholders(collection.configuration.products[1])["file-name"], "sheet-02");
+  const placeholders = collection.placeholders(collection.configuration.products[1]);
+  assertEquals(placeholders["full-title"], "Infinite series");
+  assertEquals(placeholders["group-title"], undefined);
+  assertEquals(placeholders["file-name"], "sheet-02");
 });
 
 Deno.test("r-topics: loimoi.yml files merged along the path", () => {

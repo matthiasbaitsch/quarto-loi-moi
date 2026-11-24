@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { dirname, join } from "jsr:@std/path@1";
 import { Placeholders } from "./actions/action.ts";
 import { CodeReplacement } from "./code-replacement.ts";
@@ -35,9 +36,23 @@ export class Collection {
     return readYaml(file) as Record<string, string>;
   }
 
-  // `file-name` contains placeholders itself
+  // The words and the values of the product; without `group-title` if the product has none; `file-name` contains
+  // placeholders itself
   placeholders(product: ProductConfiguration): Placeholders {
-    const values = { ...this.words(), ...product.placeholders(this.configuration.site) };
+    const nn = String(product.number).padStart(2, "0");
+    const nnName = `${nn}-${product.name}`;
+    const values: Placeholders = {
+      ...this.words(),
+      "n": String(product.number),
+      "nn": nn,
+      "name": product.name,
+      "nn-name": nnName,
+      "hash": createHash("sha1").update(`87362-${nnName}`).digest("hex").slice(0, 8),
+      "product-title": product.title,
+      "full-title": product.fullTitle,
+      "site": this.configuration.site,
+    };
+    if (product.groupTitle !== undefined) values["group-title"] = product.groupTitle;
     return { ...values, "file-name": replacePlaceholders(this.configuration.fileName, values) };
   }
 

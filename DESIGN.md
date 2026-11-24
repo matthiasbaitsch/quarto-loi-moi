@@ -232,9 +232,7 @@ classDiagram
 YAML configuration (e.g. `recipes/exercises.yml`) in `_extensions/loimoi/config/`; a file with the same path in `learning-material/_loimoi/` replaces it (`configFile()` in `utilities.ts`). Exception: `conventions.yml`, the first
 `_loimoi/conventions.yml` upward from the working directory (`conventions()`).
 
-`resolve(logicalName, folder)` in `utilities.ts` finds a file or folder by a logical name (e.g. `building-blocks`): upward
-from `folder`, the first folder containing one of the names listed under `names` in
-`conventions.yml`; error if none or several in the same folder.
+`resolve(names, folder)` in `utilities.ts`: upward from `folder`, the first folder containing one of `names` (e.g. the names of `building-blocks` listed under `names` in `conventions.yml`); error if none or several in the same folder.
 
 ### Recipe and Action classes
 

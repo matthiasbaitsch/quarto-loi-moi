@@ -45,7 +45,8 @@ export class CollectionConfiguration {
 
     let buildingBlocksFolder: string;
     if (yaml["building-blocks"] === null) {
-      buildingBlocksFolder = resolve("building-blocks", collectionFolder);
+      const names = (rules.names ?? {}) as Record<string, string[]>;
+      buildingBlocksFolder = resolve(names["building-blocks"] ?? [], collectionFolder);
     } else {
       buildingBlocksFolder = join(learningMaterialFolder, yaml["building-blocks"] as string);
       if (!existsSync(buildingBlocksFolder)) {

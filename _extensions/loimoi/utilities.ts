@@ -49,16 +49,13 @@ export function configFile(path: string, learningMaterialFolder: string): string
   return existsSync(own) ? own : join(builtInConfig, path);
 }
 
-// The file or folder for `logicalName`: upward from `folder`, the first folder containing one of the names listed in
-// `names` of `conventions.yml`; error if none or several in the same folder
-export function resolve(logicalName: string, folder: string): string {
-  const candidates = (conventions().names ?? {}) as Record<string, string[]>;
-  const names = candidates[logicalName] ?? [];
+// Upward from `folder`, the first folder containing one of `names`; error if none or several in the same folder
+export function resolve(names: string[], folder: string): string {
   const matches = ancestors(folder)
     .map((folder) => names.map((name) => join(folder, name)).filter((path) => existsSync(path)))
     .find((found) => found.length > 0) ?? [];
   if (matches.length !== 1) {
-    throw new Error(`Expected one of ${names.join(", ")} for ${logicalName}, found ${matches.length}`);
+    throw new Error(`Expected one of ${names.join(", ")} upward from ${folder}, found ${matches.length}`);
   }
   return matches[0];
 }
