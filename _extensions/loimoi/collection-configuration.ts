@@ -1,7 +1,7 @@
 import { existsSync } from "jsr:@std/fs@1";
 import { basename, dirname, join } from "jsr:@std/path@1";
 import { BuildingBlockTree } from "./building-block-tree.ts";
-import { ProductNaming } from "./product-configuration.ts";
+import { ProductConfiguration, ProductNaming } from "./product-configuration.ts";
 import { conventions, gitHubPages, mergeYamlAlongPath, readYaml, resolve, Yaml } from "./utilities.ts";
 
 const settingsFile = new URL("./config/settings.yml", import.meta.url).pathname;
@@ -9,15 +9,13 @@ const settingsFile = new URL("./config/settings.yml", import.meta.url).pathname;
 // The configuration of a collection: `loimoi.yml` merged along the path, every default filled in; all checks here
 export class CollectionConfiguration {
   readonly output: string;
-  readonly firstNumber: number;
   readonly fileName: string;
-  readonly productNaming: ProductNaming;
   readonly options: Record<string, string>;
   readonly lang: string;
   readonly site: string;
-  readonly buildingBlocksFolder: string;
+  readonly tree: BuildingBlockTree;
   readonly recipe: string;
-  readonly products: Yaml[];
+  readonly products: ProductConfiguration[];
 
   constructor(collectionFolder: string) {
     const learningMaterialFolder = dirname(collectionFolder);
@@ -32,13 +30,12 @@ export class CollectionConfiguration {
     const yaml = { ...defaults, ...own };
 
     this.output = yaml.output as string;
-    this.firstNumber = yaml["first-number"] as number;
     this.fileName = yaml["file-name"] as string;
     this.options = yaml.options as Record<string, string>;
 
-    this.productNaming = yaml["product-naming"] as ProductNaming;
-    if (this.productNaming !== "path" && this.productNaming !== "titles") {
-      throw new Error(`product-naming must be path or titles, not ${this.productNaming}`);
+    const productNaming = yaml["product-naming"] as ProductNaming;
+    if (productNaming !== "path" && productNaming !== "titles") {
+      throw new Error(`product-naming must be path or titles, not ${productNaming}`);
     }
 
     const languages = (rules["collection-languages"] ?? {}) as Record<string, string>;
@@ -46,30 +43,36 @@ export class CollectionConfiguration {
 
     this.site = (yaml.site ?? gitHubPages(collectionFolder) ?? "site-not-set") as string;
 
+    let buildingBlocksFolder: string;
     if (yaml["building-blocks"] === null) {
-      this.buildingBlocksFolder = resolve("building-blocks", collectionFolder);
+      buildingBlocksFolder = resolve("building-blocks", collectionFolder);
     } else {
-      this.buildingBlocksFolder = join(learningMaterialFolder, yaml["building-blocks"] as string);
-      if (!existsSync(this.buildingBlocksFolder)) {
-        throw new Error(`building-blocks in loimoi.yml: no folder ${this.buildingBlocksFolder}`);
+      buildingBlocksFolder = join(learningMaterialFolder, yaml["building-blocks"] as string);
+      if (!existsSync(buildingBlocksFolder)) {
+        throw new Error(`building-blocks in loimoi.yml: no folder ${buildingBlocksFolder}`);
       }
     }
+    this.tree = new BuildingBlockTree(buildingBlocksFolder);
 
     const recipes = (rules["collection-recipes"] ?? {}) as Record<string, string>;
     const recipe = (yaml.recipe as string | null) ?? recipes[name];
     if (recipe === undefined) throw new Error(`No recipe for collection ${name} in conventions.yml`);
     this.recipe = recipe;
 
+    let entries: Yaml[];
     if (yaml.products !== null) {
-      this.products = yaml.products as Yaml[];
+      entries = yaml.products as Yaml[];
     } else {
       const folders = (rules["ingredient-folders"] ?? {}) as Record<string, Record<string, string>>;
       const ingredientFolder = folders[recipe]?.[name];
       if (ingredientFolder === undefined) {
         throw new Error(`No ingredient folder for collection ${name} in conventions.yml`);
       }
-      const paths = new BuildingBlockTree(this.buildingBlocksFolder).defaultPaths(ingredientFolder);
-      this.products = paths.map((ingredients) => ({ ingredients }));
+      entries = this.tree.defaultPaths(ingredientFolder).map((ingredients) => ({ ingredients }));
     }
+    const firstNumber = yaml["first-number"] as number;
+    this.products = entries.map((entry, i) =>
+      new ProductConfiguration(entry, firstNumber + i, this.tree, productNaming)
+    );
   }
 }

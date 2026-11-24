@@ -1,6 +1,5 @@
 import { dirname, join } from "jsr:@std/path@1";
 import { Placeholders } from "./actions/action.ts";
-import { BuildingBlockTree } from "./building-block-tree.ts";
 import { CodeReplacement } from "./code-replacement.ts";
 import { ProductConfiguration } from "./product-configuration.ts";
 import { Recipe } from "./recipe.ts";
@@ -9,13 +8,11 @@ import { configFile, readYaml, replacePlaceholders, Yaml } from "./utilities.ts"
 
 export class Collection {
   readonly configuration: CollectionConfiguration;
-  readonly tree: BuildingBlockTree;
   private readonly collectionFolder: string;
 
   constructor(collectionFolder: string) {
     this.collectionFolder = collectionFolder;
     this.configuration = new CollectionConfiguration(collectionFolder);
-    this.tree = new BuildingBlockTree(this.configuration.buildingBlocksFolder);
   }
 
   outputFolder(): string {
@@ -42,12 +39,6 @@ export class Collection {
   placeholders(product: ProductConfiguration): Placeholders {
     const values = { ...this.words(), ...product.placeholders(this.configuration.site) };
     return { ...values, "file-name": replacePlaceholders(this.configuration.fileName, values) };
-  }
-
-  productConfigurations(): ProductConfiguration[] {
-    return this.configuration.products.map((entry, i) =>
-      new ProductConfiguration(entry, this.configuration.firstNumber + i, this.tree, this.configuration.productNaming)
-    );
   }
 
   private learningMaterialFolder(): string {

@@ -194,29 +194,25 @@ In detail.
 classDiagram
   direction LR
   Collection "1" --> "1" CollectionConfiguration
-  Collection "1" --> "*" ProductConfiguration
+  CollectionConfiguration "1" --> "*" ProductConfiguration
   class Collection {
     configuration: CollectionConfiguration
-    tree: BuildingBlockTree
     constructor(collectionFolder: string)
     outputFolder() string
     renderFolder() string
     recipe() Recipe
     words() Record
     placeholders(product: ProductConfiguration) Record
-    productConfigurations() ProductConfiguration[]
   }
   class CollectionConfiguration {
     output: string
-    firstNumber: number
     fileName: string
-    productNaming: string
     options: Record
     lang: string
     site: string
-    buildingBlocksFolder: string
+    tree: BuildingBlockTree
     recipe: string
-    products: Record[]
+    products: ProductConfiguration[]
     constructor(collectionFolder: string)
   }
   class ProductConfiguration {

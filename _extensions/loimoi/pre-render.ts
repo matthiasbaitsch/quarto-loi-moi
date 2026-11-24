@@ -7,14 +7,14 @@ import { LinkPages } from "./link-pages.ts";
 
 const collectionFolder = Deno.cwd();
 const collection = new Collection(collectionFolder);
-const tree = collection.tree;
+const tree = collection.configuration.tree;
 
 const outputFolder = collection.outputFolder();
 if (existsSync(outputFolder)) Deno.removeSync(outputFolder, { recursive: true });
 Deno.mkdirSync(outputFolder);
 
 const recipe = collection.recipe();
-for (const product of collection.productConfigurations()) {
+for (const product of collection.configuration.products) {
   recipe.run(tree.ingredients(product.ingredients), collection.placeholders(product));
 }
 

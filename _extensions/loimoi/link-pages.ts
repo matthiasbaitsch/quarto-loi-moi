@@ -88,7 +88,7 @@ ${sections.join("\n\n")}
     );
     // `c/` as rendered by Quarto
     const renderedFolder = join(collection.renderFolder(), relative(collectionFolder, collection.outputFolder()));
-    const products = collection.productConfigurations().map((product) => {
+    const products = collection.configuration.products.map((product) => {
       const values = collection.placeholders(product);
       const files = linked.map((action) => ({
         label: replacePlaceholders(action.link as string, values),

@@ -23,15 +23,15 @@ Deno.test("julia-parts: everything from defaults", () => {
     "${file-name}",
   ]);
   assertEquals(collection.words()["exercise-sheet"], "Exercise sheet");
-  assertEquals(collection.productConfigurations().length, 4);
-  assertObjectMatch(collection.productConfigurations()[0], {
+  assertEquals(collection.configuration.products.length, 4);
+  assertObjectMatch(collection.configuration.products[0], {
     number: 1,
     ingredients: ["10-convergence/10-sequences/exercises"],
     name: "convergence-sequences",
     title: "Sequences",
     groupTitle: "Convergence",
   });
-  assertEquals(collection.productConfigurations()[0].placeholders("https://teacher.github.io/calculus"), {
+  assertEquals(collection.configuration.products[0].placeholders("https://teacher.github.io/calculus"), {
     "n": "1",
     "nn": "01",
     "name": "convergence-sequences",
@@ -43,7 +43,7 @@ Deno.test("julia-parts: everything from defaults", () => {
     "site": "https://teacher.github.io/calculus",
   });
   assertEquals(
-    collection.placeholders(collection.productConfigurations()[0])["file-name"],
+    collection.placeholders(collection.configuration.products[0])["file-name"],
     "01-convergence-sequences-exercises",
   );
 });
@@ -52,18 +52,18 @@ Deno.test("python-flat: recipe from the conventions, lang from loimoi.yml, ingre
   const collection = read("python-flat", "aufgaben");
   assertEquals(collection.recipe().actions.length, 5);
   assertEquals(collection.words()["exercise-sheet"], "Exercise sheet");
-  assertEquals(collection.productConfigurations().map((product) => product.ingredients), [
+  assertEquals(collection.configuration.products.map((product) => product.ingredients), [
     ["10-sequences/aufgaben"],
     ["20-series/aufgaben"],
     ["30-power-series/aufgaben"],
     ["40-continuity/aufgaben"],
   ]);
-  assertEquals(collection.productConfigurations()[1].name, "infinite-series");
+  assertEquals(collection.configuration.products[1].name, "infinite-series");
   assertEquals(
-    collection.productConfigurations()[1].placeholders("https://teacher.github.io/calculus")["full-title"],
+    collection.configuration.products[1].placeholders("https://teacher.github.io/calculus")["full-title"],
     "Infinite series",
   );
-  assertEquals(collection.placeholders(collection.productConfigurations()[1])["file-name"], "sheet-02");
+  assertEquals(collection.placeholders(collection.configuration.products[1])["file-name"], "sheet-02");
 });
 
 Deno.test("r-topics: loimoi.yml files merged along the path", () => {
@@ -76,12 +76,12 @@ Deno.test("r-topics: loimoi.yml files merged along the path", () => {
     "QuartoFile",
     "Archive",
   ]);
-  assertObjectMatch(collection.productConfigurations()[0], {
+  assertObjectMatch(collection.configuration.products[0], {
     ingredients: ["theory/sequences/exercises", "programming/sequences/exercises"],
     name: "sequences",
     title: "Sequences",
   });
-  assertEquals(collection.productConfigurations().length, 4);
+  assertEquals(collection.configuration.products.length, 4);
 });
 
 Deno.test("product without product-title and without block-title is an error", () => {
@@ -91,7 +91,7 @@ Deno.test("product without product-title and without block-title is an error", (
     join(collectionFolder, "loimoi.yml"),
     `${buildingBlocks(collectionFolder, "r-topics")}products:\n  - ingredients: [theory/sequences/exercises]\n`,
   );
-  assertThrows(() => new Collection(collectionFolder).productConfigurations(), Error, "theory-sequences");
+  assertThrows(() => new Collection(collectionFolder), Error, "theory-sequences");
 });
 
 Deno.test("collection aufgaben without lang: German words", () => {
@@ -109,7 +109,7 @@ Deno.test("building-blocks in loimoi.yml: relative to the learning material fold
   assertThrows(() => new Collection(collectionFolder), Error, "no folder");
 
   ensureDirSync(join(course, "shared/blocks"));
-  assertEquals(new Collection(collectionFolder).tree.rootFolder, join(course, "shared/blocks"));
+  assertEquals(new Collection(collectionFolder).configuration.tree.rootFolder, join(course, "shared/blocks"));
 });
 
 Deno.test("loimoi.yml: unknown key, no recipe, unknown product-naming are errors", () => {
