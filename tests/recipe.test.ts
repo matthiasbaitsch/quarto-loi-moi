@@ -40,6 +40,7 @@ Deno.test("exercises recipe, notebook: julia-parts, sheet, solution, preview, zi
   assert(sheet.includes("subtitle: 'Convergence: Sequences'"));
   assert(sheet.includes("[work files](01-convergence-sequences-exercises.zip)"));
   const solution = Deno.readTextFileSync(join(product, "01-convergence-sequences-exercises-solution-2094a057.qmd"));
+  assert(solution.includes("subtitle: 'Convergence: Sequences'"));
   assert(solution.includes("function fibonacci_ratios(n)"));
   assert(solution.includes("filters:\n  - loimoi"));
   assert(solution.includes('include("src/fibonacci.jl")'));

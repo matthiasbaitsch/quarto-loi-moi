@@ -310,6 +310,7 @@ quarto-files:
 
   - name: "${nn-name}-${exercises}-${solution}-${hash}"
     title: "${solutions-to-exercise-sheet} ${n}"
+    subtitle: "${full-title}"
     process: [exercise-solution, attach-src, show-markers]
     link: "${solution-label}"
 
