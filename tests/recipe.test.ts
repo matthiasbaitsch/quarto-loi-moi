@@ -5,6 +5,7 @@ import { unzipSync } from "fflate";
 import { BuildingBlockTree } from "../_extensions/loimoi/building-block-tree.ts";
 import { CodeReplacement } from "../_extensions/loimoi/code-replacement.ts";
 import { QuartoFile } from "../_extensions/loimoi/actions/quarto-file.ts";
+import { ProductFolder } from "../_extensions/loimoi/product-folder.ts";
 import { Recipe } from "../_extensions/loimoi/recipe.ts";
 import { readYaml } from "../_extensions/loimoi/utilities.ts";
 
@@ -59,7 +60,7 @@ Deno.test("exercises recipe, notebook: julia-parts, sheet, solution, preview, zi
   assert(notebook.includes('# includet(\\"src/fibonacci.jl\\")'));
 
   const scaffold = new QuartoFile({ name: "work-files/exercises", process: ["exercise-scaffold"] }, []);
-  scaffold.run(basket, placeholders, product);
+  scaffold.run(basket, placeholders, new ProductFolder(product));
   assert(existsSync(join(product, "src/fibonacci.jl")));
   assert(existsSync(join(product, "work-files/images/sequence.svg")));
   assert(!existsSync(join(product, "work-files/src")));
@@ -103,7 +104,11 @@ Deno.test("files of the same name with different content are an error", () => {
   }
   const basket = new BuildingBlockTree(root).ingredients(["a/exercises", "b/exercises"]);
   const sheet = new QuartoFile({ name: "sheet", process: [] }, []);
-  assertThrows(() => sheet.run(basket, placeholders, Deno.makeTempDirSync()), Error, "data/values.csv");
+  assertThrows(
+    () => sheet.run(basket, placeholders, new ProductFolder(Deno.makeTempDirSync())),
+    Error,
+    "data/values.csv",
+  );
 });
 
 Deno.test("exercises recipe: unknown option or value is an error", () => {

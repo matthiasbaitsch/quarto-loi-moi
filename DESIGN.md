@@ -243,6 +243,7 @@ classDiagram
   Recipe "1" --> "*" Action
   Action <|-- QuartoFile
   Action <|-- Archive
+  Action ..> ProductFolder : writes into
   class Recipe {
     folder: string
     actions: Action[]
@@ -254,7 +255,7 @@ classDiagram
     name: string
     provides: string?
     file(placeholders: Record) string
-    run(basket: Basket, placeholders: Record, folder: string)
+    run(basket: Basket, placeholders: Record, folder: ProductFolder)
   }
   class QuartoFile {
     title: string
@@ -267,6 +268,15 @@ classDiagram
   class Archive {
     add: Record[]
   }
+  class ProductFolder {
+    folder: string
+    path(path: string) string
+    sub(path: string) ProductFolder
+    copy(source: string, path: string)
+    write(content: bytes, path: string)
+    zip(files: Record, path: string)
+    zipFolder(path: string)
+  }
 ```
 
 Remarks:
@@ -275,9 +285,10 @@ Remarks:
   `src/` and `zip/<name>/` → `<name>.zip`, both not into work files), without names starting with `_` or `.` and
   `…_files` (`studentFiles()` in `utilities.ts`); an `Archive` copies folders in `add` the same way
 - `QuartoFile` copies the files referenced in the document (e.g. `images/a.svg` to
-  `c/01-convergence-sequences/images/a.svg`); error if a file of the same name differs (possible when a product has
-  several building blocks)
-- `Recipe.run`: creates the folder of the product (`folder` plus `${nn-name}`), adds the placeholders from `provides`
+  `c/01-convergence-sequences/images/a.svg`)
+- `ProductFolder`: all writing into the folder of the product; error if a file of the same name differs (possible
+  when a product has several building blocks); `Archive` zips a folder other actions may have filled
+- `Recipe.run`: creates the `ProductFolder` (`folder` plus `${nn-name}`), adds the placeholders from `provides`
   (`file()` of the action), runs the actions in order in that folder
 
 ### Link pages
