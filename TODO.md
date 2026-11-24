@@ -9,6 +9,7 @@
 
 ## Later
 
+- `file-name` default per recipe? Slides need `${nn-name}`, set in `loimoi.yml` for now (numMat); check with numPDE and Informatik.
 - Selection of building blocks by subtree (e.g. `folien-r-alle` only the R building blocks of Mathe B).
 - Mathe B: solution sheet with executed code.
 - Recipes for slides, course notes, all slides, course slides; Informatik (C#).

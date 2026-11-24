@@ -342,6 +342,19 @@ archives:                                        # folder deleted after zip
       - /_templates/exercises/exercises.code-workspace: "${name}-${exercises}.code-workspace"
 ```
 
+### Slides
+
+The predefined recipe `slides.yml`, one slide set per product; format and subtitle from the collection's Quarto configuration (e.g. `_metadata.yml`):
+
+```yml
+quarto-files:
+  - name: "${file-name}"
+    title: "${full-title}"
+    link: "${slides-label}"
+```
+
+With `file-name: "${nn-name}"` in `loimoi.yml`, e.g. `01-convergence-sequences.qmd`; for slides rendered as PDF, `link-format: pdf`.
+
 ## Usage
 
 - `quarto render` in a collection folder prepares and renders that collection.
@@ -363,6 +376,7 @@ archives:                                        # folder deleted after zip
 | `products` | one entry per product: `ingredients`, optional `name`, `product-title`, `group-title` | one product per building block with the ingredient folder from `conventions.yml`, in folder order |
 | `file-name` | base name of the product's files, with placeholders (e.g. `aufgabenblatt-${nn}`) | `${nn-name}-${exercises}` |
 | `product-naming` | default product names from the path of the first building block (`path`) or from the titles (`titles`) | `path` |
+| `link-format` | extension of the linked files on the link pages (`html`, `pdf`), e.g. `pdf` for slides rendered with Typst | `html` |
 | `recipe` | recipe that makes the products | from `conventions.yml` |
 | `options` | options of the recipe | see the recipe |
 

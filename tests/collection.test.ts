@@ -109,7 +109,7 @@ Deno.test("building-blocks in loimoi.yml: relative to the learning material fold
   assertEquals(new Collection(collectionFolder).configuration.tree.rootFolder, join(course, "shared/blocks"));
 });
 
-Deno.test("loimoi.yml: unknown key, no recipe, unknown product-naming are errors", () => {
+Deno.test("loimoi.yml: unknown key, no recipe, unknown product-naming or link-format are errors", () => {
   const collectionFolder = join(Deno.makeTempDirSync(), "learning-material/exercises");
   ensureDirSync(collectionFolder);
   const write = (text: string) =>
@@ -120,6 +120,8 @@ Deno.test("loimoi.yml: unknown key, no recipe, unknown product-naming are errors
   assertThrows(() => new Collection(collectionFolder), Error, "No ingredient folder");
   write("product-naming: folders\n");
   assertThrows(() => new Collection(collectionFolder), Error, "product-naming");
+  write("link-format: docx\n");
+  assertThrows(() => new Collection(collectionFolder), Error, "link-format");
 
   const other = join(Deno.makeTempDirSync(), "learning-material/other");
   ensureDirSync(other);

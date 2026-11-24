@@ -114,5 +114,5 @@ Deno.test("files of the same name with different content are an error", () => {
 Deno.test("exercises recipe: unknown option or value is an error", () => {
   assertThrows(() => Recipe.read(exercises, { "work-files": "project" }, ".", []), Error, "project");
   assertThrows(() => Recipe.read(exercises, { "format": "a" }, ".", []), Error, "format");
-  assertThrows(() => Recipe.read(exercises.replace("exercises.yml", "slides.yml"), {}, ".", []), Error, "not found");
+  assertThrows(() => Recipe.read(exercises.replace("exercises.yml", "missing.yml"), {}, ".", []), Error, "not found");
 });
