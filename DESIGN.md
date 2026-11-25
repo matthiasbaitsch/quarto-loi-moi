@@ -53,6 +53,7 @@ classDiagram
     title() string?
     groupTitle() string?
     isEmpty() bool
+    document() QmdDocument
     files(pattern, options) string[]
     folders(pattern, options) string[]
   }
@@ -61,7 +62,7 @@ classDiagram
 Remarks:
 
 - `Basket`: the ingredients for one product; `name()`, `title()`, `groupTitle()` are the defaults for the product,
-  from the first building block
+  from the first building block; `document()` reads the `.qmd` files of all ingredients together and validates them once, for all actions of the product
 - `rootFolder`: absolute path to building block tree; `Folder` needs it to read from disk and to return paths
   relative to it
 - `name(options)`: derived from file system path, leading numbers stripped, options `full`, `sep`

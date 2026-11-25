@@ -426,9 +426,9 @@ three. Markers override this: `.lm-sheet`, `.lm-scaffold`, `.lm-solution` put th
 document, wherever they are. Unmarked code is *given code*: students run it but don't write it. In the solution, given code runs but is not
 shown (`include: false`, unless the cell sets `include` itself).
 
-- The setup cell (`#| label: setup`) goes into all three. It stands at the top level of a file, before the first div (text and headings may come before it). Setup cells are merged into one, each line once, so they may only contain single-line statements in one language.
+- The setup cell (`#| label: setup`) goes into all three. It stands at the top level, never inside a div. Setup cells are merged into one, each line once, so they may only contain single-line statements in one language.
 - In the scaffold, an exercise with nothing left but headings is dropped; the divs of exercises and of `.lm-scaffold` are left out, only their content stays.
-- Errors: a setup cell inside or after a div, a setup cell with a statement over several lines (checked for each building block file when it is read, as mistakes seen in practice; other misuse is not checked).
+- Errors: a setup cell inside a div, a setup cell with a statement over several lines (checked once per product on the `.qmd` files read together, as mistakes seen in practice; other misuse is not checked).
 
 Code in `src/` growing from sheet to sheet: each building block has the code as of its point in the course (e.g. `src/truss.py`), the students extend their own copy from sheet to sheet.
 

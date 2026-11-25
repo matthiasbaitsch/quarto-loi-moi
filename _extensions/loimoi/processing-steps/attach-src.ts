@@ -1,5 +1,6 @@
 import { basename, extname } from "jsr:@std/path@1";
 import { QmdDocument } from "../qmd-document.ts";
+import { QmdCodeCell, QmdNode, QmdText } from "../qmd-node.ts";
 import { ProcessingStep } from "./processing-step.ts";
 
 const languages: Record<string, string> = { ".jl": "julia", ".py": "python", ".R": "r", ".r": "r" };
@@ -16,12 +17,16 @@ export class AttachSrc implements ProcessingStep {
   run(doc: QmdDocument): QmdDocument {
     const files = this.files.filter((file) => !Deno.readTextFileSync(file).split("\n", 1)[0].includes("lm-no-attach"));
     if (files.length === 0) return doc;
-    const sections = files.map((file) => {
+    const appendix: QmdNode[] = [new QmdText([`## ${this.heading}`, ""])];
+    files.forEach((file, i) => {
       const language = languages[extname(file)];
       if (language === undefined) throw new Error(`Unknown language of ${file}`);
-      const code = Deno.readTextFileSync(file).replace(/\n?$/, "\n");
-      return `### \`src/${basename(file)}\`\n\n\`\`\`{.${language} .number-lines}\n${code}\`\`\``;
+      const code = Deno.readTextFileSync(file).replace(/\n?$/, "").split("\n");
+      if (i > 0) appendix.push(new QmdText([""]));
+      appendix.push(new QmdText([`### \`src/${basename(file)}\``, ""]));
+      appendix.push(new QmdCodeCell([`\`\`\`{.${language} .number-lines}`, ...code, "```"], language, false, {}));
     });
-    return QmdDocument.parse(`${doc.text()}\n## ${this.heading}\n\n${sections.join("\n\n")}\n`);
+    appendix.push(new QmdText([""]));
+    return new QmdDocument(doc.header, [...doc.nodes, ...appendix]);
   }
 }

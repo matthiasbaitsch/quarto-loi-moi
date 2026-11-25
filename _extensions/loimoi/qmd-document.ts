@@ -51,19 +51,13 @@ export class QmdDocument {
     this.nodes.forEach((node) => node.forEach(f));
   }
 
-  // For a single file. Setup cells at top level, before the first div: they go into every document, and are merged
-  // line by line
+  // Setup cells at top level, as they go into every document; merged line by line
   validate(): void {
-    let afterDiv = false;
     this.nodes.forEach((node) => {
-      if (isSetup(node)) {
-        if (afterDiv) throw new Error(`Setup cell after a div, it belongs before the first one: ${node.text()}`);
-        checkSingleLines(node);
-      }
+      if (isSetup(node)) checkSingleLines(node);
       if (node instanceof QmdDiv) {
-        afterDiv = true;
         node.forEach((inner) => {
-          if (isSetup(inner)) throw new Error(`Setup cell inside ${node.open}, it belongs before the first div`);
+          if (isSetup(inner)) throw new Error(`Setup cell inside ${node.open}, it belongs at the top level`);
         });
       }
     });

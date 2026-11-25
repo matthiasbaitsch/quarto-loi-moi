@@ -46,9 +46,7 @@ export class QuartoFile extends Action {
       pipeline.addStep(step);
       pipeline.addStep(new ReplaceCode(step, this.replacements));
     }
-    const files = basket.files("*.qmd", { absolute: true });
-    files.forEach((file) => QmdDocument.read(file).validate());
-    const doc = pipeline.run(QmdDocument.read(...files));
+    const doc = pipeline.run(basket.document());
 
     const header = { ...doc.header };
     if (this.title !== undefined) header.title = replacePlaceholders(this.title, placeholders);

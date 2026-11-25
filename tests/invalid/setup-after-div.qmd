@@ -1,8 +1,0 @@
-::: {#exr-a}
-## A
-:::
-
-```{julia}
-#| label: setup
-using Plots
-```

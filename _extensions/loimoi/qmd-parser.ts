@@ -67,9 +67,13 @@ function node(lines: string[], block: PandocBlock, first: number, end: number): 
   }
   const cellLines = lines.slice(first, end);
   const info = classes[0] ?? ""; // `{r}` for an executable cell, `r` for ```{.r}
-  const options = cellLines.filter((line) => line.startsWith("#|")).map((line) => line.slice(2).trim());
-  const yaml = (parseYaml(options.join("\n")) ?? {}) as Yaml;
-  return new QmdCodeCell(cellLines, info.replace(/[{}]/g, ""), info.startsWith("{"), yaml);
+  return new QmdCodeCell(cellLines, info.replace(/[{}]/g, ""), info.startsWith("{"), cellOptions(cellLines));
+}
+
+// The options of a code cell, from its `#|` lines
+export function cellOptions(lines: string[]): Yaml {
+  const options = lines.filter((line) => line.startsWith("#|")).map((line) => line.slice(2).trim());
+  return (parseYaml(options.join("\n")) ?? {}) as Yaml;
 }
 
 // First line and line after the block, counted from 0, from `data-pos`, e.g. `file.md@10:1-44:1`
