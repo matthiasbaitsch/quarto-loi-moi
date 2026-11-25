@@ -34,3 +34,12 @@ Result: one Pandoc run per product instead of 4–5 per `QuartoFile`; `Basket.do
 ### Lesson
 
 Measure first. Then do not ask how to make the expensive thing cheaper, but why it happens more often than needed and where the data really belongs.
+
+## Naming operations (2026-11-25)
+
+In `AttachSrc`, the user proposed `QmdDocument.appendNode` for `new QmdDocument(doc.header, [...doc.nodes, node])`.
+
+### What went wrong
+
+- **Existing classes treated as fixed.** Claude solved the task inside the file being edited and avoided extending the interface of another class like `QmdDocument`, as that felt like a bigger change; the same pattern as with the cache: the smallest diff instead of the right place.
+- **Generic even when looking.** Asked about the line, Claude found the pattern and proposed `withNodes`/`withHeader`, mechanics one level up; the user named the actual operation: `appendNode`.
