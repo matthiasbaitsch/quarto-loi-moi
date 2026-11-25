@@ -1,0 +1,7 @@
+## Continuity
+
+$f$ is continuous at $x_0$ if $\lim_{x \to x_0} f(x) = f(x_0)$.
+
+## Intermediate value theorem
+
+A continuous function with $f(a) < 0 < f(b)$ has a zero in $[a, b]$.

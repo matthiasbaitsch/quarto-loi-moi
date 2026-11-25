@@ -1,0 +1,9 @@
+## Series
+
+The series $\sum a_k$ converges if the partial sums $s_n = \sum_{k=1}^{n} a_k$ converge.
+
+## Geometric series
+
+$$
+  \sum_{k=0}^{\infty} q^k = \frac{1}{1 - q} \quad \text{for } |q| < 1
+$$

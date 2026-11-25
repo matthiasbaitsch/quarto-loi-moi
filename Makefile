@@ -1,7 +1,9 @@
 COURSES = examples/nummat examples/numpde examples/mathe-b
 EXAMPLES = examples/python-flat examples/julia-parts examples/r-topics $(COURSES)
 COLLECTIONS = examples/python-flat/learning-material/aufgaben examples/julia-parts/learning-material/exercises \
-	examples/r-topics/learning-material/exercises examples/nummat/lernpfad/aufgaben \
+	examples/julia-parts/learning-material/slides examples/r-topics/learning-material/exercises \
+	examples/r-topics/learning-material/theory-slides examples/r-topics/learning-material/programming-slides \
+	examples/nummat/lernpfad/aufgaben \
 	examples/nummat/lernpfad/folien examples/numpde/lernpfad/aufgaben examples/mathe-b/lernpfad/aufgaben
 
 # Copy the extension into the example projects (Quarto does not follow a symlink to an extension)
@@ -28,9 +30,12 @@ render-python-flat: examples
 
 render-julia-parts: examples
 	quarto render examples/julia-parts/learning-material/exercises
+	quarto render examples/julia-parts/learning-material/slides
 
 render-r-topics: examples
 	quarto render examples/r-topics/learning-material/exercises
+	quarto render examples/r-topics/learning-material/theory-slides
+	quarto render examples/r-topics/learning-material/programming-slides
 
 # pyproject.toml and uv.lock are symlinks to numMat's; Jupyter is in its group `render`
 render-nummat: examples

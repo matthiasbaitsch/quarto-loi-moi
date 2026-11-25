@@ -1,0 +1,17 @@
+---
+title: 'Functions: Power series'
+---
+
+## Power series
+
+$$
+  \sum_{k=0}^{\infty} a_k x^k
+$$
+
+converges for $|x| < R$, the radius of convergence.
+
+## Ratio test
+
+$$
+  R = \lim_{k \to \infty} \left| \frac{a_k}{a_{k+1}} \right|
+$$

@@ -1,0 +1,11 @@
+---
+title: 'Functions: Continuity'
+---
+
+## Continuity
+
+$f$ is continuous at $x_0$ if $\lim_{x \to x_0} f(x) = f(x_0)$.
+
+## Intermediate value theorem
+
+If $f$ is continuous on $[a, b]$ and $f(a)$ and $f(b)$ have opposite signs, $f$ has a zero in $[a, b]$.

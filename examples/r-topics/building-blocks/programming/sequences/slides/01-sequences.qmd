@@ -1,0 +1,8 @@
+## Sequences in R
+
+A sequence as a vector:
+
+```{r}
+n <- 1:10
+1 / n
+```

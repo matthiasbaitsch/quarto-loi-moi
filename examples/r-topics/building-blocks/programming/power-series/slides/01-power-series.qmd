@@ -1,0 +1,6 @@
+## Taylor polynomials in R
+
+```{r}
+taylor_exp <- function(x, n) sum(x^(0:n) / factorial(0:n))
+taylor_exp(1, 10) - exp(1)
+```

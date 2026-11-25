@@ -1,0 +1,8 @@
+## Partial sums in R
+
+`cumsum` computes all partial sums at once:
+
+```{r}
+k <- 1:10
+cumsum((-1)^(k + 1) / k)
+```

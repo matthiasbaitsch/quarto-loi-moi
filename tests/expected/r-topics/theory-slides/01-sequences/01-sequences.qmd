@@ -1,0 +1,11 @@
+---
+title: Sequences
+---
+
+## Sequences
+
+A sequence $(a_n)$ converges to $a$ if for every $\varepsilon > 0$ there is an $N$ with $|a_n - a| < \varepsilon$ for all $n \geq N$.
+
+## Example
+
+$q_n = F_{n+1} / F_n$ converges to the golden ratio $\varphi = (1 + \sqrt{5}) / 2$.

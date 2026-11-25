@@ -71,14 +71,15 @@ ${sections.join("\n\n")}
 `;
   }
 
-  // Collections: the folders with a `_quarto.yml` and a recipe in `conventions.yml`, in name order; other Quarto
-  // projects (e.g. a book made without loi-moi) are skipped
+  // Collections: the folders with a `_quarto.yml` and either a recipe in `conventions.yml` or a `loimoi.yml` of their
+  // own, in name order; other Quarto projects (e.g. a book made without loi-moi) are skipped
   private collections(): CollectionLinks[] {
     const recipes = (conventions()["collection-recipes"] ?? {}) as Record<string, string>;
+    const has = (name: string, file: string) => existsSync(join(this.learningMaterialFolder, name, file));
     const names = [...Deno.readDirSync(this.learningMaterialFolder)]
-      .filter((entry) => entry.isDirectory && existsSync(join(this.learningMaterialFolder, entry.name, "_quarto.yml")))
+      .filter((entry) => entry.isDirectory && has(entry.name, "_quarto.yml"))
       .map((entry) => entry.name)
-      .filter((name) => name in recipes)
+      .filter((name) => name in recipes || has(name, "loimoi.yml"))
       .sort();
     return names.map((name) => this.collection(name));
   }

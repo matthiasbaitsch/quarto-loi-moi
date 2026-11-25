@@ -1,0 +1,6 @@
+## Power series
+
+$\sum a_k x^k$ converges for $|x| < R$ with
+$$
+  R = \lim_{k \to \infty} \left| \frac{a_k}{a_{k+1}} \right|
+$$

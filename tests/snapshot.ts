@@ -13,9 +13,9 @@ export const expected = join(root, "tests/expected");
 
 // Example → its collections
 export const snapshots: Record<string, string[]> = {
-  "julia-parts": ["exercises"],
+  "julia-parts": ["exercises", "slides"],
   "python-flat": ["aufgaben"],
-  "r-topics": ["exercises"],
+  "r-topics": ["exercises", "theory-slides", "programming-slides"],
 };
 
 // Runs the pre-render in each collection folder, as Quarto does; returns the files of the output folder (path

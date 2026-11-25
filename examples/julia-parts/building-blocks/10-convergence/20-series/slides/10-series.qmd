@@ -1,0 +1,10 @@
+## Series
+
+A series is the sequence of the partial sums $s_n = \sum_{k=1}^{n} a_k$.
+
+## The geometric series
+
+For $|q| < 1$:
+$$
+  \sum_{k=0}^{\infty} q^k = \frac{1}{1 - q}
+$$

@@ -1,0 +1,7 @@
+## Zeros in R
+
+`uniroot` finds a zero by bracketing:
+
+```{r}
+uniroot(function(x) cos(x) - x, c(0, 1))$root
+```
