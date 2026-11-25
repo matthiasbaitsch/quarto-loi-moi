@@ -1,0 +1,21 @@
+---
+title: Problem set 5
+---
+
+```{r}
+#| label: setup
+#| include: false
+fibonacci <- read.csv("data/fibonacci.csv")
+```
+
+## How fast do the ratios converge?
+
+### Implementation
+
+```{r}
+fibonacci_ratios <- function(F) {
+  # ...
+}
+```
+
+### Errors

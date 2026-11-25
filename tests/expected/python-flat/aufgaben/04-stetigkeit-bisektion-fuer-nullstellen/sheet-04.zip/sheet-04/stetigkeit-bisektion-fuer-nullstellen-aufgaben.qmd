@@ -1,0 +1,19 @@
+---
+title: Aufgabenblatt 4
+---
+
+```{python}
+#| label: setup
+#| include: false
+import numpy as np
+import matplotlib.pyplot as plt
+```
+
+## Bisection
+
+### Implementation
+
+```{python}
+```
+
+### Errors

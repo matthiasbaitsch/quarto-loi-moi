@@ -1,0 +1,83 @@
+---
+filters:
+  - loimoi
+title: Problem set 5
+subtitle: Sequences
+---
+
+## Part 1: On paper
+
+::: {#exr-golden-ratio}
+## The golden ratio
+
+The Fibonacci numbers are $F_1 = F_2 = 1$ and $F_{n+2} = F_{n+1} + F_n$. Their ratios $q_n = F_{n+1} / F_n$ seem to converge.
+
+1. Compute $q_1, \ldots, q_5$.
+
+1. Show that $q_{n+1} = 1 + 1 / q_n$.
+
+1. Assume that the sequence converges. Determine its limit.
+
+::: {.lm-solution}
+1. With $F_1, \ldots, F_6 = 1, 1, 2, 3, 5, 8$: $q_1 = 1$, $q_2 = 2$, $q_3 = 3/2$, $q_4 = 5/3$, $q_5 = 8/5$.
+
+1. Dividing $F_{n+2} = F_{n+1} + F_n$ by $F_{n+1}$ gives $q_{n+1} = 1 + F_n / F_{n+1} = 1 + 1 / q_n$.
+
+1. For the limit $q$, $q = 1 + 1/q$, so $q^2 - q - 1 = 0$. Since all $q_n \geq 1$, the limit is the positive root, the golden ratio
+   $$
+     \varphi = \frac{1 + \sqrt{5}}{2} \approx 1.618.
+   $$
+:::
+:::
+
+## Part 2: In R
+
+Download the [work files](05-sequences-exercises.zip) and unzip them into your project folder. The data are in the folder `data/`.
+
+```{r}
+#| label: setup
+#| include: false
+fibonacci <- read.csv("data/fibonacci.csv")
+```
+
+::: {#exr-fibonacci}
+## How fast do the ratios converge?
+
+The file `data/fibonacci.csv` contains the first $30$ Fibonacci numbers $F_n$.
+
+### Implementation
+
+Implement the function `fibonacci_ratios(F)`, which returns the ratios $q_n = F_{n+1} / F_n$ from @exr-golden-ratio for a vector `F` of Fibonacci numbers. Test it with $F_1, \ldots, F_6$.
+
+::: {.lm-scaffold}
+```{r}
+fibonacci_ratios <- function(F) {
+  # ...
+}
+```
+:::
+
+::: {.lm-solution}
+```{r}
+fibonacci_ratios <- function(F) {
+  F[-1] / F[-length(F)]
+}
+
+fibonacci_ratios(c(1, 1, 2, 3, 5, 8))
+```
+:::
+
+### Errors
+
+Add the columns `q` and `error` to the data frame `fibonacci`: the ratio $q_n$, and its distance to the golden ratio. By which factor does the error fall in each step?
+
+::: {.lm-solution}
+```{r}
+fibonacci$q <- c(fibonacci_ratios(fibonacci$F), NA)
+fibonacci$error <- abs(fibonacci$q - (1 + sqrt(5)) / 2)
+head(fibonacci, 20)
+```
+
+The error falls by the factor $\varphi^2 \approx 2.6$ in each step: the ratios lie alternately above and below $\varphi$, closer each time.
+:::
+:::

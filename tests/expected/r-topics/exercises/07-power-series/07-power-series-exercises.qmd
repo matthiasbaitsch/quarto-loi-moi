@@ -1,0 +1,58 @@
+---
+execute:
+  warning: false
+knitr:
+  opts_chunk:
+    comment: ''
+title: Problem set 7
+subtitle: Power series
+---
+
+## Part 1: On paper
+
+```{r}
+#| label: setup
+#| include: false
+library(knitr)
+```
+
+::: {#exr-radius}
+## Radius of convergence
+
+Consider the power series
+$$
+  \sum_{k=0}^{\infty} \frac{x^k}{2^k}
+$$
+with the partial sums $s_n(x)$ for $x = 1$ and $x = 3$
+
+::: {.lm-sheet}
+```{r}
+n <- 0:8
+s <- function(x) cumsum((x / 2)^n)
+kable(data.frame(n = n, "x = 1" = s(1), "x = 3" = s(3), check.names = FALSE), digits = 4)
+```
+:::
+
+Determine the radius of convergence and explain the table.
+:::
+
+## Part 2: In R
+
+Download the [work files](07-power-series-exercises.zip) and unzip them into your project folder.
+
+::: {#exr-taylor}
+## Taylor polynomials of the exponential function
+
+The power series of $e^x$ converges for all $x$. Its partial sums are the Taylor polynomials
+$$
+  T_n(x) = \sum_{k=0}^{n} \frac{x^k}{k!}.
+$$
+
+### Implementation
+
+Implement the function `taylor_exp(x, n)`, which returns $T_n(x)$.
+
+### Errors
+
+Compute the errors of $T_1(1), \ldots, T_{15}(1)$. How does the error fall?
+:::

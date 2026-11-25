@@ -1,0 +1,53 @@
+---
+filters:
+  - loimoi
+title: Lösungen zu Aufgabenblatt 3
+subtitle: Power series
+---
+
+::: {#exr-radius}
+## Radius of convergence
+
+::: {.lm-solution}
+With the ratio test, the series $\sum a_k x^k$ converges for $|x| < R = \lim |a_k / a_{k+1}|$.
+
+1. $|a_k / a_{k+1}| = 2^{k+1} / 2^k = 2$, so $R = 2$.
+
+1. $|a_k / a_{k+1}| = (k + 1)! / k! = k + 1 \to \infty$, so $R = \infty$: the series converges for all $x$.
+:::
+:::
+
+```{python}
+#| label: setup
+#| include: false
+import math
+```
+
+::: {#exr-taylor}
+## Taylor polynomials of the exponential function
+
+### Implementation
+
+::: {.lm-solution}
+```{python}
+def taylor_exp(x, n):
+    term = 1.0
+    total = 1.0
+    for k in range(1, n + 1):
+        term *= x / k
+        total += term
+    return total
+```
+:::
+
+### Errors
+
+::: {.lm-solution}
+```{python}
+for n in range(1, 16):
+    print(n, abs(taylor_exp(1.0, n) - math.e))
+```
+
+The error is about $1 / (n + 1)!$, the first term left out. It falls faster and faster; after about $17$ terms, it reaches the level of the rounding errors.
+:::
+:::

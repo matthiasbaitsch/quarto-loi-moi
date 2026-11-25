@@ -1,19 +1,10 @@
 import { QmdDocument } from "../qmd-document.ts";
 import { QmdDiv, QmdNode, QmdText } from "../qmd-node.ts";
-import {
-  blankLines,
-  checkStructure,
-  hasClass,
-  headings,
-  isExecutable,
-  isExercise,
-  tidy,
-} from "./exercise.ts";
+import { blankLines, hasClass, headings, isExecutable, isExercise, tidy } from "./exercise.ts";
 import { ProcessingStep } from "./processing-step.ts";
 
 export class ExerciseScaffold implements ProcessingStep {
   run(doc: QmdDocument): QmdDocument {
-    checkStructure(doc.nodes);
     return new QmdDocument(doc.header, tidy(scaffold(doc.nodes)));
   }
 }

@@ -1,20 +1,10 @@
 import { QmdDocument } from "../qmd-document.ts";
 import { QmdCodeCell, QmdNode, QmdText } from "../qmd-node.ts";
-import {
-  blankLines,
-  checkStructure,
-  hasClass,
-  headings,
-  isExecutable,
-  isExercise,
-  tidy,
-  withChildren,
-} from "./exercise.ts";
+import { blankLines, hasClass, headings, isExecutable, isExercise, tidy, withChildren } from "./exercise.ts";
 import { ProcessingStep } from "./processing-step.ts";
 
 export class ExerciseSolution implements ProcessingStep {
   run(doc: QmdDocument): QmdDocument {
-    checkStructure(doc.nodes);
     return new QmdDocument(doc.header, tidy(solution(doc.nodes)));
   }
 }

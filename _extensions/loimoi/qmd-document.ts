@@ -1,6 +1,6 @@
 import { stringify as stringifyYaml } from "jsr:@std/yaml@1";
 import { jupyterNotebook } from "./jupyter-notebook.ts";
-import { QmdNode } from "./qmd-node.ts";
+import { QmdCodeCell, QmdDiv, QmdNode } from "./qmd-node.ts";
 import { parseBody, splitHeader } from "./qmd-parser.ts";
 import { Yaml } from "./utilities.ts";
 
@@ -51,6 +51,24 @@ export class QmdDocument {
     this.nodes.forEach((node) => node.forEach(f));
   }
 
+  // For a single file. Setup cells at top level, before the first div: they go into every document, and are merged
+  // line by line
+  validate(): void {
+    let afterDiv = false;
+    this.nodes.forEach((node) => {
+      if (isSetup(node)) {
+        if (afterDiv) throw new Error(`Setup cell after a div, it belongs before the first one: ${node.text()}`);
+        checkSingleLines(node);
+      }
+      if (node instanceof QmdDiv) {
+        afterDiv = true;
+        node.forEach((inner) => {
+          if (isSetup(inner)) throw new Error(`Setup cell inside ${node.open}, it belongs before the first div`);
+        });
+      }
+    });
+  }
+
   map(f: (node: QmdNode) => QmdNode[]): QmdDocument {
     return new QmdDocument(this.header, this.nodes.flatMap((node) => node.map(f)));
   }
@@ -59,4 +77,18 @@ export class QmdDocument {
   write(file: string): void {
     Deno.writeTextFileSync(file, file.endsWith(".ipynb") ? this.ipynb() : this.text());
   }
+}
+
+// Merging keeps each line once, which is only right for single-line statements; indented lines and lines that only
+// close something (`end`, `)`, …) are a sign of a statement over several lines
+function checkSingleLines(cell: QmdCodeCell): void {
+  const code = cell.lines.slice(1, -1);
+  const multiLine = code.find((line) => /^\s+\S/.test(line) || /^\s*(end|\)|\]|\})\s*$/.test(line));
+  if (multiLine !== undefined) {
+    throw new Error(`Setup cell: only single-line statements allowed: \`${multiLine}\``);
+  }
+}
+
+function isSetup(node: QmdNode): node is QmdCodeCell {
+  return node instanceof QmdCodeCell && node.options.label === "setup";
 }

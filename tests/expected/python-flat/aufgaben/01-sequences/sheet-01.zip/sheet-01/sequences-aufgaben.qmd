@@ -1,0 +1,24 @@
+---
+title: Aufgabenblatt 1
+---
+
+```{python}
+#| label: setup
+#| include: false
+import csv
+import math
+
+# The Fibonacci numbers from the data file
+F = [int(row["F"]) for row in csv.DictReader(open("daten/fibonacci.csv"))]
+```
+
+## How fast do the ratios converge?
+
+### Implementation
+
+```{python}
+def fibonacci_ratios(F):
+    ...
+```
+
+### Errors

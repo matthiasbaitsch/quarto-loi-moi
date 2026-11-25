@@ -1,0 +1,42 @@
+---
+title: Problem set 5
+subtitle: Sequences
+---
+
+## Part 1: On paper
+
+::: {#exr-golden-ratio}
+## The golden ratio
+
+The Fibonacci numbers are $F_1 = F_2 = 1$ and $F_{n+2} = F_{n+1} + F_n$. Their ratios $q_n = F_{n+1} / F_n$ seem to converge.
+
+1. Compute $q_1, \ldots, q_5$.
+
+1. Show that $q_{n+1} = 1 + 1 / q_n$.
+
+1. Assume that the sequence converges. Determine its limit.
+:::
+
+## Part 2: In R
+
+Download the [work files](05-sequences-exercises.zip) and unzip them into your project folder. The data are in the folder `data/`.
+
+```{r}
+#| label: setup
+#| include: false
+fibonacci <- read.csv("data/fibonacci.csv")
+```
+
+::: {#exr-fibonacci}
+## How fast do the ratios converge?
+
+The file `data/fibonacci.csv` contains the first $30$ Fibonacci numbers $F_n$.
+
+### Implementation
+
+Implement the function `fibonacci_ratios(F)`, which returns the ratios $q_n = F_{n+1} / F_n$ from @exr-golden-ratio for a vector `F` of Fibonacci numbers. Test it with $F_1, \ldots, F_6$.
+
+### Errors
+
+Add the columns `q` and `error` to the data frame `fibonacci`: the ratio $q_n$, and its distance to the golden ratio. By which factor does the error fall in each step?
+:::

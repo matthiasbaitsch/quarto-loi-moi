@@ -30,7 +30,7 @@ Git repository, public on GitHub: `matthiasbaitsch/quarto-loi-moi`.
   follow a symlink to an extension); `make render` or `make render-<example>` renders (with `uv run` if the example
   has a `pyproject.toml`); `make clean` removes all generated files; output in `__output/`. Don't render on every
   change, the user tests themselves.
-- Test policy: assertion first; one test per example, each aspect in one example only.
+- Test policy: as few tests in code as possible. The examples cover all functionality, each aspect in one example only; `tests/expected/<example>/` holds their pre-render output, compared by the snapshot test; after an intended change `deno task update-expected`, then review the diff. Invalid input: one malformation per entry in `tests/invalid/`. Unit tests only for what neither covers, and not for trivial checks.
 - Code style: simple; comments sparingly, only where the code doesn't say it (the user is learning TypeScript;
   explain new constructs in the review, not in the code); file names follow class names; no `continue`/`break`;
   no environment variables; attributes declared in the class, not as constructor parameters.
@@ -46,3 +46,4 @@ Git repository, public on GitHub: `matthiasbaitsch/quarto-loi-moi`.
 - No line breaks within paragraphs or list items in Markdown documents (one line each).
 - Do nothing that was not asked for. No memory directory, notes go into this file.
 - No Git commits, no GitHub repository without being asked.
+- Finished TODOs are not deleted: they go into the section "Done" at the end of `TODO.md`, as documentation.

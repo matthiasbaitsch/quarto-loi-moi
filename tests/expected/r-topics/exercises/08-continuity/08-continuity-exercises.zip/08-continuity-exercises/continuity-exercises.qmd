@@ -1,0 +1,17 @@
+---
+title: Problem set 8
+---
+
+Write your code into the cells below each exercise. Run the whole document before handing it in.
+
+## Bisection
+
+### Implementation
+
+```{r}
+bisection <- function(f, a, b, n) {
+  # ...
+}
+```
+
+### Errors

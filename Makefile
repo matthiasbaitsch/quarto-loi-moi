@@ -49,6 +49,6 @@ render-mathe-b: examples
 clean:
 	rm -rf __output
 	for example in $(EXAMPLES); do rm -rf $$example/_extensions/loimoi; done
-	for collection in $(COLLECTIONS); do rm -rf $$collection/c $$collection/.quarto; done
+	for collection in $(COLLECTIONS); do rm -rf $$collection/c $$collection/generated $$collection/.quarto; done
 
 .PHONY: examples render render-python-flat render-julia-parts render-r-topics render-nummat render-numpde render-mathe-b clean

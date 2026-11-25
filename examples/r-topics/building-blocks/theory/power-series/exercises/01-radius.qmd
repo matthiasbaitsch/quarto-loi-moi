@@ -1,3 +1,8 @@
+---
+execute:
+  warning: false
+---
+
 ## Part 1: On paper
 
 ```{r}

@@ -4,6 +4,7 @@
 import csv
 import math
 
+# The Fibonacci numbers from the data file
 F = [int(row["F"]) for row in csv.DictReader(open("daten/fibonacci.csv"))]
 ```
 
@@ -24,9 +25,10 @@ def fibonacci_ratios(F):
 :::
 
 ::: {.lm-solution}
+The function is in `src/fibonacci.py` (see the appendix).
+
 ```{python}
-def fibonacci_ratios(F):
-    return [b / a for a, b in zip(F, F[1:])]
+from src.fibonacci import fibonacci_ratios
 ```
 :::
 

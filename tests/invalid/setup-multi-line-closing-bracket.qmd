@@ -1,0 +1,6 @@
+```{julia}
+#| label: setup
+a = [
+1, 2
+]
+```

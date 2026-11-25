@@ -1,0 +1,20 @@
+---
+title: Aufgabenblatt 2
+---
+
+```{python}
+#| label: setup
+#| include: false
+import math
+```
+
+## The alternating harmonic series
+
+### Implementation
+
+```{python}
+def partial_sums(n):
+    ...
+```
+
+### Errors

@@ -1,0 +1,99 @@
+---
+execute:
+  warning: false
+knitr:
+  opts_chunk:
+    comment: ''
+filters:
+  - loimoi
+title: Problem set 7
+subtitle: Power series
+---
+
+## Part 1: On paper
+
+```{r}
+#| label: setup
+#| include: false
+library(knitr)
+```
+
+::: {#exr-radius}
+## Radius of convergence
+
+Consider the power series
+$$
+  \sum_{k=0}^{\infty} \frac{x^k}{2^k}
+$$
+with the partial sums $s_n(x)$ for $x = 1$ and $x = 3$
+
+::: {.lm-sheet}
+```{r}
+n <- 0:8
+s <- function(x) cumsum((x / 2)^n)
+kable(data.frame(n = n, "x = 1" = s(1), "x = 3" = s(3), check.names = FALSE), digits = 4)
+```
+:::
+
+Determine the radius of convergence and explain the table.
+
+::: {.lm-solution}
+With the ratio test, $\sum a_k x^k$ converges for $|x| < R = \lim |a_k / a_{k+1}|$. Here $|a_k / a_{k+1}| = 2^{k+1} / 2^k = 2$, so $R = 2$.
+
+For $x = 1$, inside the radius, the series is the geometric series with $q = 1/2$ and converges to $1 / (1 - 1/2) = 2$. For $x = 3$, outside the radius, the terms $(3/2)^k$ grow, and the series diverges.
+:::
+:::
+
+## Part 2: In R
+
+Download the [work files](07-power-series-exercises.zip) and unzip them into your project folder.
+
+
+::: {#exr-taylor}
+## Taylor polynomials of the exponential function
+
+The power series of $e^x$ converges for all $x$. Its partial sums are the Taylor polynomials
+$$
+  T_n(x) = \sum_{k=0}^{n} \frac{x^k}{k!}.
+$$
+
+### Implementation
+
+Implement the function `taylor_exp(x, n)`, which returns $T_n(x)$.
+
+::: {.lm-scaffold}
+```{r}
+taylor_exp <- function(x, n) {
+  # ...
+}
+```
+:::
+
+::: {.lm-solution}
+```{r}
+taylor_exp <- function(x, n) {
+  term <- 1
+  total <- 1
+  for (k in seq_len(n)) {
+    term <- term * x / k
+    total <- total + term
+  }
+  total
+}
+```
+:::
+
+### Errors
+
+Compute the errors of $T_1(1), \ldots, T_{15}(1)$. How does the error fall?
+
+::: {.lm-solution}
+```{r}
+ns <- 1:15
+errors <- abs(sapply(ns, function(n) taylor_exp(1, n)) - exp(1))
+kable(data.frame(n = ns, error = format(errors, digits = 3)))
+```
+
+The error is about $1 / (n + 1)!$, the first term left out. It falls faster and faster; after about $17$ terms, it reaches the level of the rounding errors.
+:::
+:::

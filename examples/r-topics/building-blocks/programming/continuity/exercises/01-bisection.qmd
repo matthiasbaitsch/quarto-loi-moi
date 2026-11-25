@@ -2,6 +2,14 @@
 
 Download the [work files](${work-files}) and unzip them into your project folder.
 
+::: {.lm-scaffold}
+Write your code into the cells below each exercise. Run the whole document before handing it in.
+:::
+
+::: {.lm-solution}
+All functions of this sheet are written for clarity, not for speed.
+:::
+
 ::: {#exr-bisection}
 ## Bisection
 

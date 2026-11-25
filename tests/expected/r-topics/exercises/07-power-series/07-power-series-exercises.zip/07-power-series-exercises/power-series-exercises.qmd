@@ -1,0 +1,26 @@
+---
+execute:
+  warning: false
+knitr:
+  opts_chunk:
+    comment: ''
+title: Problem set 7
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(knitr)
+```
+
+## Taylor polynomials of the exponential function
+
+### Implementation
+
+```{r}
+taylor_exp <- function(x, n) {
+  # ...
+}
+```
+
+### Errors

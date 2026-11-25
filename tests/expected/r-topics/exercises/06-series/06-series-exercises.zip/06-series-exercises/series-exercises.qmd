@@ -1,0 +1,15 @@
+---
+title: Problem set 6
+---
+
+## The alternating harmonic series
+
+### Implementation
+
+```{r}
+partial_sums <- function(n) {
+  # ...
+}
+```
+
+### Errors

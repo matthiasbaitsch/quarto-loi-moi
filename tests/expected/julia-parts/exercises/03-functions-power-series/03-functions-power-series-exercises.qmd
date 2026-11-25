@@ -1,0 +1,44 @@
+---
+title: Exercise sheet 3
+subtitle: 'Functions: Power series'
+---
+
+## Part 1: On paper
+
+::: {#exr-radius}
+## Radius of convergence
+
+Determine the radius of convergence of the power series
+
+1. $\displaystyle \sum_{k=0}^{\infty} \frac{x^k}{2^k}$,
+
+1. $\displaystyle \sum_{k=0}^{\infty} \frac{x^k}{k!}$.
+:::
+
+## Part 2: In Julia
+
+Download the [work files](03-functions-power-series-exercises.zip) and unzip them into your project folder. Develop your code in the notebook first. Once a function works, move it into the folder `src/` and include it from there. `src/partial_sums.jl` is your function from the last sheet.
+
+```{julia}
+#| label: setup
+#| include: false
+include("src/partial_sums.jl")
+include("src/taylor_exp.jl")
+```
+
+::: {#exr-taylor}
+## Taylor polynomials of the exponential function
+
+The second series from @exr-radius is $e^x$. Its partial sums are the Taylor polynomials
+$$
+  T_n(x) = \sum_{k=0}^{n} \frac{x^k}{k!}.
+$$
+
+### Implementation
+
+Implement the function `taylor_exp(x, n)`, which returns $T_n(x)$.
+
+### Errors
+
+Compute the errors of $T_1(1), \ldots, T_{15}(1)$. How does the error fall?
+:::

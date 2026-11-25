@@ -1,0 +1,87 @@
+---
+filters:
+  - loimoi
+title: Aufgabenblatt 4
+subtitle: 'Stetigkeit: Bisektion für Nullstellen'
+---
+
+## Part 1: On paper
+
+::: {#exr-piecewise}
+## A piecewise function
+
+Let
+$$
+  f(x) = \begin{cases} x^2 & \text{for } x \leq 1, \\ a x - 1 & \text{for } x > 1. \end{cases}
+$$
+
+1. For which $a$ is $f$ continuous?
+
+1. Is $f$ then also differentiable at $x = 1$?
+
+::: {.lm-solution}
+1. Both pieces are continuous; at $x = 1$, the left piece gives $1$, the right one tends to $a - 1$. So $f$ is continuous for $a = 2$.
+
+1. Yes: the derivative of the left piece at $1$ is $2 \cdot 1 = 2$, that of the right piece is $a = 2$.
+:::
+:::
+
+## Part 2: In Python
+
+Download the [work files](sheet-04.zip), unzip them into your project folder and open the notebook.
+
+How to set up Python is explained on the [course page](https://matthiasbaitsch.github.io/quarto-loi-moi/index.html).
+
+```{python}
+#| label: setup
+#| include: false
+import numpy as np
+import matplotlib.pyplot as plt
+```
+
+::: {#exr-bisection}
+## Bisection
+
+If $f$ is continuous on $[a, b]$ and $f(a)$ and $f(b)$ have opposite signs, $f$ has a zero in $[a, b]$ (intermediate value theorem). Bisection halves the interval in each step and keeps the half in which the sign changes.
+
+### Implementation
+
+Implement the function `bisection(f, a, b, n)`, which returns the list of the midpoints of the first $n$ intervals.
+
+::: {.lm-scaffold}
+```{python}
+```
+:::
+
+::: {.lm-solution}
+```{python}
+def bisection(f, a, b, n):
+    midpoints = []
+    for k in range(n):
+        m = (a + b) / 2
+        midpoints.append(m)
+        if np.sign(f(m)) == np.sign(f(a)):
+            a = m
+        else:
+            b = m
+    return midpoints
+```
+:::
+
+### Errors
+
+Find the zero of $\cos x - x$ in $[0, 1]$ with $n = 50$. Take the last midpoint as the exact zero and plot the errors of the first $40$ midpoints in a semi-log diagram. How many steps are needed for ten correct digits?
+
+::: {.lm-solution}
+```{python}
+midpoints = bisection(lambda x: np.cos(x) - x, 0.0, 1.0, 50)
+errors = np.abs(np.array(midpoints[:40]) - midpoints[-1])
+plt.semilogy(range(1, 41), errors, "o-")
+plt.xlabel("step")
+plt.ylabel("error")
+plt.show()
+```
+
+After $n$ steps, the interval has the length $2^{-n}$, so the error falls along a straight line. Ten correct digits need $2^{-n} < 10^{-10}$, that is $n \geq 34$.
+:::
+:::

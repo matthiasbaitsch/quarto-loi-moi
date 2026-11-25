@@ -1,92 +1,22 @@
-import { assertEquals, assertThrows } from "@std/assert";
-import { existsSync } from "@std/fs";
+import { assertThrows } from "@std/assert";
 import { join } from "@std/path";
 import { QmdDocument } from "../_extensions/loimoi/qmd-document.ts";
-import { QmdCodeCell, QmdDiv, QmdNode, QmdText } from "../_extensions/loimoi/qmd-node.ts";
 
-const examples = new URL("../examples/", import.meta.url).pathname;
+// Each entry of `tests/invalid/` has one malformation: a file, or a folder with files that are read together.
+// Valid files are the building blocks of the examples.
+const invalid = new URL("invalid/", import.meta.url).pathname;
 
-const text = `---
-title: Test
----
+// The files of an entry: the file itself, or the files in the folder in name order
+function filesOf(entry: Deno.DirEntry): string[] {
+  const path = join(invalid, entry.name);
+  if (!entry.isDirectory) return [path];
+  const names = [...Deno.readDirSync(path)].map((file) => file.name).sort();
+  return names.map((name) => join(path, name));
+}
 
-# Heading
-
-::: {#exr-a}
-## Exercise A
-
-Text.
-
-::: {.lm-solution}
-Solution.
-:::
-:::
-
-\`\`\`{julia}
-#| echo: false
-x = 1
-\`\`\`
-
-\`\`\`{.julia}
-y = 2
-\`\`\`
-`;
-
-Deno.test("parse and text: document written as read", () => {
-  assertEquals(QmdDocument.parse(text).text(), text);
-});
-
-Deno.test("parse: header, divs and code cells", () => {
-  const doc = QmdDocument.parse(text);
-  assertEquals(doc.header, { title: "Test" });
-
-  const [exercise, executable, shown] = doc.nodes.filter((node) => !(node instanceof QmdText));
-  assertEquals((exercise as QmdDiv).id, "exr-a");
-  assertEquals(((exercise as QmdDiv).children.find((child) => child instanceof QmdDiv) as QmdDiv).classes, [
-    "lm-solution",
-  ]);
-  assertEquals((executable as QmdCodeCell).language, "julia");
-  assertEquals((executable as QmdCodeCell).options, { echo: false });
-  assertEquals((executable as QmdCodeCell).executable, true);
-  assertEquals((shown as QmdCodeCell).executable, false);
-});
-
-Deno.test("map: remove solutions, also inside divs", () => {
-  const removeSolution = (node: QmdNode) =>
-    node instanceof QmdDiv && node.classes.includes("lm-solution") ? [] : [node];
-  const expected = text.replace("::: {.lm-solution}\nSolution.\n:::\n", "");
-  assertEquals(QmdDocument.parse(text).map(removeSolution).text(), expected);
-});
-
-Deno.test("read: files combined in order, headers merged, clash is an error", () => {
-  const folder = Deno.makeTempDirSync();
-  const a = join(folder, "a.qmd");
-  const b = join(folder, "b.qmd");
-  const c = join(folder, "c.qmd");
-  Deno.writeTextFileSync(a, "---\ntitle: A\n---\n\nText A\n");
-  Deno.writeTextFileSync(b, "---\nauthor: B\n---\n\nText B\n");
-  const d = join(folder, "d.qmd");
-  const e = join(folder, "e.qmd");
-  Deno.writeTextFileSync(c, "---\ntitle: C\n---\n\nText C\n");
-  Deno.writeTextFileSync(d, "Text D\n");
-  Deno.writeTextFileSync(e, "::: {#exr-e}\nText E\n:::\n");
-
-  const doc = QmdDocument.read(a, b);
-  assertEquals(doc.header, { title: "A", author: "B" });
-  assertEquals(doc.text(), "---\ntitle: A\nauthor: B\n---\n\nText A\n\nText B\n");
-  assertThrows(() => QmdDocument.read(a, c), Error, "title");
-  assertEquals(QmdDocument.read(d, e).body(), "Text D\n\n::: {#exr-e}\nText E\n:::\n");
-});
-
-Deno.test("read and write: julia-parts as qmd and ipynb, by the extension", () => {
-  const exercises = examples + "julia-parts/building-blocks/10-convergence/10-sequences/exercises/";
-  const doc = QmdDocument.read(exercises + "10-golden-ratio.qmd", exercises + "20-fibonacci.qmd");
-  const folder = Deno.makeTempDirSync();
-
-  doc.write(join(folder, "sheet.qmd"));
-  assertEquals(Deno.readTextFileSync(join(folder, "sheet.qmd")), doc.text());
-
-  doc.write(join(folder, "notebook.ipynb"));
-  const notebook = JSON.parse(Deno.readTextFileSync(join(folder, "notebook.ipynb")));
-  assertEquals(notebook.cells.some((cell: { cell_type: string }) => cell.cell_type === "code"), true);
+Deno.test("read and validate: every entry in tests/invalid fails", () => {
+  for (const entry of Deno.readDirSync(invalid)) {
+    const files = filesOf(entry);
+    assertThrows(() => QmdDocument.read(...files).validate(), Error, undefined, `${entry.name} does not fail`);
+  }
 });

@@ -1,0 +1,56 @@
+---
+filters:
+  - loimoi
+title: Solutions to problem set 8
+subtitle: Continuity
+---
+
+::: {#exr-piecewise}
+## A piecewise function
+
+::: {.lm-solution}
+1. Both pieces are continuous; at $x = 1$, the left piece gives $1$, the right one tends to $a - 1$. So $f$ is continuous for $a = 2$.
+
+1. Yes: the derivative of the left piece at $1$ is $2 \cdot 1 = 2$, that of the right piece is $a = 2$.
+:::
+:::
+
+::: {.lm-solution}
+All functions of this sheet are written for clarity, not for speed.
+:::
+
+::: {#exr-bisection}
+## Bisection
+
+### Implementation
+
+::: {.lm-solution}
+```{r}
+bisection <- function(f, a, b, n) {
+  midpoints <- numeric(n)
+  for (k in seq_len(n)) {
+    m <- (a + b) / 2
+    midpoints[k] <- m
+    if (sign(f(m)) == sign(f(a))) {
+      a <- m
+    } else {
+      b <- m
+    }
+  }
+  midpoints
+}
+```
+:::
+
+### Errors
+
+::: {.lm-solution}
+```{r}
+midpoints <- bisection(function(x) cos(x) - x, 0, 1, 50)
+errors <- abs(midpoints[1:40] - midpoints[50])
+plot(1:40, errors, log = "y", type = "b", xlab = "step", ylab = "error")
+```
+
+After $n$ steps, the interval has the length $2^{-n}$, so the error falls along a straight line. Ten correct digits need $2^{-n} < 10^{-10}$, that is $n \geq 34$.
+:::
+:::

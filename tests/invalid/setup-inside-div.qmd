@@ -1,0 +1,10 @@
+::: {#exr-a}
+## A
+
+::: {.lm-solution}
+```{julia}
+#| label: setup
+using Plots
+```
+:::
+:::

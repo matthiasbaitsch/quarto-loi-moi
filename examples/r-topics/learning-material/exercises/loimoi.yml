@@ -16,3 +16,5 @@ products:
 recipe: exercises
 options:
   work-files: folder
+first-number: 5
+output: generated

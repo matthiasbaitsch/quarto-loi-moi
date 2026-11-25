@@ -10,6 +10,11 @@
 
 1. Compute the value of $0.999\ldots = \sum_{k=1}^{\infty} 9 \cdot 10^{-k}$.
 
+::: {.callout-tip}
+## Hint
+Multiply the sum by $1 - q$.
+:::
+
 ::: {.lm-solution}
 1. Multiplying the sum $s_n$ by $1 - q$, all terms but the first and the last cancel: $(1 - q) s_n = 1 - q^{n+1}$.
 

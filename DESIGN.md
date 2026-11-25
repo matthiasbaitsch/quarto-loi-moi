@@ -89,6 +89,7 @@ classDiagram
     text() string
     ipynb() string
     write(file: string)
+    validate()
     map(f: QmdNode → QmdNode[]) QmdDocument
     forEach(f: QmdNode → void)
   }
@@ -331,7 +332,6 @@ Remarks:
 - One file per class, named after the class (`qmd-document.ts`); free functions in `utilities.ts`
 - Names for paths: `…Folder`, `…File` absolute (`outputFolder`); `path`, `…Path` relative to a base folder named in
   the class or a comment (`Folder.path`); `…Name` only the last part (`collectionFolderName`); always "folder", not "dir"
-- Tests: assertion first; unit tests for `BuildingBlockTree`, `QmdDocument` and the steps; each example one test,
-  each aspect in one example only
-- `deno task test`, `deno task check`, `make examples`
+- Tests: the pre-render output of each example compared with `tests/expected/<example>/` (zips by content), the examples covering all functionality, each aspect in one example only; invalid input in `tests/invalid/`; few unit tests
+- `deno task test`, `deno task check`, `deno task update-expected`, `make examples`
 - Simple; comments sparingly, only where the code doesn't say it; no `continue`/`break`; no environment variables

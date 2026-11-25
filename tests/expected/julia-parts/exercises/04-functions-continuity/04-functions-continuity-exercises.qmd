@@ -1,0 +1,51 @@
+---
+title: Exercise sheet 4
+subtitle: 'Functions: Continuity'
+---
+
+## Part 1: On paper
+
+::: {#exr-piecewise}
+## A piecewise function
+
+Let
+$$
+  f(x) = \begin{cases} x^2 & \text{for } x \leq 1, \\ a x - 1 & \text{for } x > 1. \end{cases}
+$$
+
+1. For which $a$ is $f$ continuous?
+
+1. Is $f$ then also differentiable at $x = 1$?
+:::
+
+## Part 2: In Julia
+
+Download the [work files](04-functions-continuity-exercises.zip) and unzip them into your project folder. Develop your code in the notebook first. Once a function works, move it into the folder `src/` and include it from there.
+
+```{julia}
+#| label: setup
+#| include: false
+include("src/bisection.jl")
+```
+
+::: {#exr-bisection}
+## Bisection
+
+If $f$ is continuous on $[a, b]$ and $f(a)$ and $f(b)$ have opposite signs, $f$ has a zero in $[a, b]$ (intermediate value theorem). Bisection halves the interval in each step and keeps the half in which the sign changes.
+
+### Implementation
+
+Implement the function `bisection(f, a, b, n)`, which returns the midpoints of the first $n$ intervals.
+
+### Errors
+
+Find the zero of $\cos x - x$ in $[0, 1]$ with $n = 40$. How many steps are needed for ten correct digits?
+:::
+
+::: {#exr-bisection-speed}
+## How fast does bisection converge?
+
+The code below computes the errors of the first ten midpoints for the zero $x^* = 0.7390851332\ldots$ of $\cos x - x$.
+
+By which factor does the error fall per step?
+:::

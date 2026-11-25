@@ -1,5 +1,6 @@
 options:
   work-files: folder
-lang: en
 product-naming: titles
 file-name: "sheet-${nn}"
+building-blocks: ../building-blocks
+link-format: pdf

@@ -1,0 +1,64 @@
+---
+filters:
+  - loimoi
+title: Solutions to exercise sheet 2
+subtitle: 'Convergence: Series'
+---
+
+::: {#exr-geometric}
+## The geometric series
+
+::: {.lm-solution}
+1. Multiplying the sum $s_n$ by $1 - q$, all terms but the first and the last cancel: $(1 - q) s_n = 1 - q^{n+1}$.
+
+1. For $|q| < 1$, $q^{n+1} \to 0$, so $\sum_{k=0}^{\infty} q^k = 1 / (1 - q)$. With $q = 1/10$:
+   $$
+     \sum_{k=1}^{\infty} 9 \cdot 10^{-k} = \frac{9}{10} \cdot \frac{1}{1 - 1/10} = 1.
+   $$
+:::
+:::
+
+```{julia}
+#| label: setup
+#| include: false
+include("src/partial_sums.jl")
+```
+
+::: {#exr-alternating}
+## The alternating harmonic series
+
+### Implementation
+
+::: {.lm-solution}
+The function is in `src/partial_sums.jl` (see the appendix).
+:::
+
+### Errors
+
+::: {.lm-solution}
+```{julia}
+sums = partial_sums(1000)
+ns = [10, 100, 1000]
+[ns abs.(sums[ns] .- log(2))]
+```
+
+The error is about $1 / (2n)$: one more correct digit needs ten times as many terms. The geometric series with $q = 1/10$ gains one digit with each term.
+:::
+:::
+
+## Appendix
+
+### `src/partial_sums.jl`
+
+```{.julia .number-lines}
+# The partial sums s_1, ..., s_n of the alternating harmonic series.
+function partial_sums(n)
+    s = 0.0
+    sums = Float64[]
+    for k in 1:n
+        s += (-1)^(k + 1) / k
+        push!(sums, s)
+    end
+    return sums
+end
+```

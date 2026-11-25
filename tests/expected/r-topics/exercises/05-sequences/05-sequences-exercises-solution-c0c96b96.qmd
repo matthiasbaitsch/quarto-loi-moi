@@ -1,0 +1,55 @@
+---
+filters:
+  - loimoi
+title: Solutions to problem set 5
+subtitle: Sequences
+---
+
+::: {#exr-golden-ratio}
+## The golden ratio
+
+::: {.lm-solution}
+1. With $F_1, \ldots, F_6 = 1, 1, 2, 3, 5, 8$: $q_1 = 1$, $q_2 = 2$, $q_3 = 3/2$, $q_4 = 5/3$, $q_5 = 8/5$.
+
+1. Dividing $F_{n+2} = F_{n+1} + F_n$ by $F_{n+1}$ gives $q_{n+1} = 1 + F_n / F_{n+1} = 1 + 1 / q_n$.
+
+1. For the limit $q$, $q = 1 + 1/q$, so $q^2 - q - 1 = 0$. Since all $q_n \geq 1$, the limit is the positive root, the golden ratio
+   $$
+     \varphi = \frac{1 + \sqrt{5}}{2} \approx 1.618.
+   $$
+:::
+:::
+
+```{r}
+#| label: setup
+#| include: false
+fibonacci <- read.csv("data/fibonacci.csv")
+```
+
+::: {#exr-fibonacci}
+## How fast do the ratios converge?
+
+### Implementation
+
+::: {.lm-solution}
+```{r}
+fibonacci_ratios <- function(F) {
+  F[-1] / F[-length(F)]
+}
+
+fibonacci_ratios(c(1, 1, 2, 3, 5, 8))
+```
+:::
+
+### Errors
+
+::: {.lm-solution}
+```{r}
+fibonacci$q <- c(fibonacci_ratios(fibonacci$F), NA)
+fibonacci$error <- abs(fibonacci$q - (1 + sqrt(5)) / 2)
+head(fibonacci, 20)
+```
+
+The error falls by the factor $\varphi^2 \approx 2.6$ in each step: the ratios lie alternately above and below $\varphi$, closer each time.
+:::
+:::

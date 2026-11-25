@@ -1,0 +1,86 @@
+---
+filters:
+  - loimoi
+title: Aufgabenblatt 2
+subtitle: Infinite series
+---
+
+## Part 1: On paper
+
+::: {#exr-geometric}
+## The geometric series
+
+1. Show that, for $q \neq 1$,
+   $$
+     \sum_{k=0}^{n} q^k = \frac{1 - q^{n+1}}{1 - q}.
+   $$
+
+1. Compute the value of $0.999\ldots = \sum_{k=1}^{\infty} 9 \cdot 10^{-k}$.
+
+::: {.lm-solution}
+1. Multiplying the sum $s_n$ by $1 - q$, all terms but the first and the last cancel: $(1 - q) s_n = 1 - q^{n+1}$.
+
+1. For $|q| < 1$, $q^{n+1} \to 0$, so $\sum_{k=0}^{\infty} q^k = 1 / (1 - q)$. With $q = 1/10$:
+   $$
+     \sum_{k=1}^{\infty} 9 \cdot 10^{-k} = \frac{9}{10} \cdot \frac{1}{1 - 1/10} = 1.
+   $$
+:::
+:::
+
+## Part 2: In Python
+
+Download the [work files](sheet-02.zip), unzip them into your project folder and open the notebook.
+
+How to set up Python is explained on the [course page](https://matthiasbaitsch.github.io/quarto-loi-moi/index.html).
+
+```{python}
+#| label: setup
+#| include: false
+import math
+```
+
+::: {#exr-alternating}
+## The alternating harmonic series
+
+The alternating harmonic series converges to $\ln 2$:
+$$
+  \sum_{k=1}^{\infty} \frac{(-1)^{k+1}}{k} = 1 - \frac{1}{2} + \frac{1}{3} - \ldots = \ln 2.
+$$
+
+### Implementation
+
+Implement the function `partial_sums(n)`, which returns the list of the partial sums $s_1, \ldots, s_n$.
+
+::: {.lm-scaffold}
+```{python}
+def partial_sums(n):
+    ...
+```
+:::
+
+::: {.lm-solution}
+```{python}
+def partial_sums(n):
+    s = 0.0
+    sums = []
+    for k in range(1, n + 1):
+        s += (-1) ** (k + 1) / k
+        sums.append(s)
+    return sums
+```
+:::
+
+### Errors
+
+Compute the errors of $s_{10}$, $s_{100}$ and $s_{1000}$. How many terms are needed for one more correct digit? Compare with the geometric series from @exr-geometric.
+
+::: {.lm-solution}
+```{python}
+sums = partial_sums(1000)
+for n in [10, 100, 1000]:
+    print(n, abs(sums[n - 1] - math.log(2)))
+```
+
+The error is about $1 / (2n)$: one more correct digit needs ten times as many terms. The geometric series with $q = 1/10$ gains one digit with each term.
+:::
+:::

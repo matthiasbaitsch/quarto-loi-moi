@@ -1,0 +1,45 @@
+---
+title: Aufgabenblatt 3
+subtitle: Power series
+---
+
+## Part 1: On paper
+
+::: {#exr-radius}
+## Radius of convergence
+
+Determine the radius of convergence of the power series
+
+1. $\displaystyle \sum_{k=0}^{\infty} \frac{x^k}{2^k}$,
+
+1. $\displaystyle \sum_{k=0}^{\infty} \frac{x^k}{k!}$.
+:::
+
+## Part 2: In Python
+
+Download the [work files](sheet-03.zip), unzip them into your project folder and open the notebook.
+
+How to set up Python is explained on the [course page](https://matthiasbaitsch.github.io/quarto-loi-moi/index.html).
+
+```{python}
+#| label: setup
+#| include: false
+import math
+```
+
+::: {#exr-taylor}
+## Taylor polynomials of the exponential function
+
+The second series from @exr-radius is $e^x$. Its partial sums are the Taylor polynomials
+$$
+  T_n(x) = \sum_{k=0}^{n} \frac{x^k}{k!}.
+$$
+
+### Implementation
+
+Implement the function `taylor_exp(x, n)`, which returns $T_n(x)$.
+
+### Errors
+
+Compute the errors of $T_1(1), \ldots, T_{15}(1)$. How does the error fall?
+:::

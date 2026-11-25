@@ -42,3 +42,20 @@ midpoints[end]
 After $n$ steps, the interval has the length $2^{-n}$. Ten correct digits need $2^{-n} < 10^{-10}$, that is $n \geq 34$.
 :::
 :::
+
+::: {#exr-bisection-speed}
+## How fast does bisection converge?
+
+The code below computes the errors of the first ten midpoints for the zero $x^* = 0.7390851332\ldots$ of $\cos x - x$.
+
+```{julia}
+#| include: true
+errors = abs.(bisection(x -> cos(x) - x, 0.0, 1.0, 10) .- 0.7390851332151607)
+```
+
+By which factor does the error fall per step?
+
+::: {.lm-solution}
+On average by $2$, as the interval is halved in each step. Single steps may do better or worse, depending on where the midpoint falls.
+:::
+:::

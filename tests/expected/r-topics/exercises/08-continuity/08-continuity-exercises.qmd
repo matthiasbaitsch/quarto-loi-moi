@@ -1,0 +1,37 @@
+---
+title: Problem set 8
+subtitle: Continuity
+---
+
+## Part 1: On paper
+
+::: {#exr-piecewise}
+## A piecewise function
+
+Let
+$$
+  f(x) = \begin{cases} x^2 & \text{for } x \leq 1, \\ a x - 1 & \text{for } x > 1. \end{cases}
+$$
+
+1. For which $a$ is $f$ continuous?
+
+1. Is $f$ then also differentiable at $x = 1$?
+:::
+
+## Part 2: In R
+
+Download the [work files](08-continuity-exercises.zip) and unzip them into your project folder.
+
+::: {#exr-bisection}
+## Bisection
+
+If $f$ is continuous on $[a, b]$ and $f(a)$ and $f(b)$ have opposite signs, $f$ has a zero in $[a, b]$ (intermediate value theorem). Bisection halves the interval in each step and keeps the half in which the sign changes.
+
+### Implementation
+
+Implement the function `bisection(f, a, b, n)`, which returns the vector of the midpoints of the first $n$ intervals.
+
+### Errors
+
+Find the zero of $\cos x - x$ in $[0, 1]$ with $n = 50$. Take the last midpoint as the exact zero and plot the errors of the first $40$ midpoints in a semi-log diagram. How many steps are needed for ten correct digits?
+:::

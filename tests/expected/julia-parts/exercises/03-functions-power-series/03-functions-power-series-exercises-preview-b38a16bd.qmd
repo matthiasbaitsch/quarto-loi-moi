@@ -1,0 +1,92 @@
+---
+filters:
+  - loimoi
+title: Exercise sheet 3
+subtitle: 'Functions: Power series'
+---
+
+## Part 1: On paper
+
+::: {#exr-radius}
+## Radius of convergence
+
+Determine the radius of convergence of the power series
+
+1. $\displaystyle \sum_{k=0}^{\infty} \frac{x^k}{2^k}$,
+
+1. $\displaystyle \sum_{k=0}^{\infty} \frac{x^k}{k!}$.
+
+::: {.lm-solution}
+With the ratio test, the series $\sum a_k x^k$ converges for $|x| < R = \lim |a_k / a_{k+1}|$.
+
+1. $|a_k / a_{k+1}| = 2^{k+1} / 2^k = 2$, so $R = 2$.
+
+1. $|a_k / a_{k+1}| = (k + 1)! / k! = k + 1 \to \infty$, so $R = \infty$: the series converges for all $x$.
+:::
+:::
+
+## Part 2: In Julia
+
+Download the [work files](03-functions-power-series-exercises.zip) and unzip them into your project folder. Develop your code in the notebook first. Once a function works, move it into the folder `src/` and include it from there. `src/partial_sums.jl` is your function from the last sheet.
+
+```{julia}
+#| label: setup
+#| include: false
+include("src/partial_sums.jl")
+include("src/taylor_exp.jl")
+```
+
+::: {#exr-taylor}
+## Taylor polynomials of the exponential function
+
+The second series from @exr-radius is $e^x$. Its partial sums are the Taylor polynomials
+$$
+  T_n(x) = \sum_{k=0}^{n} \frac{x^k}{k!}.
+$$
+
+### Implementation
+
+Implement the function `taylor_exp(x, n)`, which returns $T_n(x)$.
+
+::: {.lm-scaffold}
+```{julia}
+# function taylor_exp(x, n)
+#     ...
+# end
+```
+:::
+
+::: {.lm-solution}
+The function is in `src/taylor_exp.jl` (see the appendix).
+:::
+
+### Errors
+
+Compute the errors of $T_1(1), \ldots, T_{15}(1)$. How does the error fall?
+
+::: {.lm-solution}
+```{julia}
+ns = 1:15
+[ns abs.(taylor_exp.(1.0, ns) .- exp(1.0))]
+```
+
+The error is about $1 / (n + 1)!$, the first term left out. It falls faster and faster; after about $17$ terms, it reaches the level of the rounding errors.
+:::
+:::
+
+## Appendix
+
+### `src/taylor_exp.jl`
+
+```{.julia .number-lines}
+# The Taylor polynomial T_n(x) of the exponential function at 0.
+function taylor_exp(x, n)
+    term = 1.0
+    total = 1.0
+    for k in 1:n
+        term *= x / k
+        total += term
+    end
+    return total
+end
+```

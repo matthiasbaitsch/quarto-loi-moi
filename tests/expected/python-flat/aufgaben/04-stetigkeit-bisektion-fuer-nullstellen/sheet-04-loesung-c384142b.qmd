@@ -1,0 +1,59 @@
+---
+filters:
+  - loimoi
+title: Lösungen zu Aufgabenblatt 4
+subtitle: 'Stetigkeit: Bisektion für Nullstellen'
+---
+
+::: {#exr-piecewise}
+## A piecewise function
+
+::: {.lm-solution}
+1. Both pieces are continuous; at $x = 1$, the left piece gives $1$, the right one tends to $a - 1$. So $f$ is continuous for $a = 2$.
+
+1. Yes: the derivative of the left piece at $1$ is $2 \cdot 1 = 2$, that of the right piece is $a = 2$.
+:::
+:::
+
+```{python}
+#| label: setup
+#| include: false
+import numpy as np
+import matplotlib.pyplot as plt
+```
+
+::: {#exr-bisection}
+## Bisection
+
+### Implementation
+
+::: {.lm-solution}
+```{python}
+def bisection(f, a, b, n):
+    midpoints = []
+    for k in range(n):
+        m = (a + b) / 2
+        midpoints.append(m)
+        if np.sign(f(m)) == np.sign(f(a)):
+            a = m
+        else:
+            b = m
+    return midpoints
+```
+:::
+
+### Errors
+
+::: {.lm-solution}
+```{python}
+midpoints = bisection(lambda x: np.cos(x) - x, 0.0, 1.0, 50)
+errors = np.abs(np.array(midpoints[:40]) - midpoints[-1])
+plt.semilogy(range(1, 41), errors, "o-")
+plt.xlabel("step")
+plt.ylabel("error")
+plt.show()
+```
+
+After $n$ steps, the interval has the length $2^{-n}$, so the error falls along a straight line. Ten correct digits need $2^{-n} < 10^{-10}$, that is $n \geq 34$.
+:::
+:::

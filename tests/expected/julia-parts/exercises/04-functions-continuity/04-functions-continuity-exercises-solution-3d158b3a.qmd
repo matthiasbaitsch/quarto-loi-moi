@@ -1,0 +1,77 @@
+---
+filters:
+  - loimoi
+title: Solutions to exercise sheet 4
+subtitle: 'Functions: Continuity'
+---
+
+::: {#exr-piecewise}
+## A piecewise function
+
+::: {.lm-solution}
+1. Both pieces are continuous; at $x = 1$, the left piece gives $1$, the right one tends to $a - 1$. So $f$ is continuous for $a = 2$.
+
+1. Yes: the derivative of the left piece at $1$ is $2 \cdot 1 = 2$, that of the right piece is $a = 2$.
+:::
+:::
+
+```{julia}
+#| label: setup
+#| include: false
+include("src/bisection.jl")
+```
+
+::: {#exr-bisection}
+## Bisection
+
+### Implementation
+
+::: {.lm-solution}
+The function is in `src/bisection.jl` (see the appendix).
+:::
+
+### Errors
+
+::: {.lm-solution}
+```{julia}
+midpoints = bisection(x -> cos(x) - x, 0.0, 1.0, 40)
+midpoints[end]
+```
+
+After $n$ steps, the interval has the length $2^{-n}$. Ten correct digits need $2^{-n} < 10^{-10}$, that is $n \geq 34$.
+:::
+:::
+
+::: {#exr-bisection-speed}
+## How fast does bisection converge?
+
+```{julia}
+#| include: true
+errors = abs.(bisection(x -> cos(x) - x, 0.0, 1.0, 10) .- 0.7390851332151607)
+```
+
+::: {.lm-solution}
+On average by $2$, as the interval is halved in each step. Single steps may do better or worse, depending on where the midpoint falls.
+:::
+:::
+
+## Appendix
+
+### `src/bisection.jl`
+
+```{.julia .number-lines}
+# The midpoints of the first n intervals of bisection for a zero of f in [a, b].
+function bisection(f, a, b, n)
+    midpoints = Float64[]
+    for k in 1:n
+        m = (a + b) / 2
+        push!(midpoints, m)
+        if sign(f(m)) == sign(f(a))
+            a = m
+        else
+            b = m
+        end
+    end
+    return midpoints
+end
+```

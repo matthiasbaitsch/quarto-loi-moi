@@ -1,0 +1,59 @@
+---
+execute:
+  warning: false
+knitr:
+  opts_chunk:
+    comment: ''
+filters:
+  - loimoi
+title: Solutions to problem set 7
+subtitle: Power series
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(knitr)
+```
+
+::: {#exr-radius}
+## Radius of convergence
+
+::: {.lm-solution}
+With the ratio test, $\sum a_k x^k$ converges for $|x| < R = \lim |a_k / a_{k+1}|$. Here $|a_k / a_{k+1}| = 2^{k+1} / 2^k = 2$, so $R = 2$.
+
+For $x = 1$, inside the radius, the series is the geometric series with $q = 1/2$ and converges to $1 / (1 - 1/2) = 2$. For $x = 3$, outside the radius, the terms $(3/2)^k$ grow, and the series diverges.
+:::
+:::
+
+::: {#exr-taylor}
+## Taylor polynomials of the exponential function
+
+### Implementation
+
+::: {.lm-solution}
+```{r}
+taylor_exp <- function(x, n) {
+  term <- 1
+  total <- 1
+  for (k in seq_len(n)) {
+    term <- term * x / k
+    total <- total + term
+  }
+  total
+}
+```
+:::
+
+### Errors
+
+::: {.lm-solution}
+```{r}
+ns <- 1:15
+errors <- abs(sapply(ns, function(n) taylor_exp(1, n)) - exp(1))
+kable(data.frame(n = ns, error = format(errors, digits = 3)))
+```
+
+The error is about $1 / (n + 1)!$, the first term left out. It falls faster and faster; after about $17$ terms, it reaches the level of the rounding errors.
+:::
+:::

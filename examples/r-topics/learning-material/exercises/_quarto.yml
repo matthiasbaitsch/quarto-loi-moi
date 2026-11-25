@@ -1,6 +1,8 @@
 project:
   type: default
   output-dir: ../../../../__output/r-topics/exercises
+  render:
+    - generated/**/*.qmd
 
 metadata-files:
   - ../../../_common.yml

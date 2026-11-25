@@ -1,0 +1,6 @@
+```{julia}
+#| label: setup
+function g(x)
+    2x
+end
+```

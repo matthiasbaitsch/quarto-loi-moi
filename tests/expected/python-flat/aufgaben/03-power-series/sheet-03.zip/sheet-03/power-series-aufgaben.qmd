@@ -1,0 +1,20 @@
+---
+title: Aufgabenblatt 3
+---
+
+```{python}
+#| label: setup
+#| include: false
+import math
+```
+
+## Taylor polynomials of the exponential function
+
+### Implementation
+
+```{python}
+def taylor_exp(x, n):
+    ...
+```
+
+### Errors

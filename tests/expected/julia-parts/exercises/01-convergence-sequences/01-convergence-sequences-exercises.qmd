@@ -1,0 +1,42 @@
+---
+title: Exercise sheet 1
+subtitle: 'Convergence: Sequences'
+---
+
+## Part 1: On paper
+
+::: {#exr-golden-ratio}
+## The golden ratio
+
+The Fibonacci numbers are $F_1 = F_2 = 1$ and $F_{n+2} = F_{n+1} + F_n$. Their ratios $q_n = F_{n+1} / F_n$ seem to converge:
+
+![](images/sequence.svg)
+
+1. Compute $q_1, \ldots, q_5$.
+
+1. Show that $q_{n+1} = 1 + 1 / q_n$.
+
+1. Assume that the sequence converges. Determine its limit.
+:::
+
+## Part 2: In Julia
+
+Download the [work files](01-convergence-sequences-exercises.zip) and unzip them into your project folder. Develop your code in the notebook first. Once a function works, move it into the folder `src/` and include it from there.
+
+```{julia}
+#| label: setup
+#| include: false
+include("src/fibonacci.jl")
+```
+
+::: {#exr-fibonacci}
+## How fast do the ratios converge?
+
+### Implementation
+
+Implement the function `fibonacci_ratios(n)`, which returns the vector of the ratios $q_1, \ldots, q_n$ from @exr-golden-ratio.
+
+### Errors
+
+Compute the ratios for $n = 20$ together with their errors. By which factor does the error fall in each step?
+:::

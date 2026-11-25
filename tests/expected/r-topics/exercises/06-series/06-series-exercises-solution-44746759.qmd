@@ -1,0 +1,46 @@
+---
+filters:
+  - loimoi
+title: Solutions to problem set 6
+subtitle: Series
+---
+
+::: {#exr-geometric}
+## The geometric series
+
+::: {.lm-solution}
+1. Multiplying the sum $s_n$ by $1 - q$, all terms but the first and the last cancel: $(1 - q) s_n = 1 - q^{n+1}$.
+
+1. For $|q| < 1$, $q^{n+1} \to 0$, so $\sum_{k=0}^{\infty} q^k = 1 / (1 - q)$. With $q = 1/10$:
+   $$
+     \sum_{k=1}^{\infty} 9 \cdot 10^{-k} = \frac{9}{10} \cdot \frac{1}{1 - 1/10} = 1.
+   $$
+:::
+:::
+
+::: {#exr-alternating}
+## The alternating harmonic series
+
+### Implementation
+
+::: {.lm-solution}
+```{r}
+partial_sums <- function(n) {
+  k <- 1:n
+  cumsum((-1)^(k + 1) / k)
+}
+```
+:::
+
+### Errors
+
+::: {.lm-solution}
+```{r}
+sums <- partial_sums(1000)
+ns <- c(10, 100, 1000)
+data.frame(n = ns, error = abs(sums[ns] - log(2)))
+```
+
+The error is about $1 / (2n)$: one more correct digit needs ten times as many terms. The geometric series with $q = 1/10$ gains one digit with each term.
+:::
+:::
