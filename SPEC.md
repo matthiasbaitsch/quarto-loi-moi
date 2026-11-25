@@ -434,7 +434,7 @@ Code in `src/` growing from sheet to sheet: each building block has the code as 
 
 ### Placeholders
 
-Filled in per product when the recipe runs:
+Filled in per product when the recipe runs, in the header and the text of the building blocks; not in the opening lines of divs (fixed: exercise ids, markers, Quarto classes) and not in code cells, whose code may use `${…}` itself (shell, JavaScript):
 
 | Placeholder | Value | Example |
 |---|---|---|

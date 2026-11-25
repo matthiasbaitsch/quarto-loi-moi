@@ -33,5 +33,5 @@ function hidden(cell: QmdCodeCell): QmdCodeCell {
   if ("include" in cell.options) return cell;
   const [fence, ...rest] = cell.lines;
   const lines = [fence, "#| include: false", ...rest];
-  return new QmdCodeCell(lines, cell.language, cell.executable, { ...cell.options, include: false });
+  return new QmdCodeCell(lines, cell.language, cell.executable);
 }

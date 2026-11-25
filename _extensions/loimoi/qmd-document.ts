@@ -63,6 +63,10 @@ export class QmdDocument {
     });
   }
 
+  appendNode(node: QmdNode): QmdDocument {
+    return new QmdDocument(this.header, [...this.nodes, node]);
+  }
+
   map(f: (node: QmdNode) => QmdNode[]): QmdDocument {
     return new QmdDocument(this.header, this.nodes.flatMap((node) => node.map(f)));
   }

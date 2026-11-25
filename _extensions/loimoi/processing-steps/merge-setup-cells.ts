@@ -32,5 +32,5 @@ function merge(cells: QmdCodeCell[]): QmdCodeCell {
   const options = first.lines.filter((line) => line.startsWith("#|"));
   const code = cells.flatMap((cell) => cell.lines.slice(1, -1).filter((line) => !line.startsWith("#|")));
   const lines = [first.lines[0], ...options, ...new Set(code), first.lines.at(-1)!];
-  return new QmdCodeCell(lines, first.language, first.executable, first.options);
+  return new QmdCodeCell(lines, first.language, first.executable);
 }

@@ -91,12 +91,14 @@ classDiagram
     ipynb() string
     write(file: string)
     validate()
+    appendNode(node: QmdNode) QmdDocument
     map(f: QmdNode → QmdNode[]) QmdDocument
     forEach(f: QmdNode → void)
   }
   class QmdNode {
     <<abstract>>
     text() string
+    transformText(f: string → string) QmdNode
     map(f: QmdNode → QmdNode[]) QmdNode[]
     forEach(f: QmdNode → void)
   }
@@ -113,8 +115,8 @@ classDiagram
   class QmdCodeCell {
     lines: string[]
     language: string
-    options: Record
     executable: boolean
+    options() Record
   }
 ```
 
@@ -123,6 +125,8 @@ Remarks:
 - `read(...files)`: headers merged, error if values clash
 - `write(file)`: a Jupyter notebook for `.ipynb`, otherwise Quarto
 - `map(f)`: each node replaced by `f(node)` (none, itself, or several); a `QmdDiv` maps its children first
+- `transformText(f)`: a new node with `f` applied to each line of text; a `QmdDiv` only to its children (its opening line holds fixed things); a `QmdCodeCell` unchanged, as its code may use `${…}` itself (shell, JavaScript)
+- `options()`: read from the `#|` lines when asked, so they always match the lines
 
 #### Processing steps
 
