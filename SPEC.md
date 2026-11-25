@@ -428,7 +428,7 @@ shown (`include: false`, unless the cell sets `include` itself).
 
 - The setup cell (`#| label: setup`) goes into all three. Setup cells are merged into one, each line once, so they may
   only contain single-line statements in one language.
-- In the scaffold, an exercise with nothing left but headings is dropped.
+- In the scaffold, an exercise with nothing left but headings is dropped; the divs of exercises and of `.lm-scaffold` are left out, only their content stays.
 - Errors: a marker or setup cell inside a marker, an exercise inside another div.
 
 Code in `src/` growing from sheet to sheet: each building block has the code as of its point in the course (e.g. `src/truss.py`), the students extend their own copy from sheet to sheet.

@@ -1,4 +1,4 @@
-import { assert, assertThrows } from "@std/assert";
+import { assert, assertEquals, assertThrows } from "@std/assert";
 import { QmdDocument } from "../_extensions/loimoi/qmd-document.ts";
 import { ExerciseScaffold } from "../_extensions/loimoi/processing-steps/exercise-scaffold.ts";
 import { ExerciseSheet } from "../_extensions/loimoi/processing-steps/exercise-sheet.ts";
@@ -77,6 +77,12 @@ Deno.test("markers outside exercises: .lm-solution only in the solution, .lm-sca
   assert(new ExerciseScaffold().run(doc()).text().includes("Notes for the notebook"));
   assert(!new ExerciseSheet().run(doc()).text().includes("Notes for the notebook"));
   assert(!new ExerciseSolution().run(doc()).text().includes("Notes for the notebook"));
+});
+
+Deno.test("exercise scaffold: content of exercises and .lm-scaffold without their divs", () => {
+  const text = "::: {#exr-a}\n## A\n\n::: {.lm-scaffold}\n```{python}\nx = 1\n```\n:::\n:::\n\n::: {#exr-b}\n## B\n\n```{python}\ny = 2\n```\n:::\n";
+  const scaffold = new ExerciseScaffold().run(QmdDocument.parse(text)).text();
+  assertEquals(scaffold, "## A\n\n```{python}\nx = 1\n```\n\n## B\n\n```{python}\ny = 2\n```\n");
 });
 
 Deno.test("nested markers are an error", () => {
