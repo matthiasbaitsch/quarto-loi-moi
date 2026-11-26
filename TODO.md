@@ -2,8 +2,7 @@
 
 ## Next
 
-- [ ] Classes: merge `CollectionConfiguration` into `Collection` (the split into data and logic is artificial, `Collection` only derives from it); rename `ProductConfiguration` to `Product` (it is the product, not configuration).
-- [ ] Course notes as a book (numMat `skript` first): one product per collection (recipe `series: false`), named after the collection folder; the book's chapters belong to the `Product`; default `index.qmd`, the building blocks with one part per `group-title`, the other `.qmd` files in name order, setting `chapters` to override; one chapter per building block with a heading from the recipe; chapter list written into a file Quarto reads via `metadata-files` (tested: arrays concatenated with `_quarto.yml`'s, `index.qmd` not duplicated); link page links to the book's `index.html`. Decide with it: series settings (`first-number`, `name`, `folder-name`, `base-name`, `products`) under a top-level `series:` in `_collection.yml`, missing for a book instead of `series: false`.
+- [ ] Course notes as a book (numMat `skript` first): one product per collection (recipe `series: false`), named after the collection folder; the book's chapters belong to the product; default `index.qmd`, the building blocks with one part per `group-title`, the other `.qmd` files in name order, setting `chapters` to override; one chapter per building block with a heading from the recipe; chapter list written into a file Quarto reads via `metadata-files` (tested: arrays concatenated with `_quarto.yml`'s, `index.qmd` not duplicated); link page links to the book's `index.html`. Decide with it: series settings (`first-number`, `name`, `folder-name`, `base-name`, `products`) under a top-level `series:` in `_collection.yml`, missing for a book instead of `series: false`.
 - [ ] numPDE: groups by topic in folders, `_about.yml`, `.lm-` markers, code from `notebook.qmd` into the exercises, `${notebook}` → `${work-files}`; compare `c/` with today's.
 - [ ] Mathe B, solutions: headings inside exercises now shown (old: only title and solution).
 - [ ] Mathe B: move from `examples/mathe-b` into the real `lernpfad/aufgaben`; commit loi-moi and the `loimoi` branches of the submodules.
@@ -13,10 +12,10 @@
 - [ ] The collection's Quarto configuration resolved by `quarto inspect` (`metadata-files`; about 0.7 s): `output-dir` from there (now read from `_quarto.yml` only), `lang` defaults to Quarto's `lang`, as in SPEC.
 
 - [ ] "Ingredient" renamed to "compartment", as in SPEC and DESIGN: setting `ingredient-folder` → `compartment`, `ingredient-folders` in `conventions.yml` → `compartments`; code, examples, courses.
-- [ ] Code names as in DESIGN "Model of the source material": `BuildingBlockTree` → `SourceMaterial`, `Basket` → `SourceKit`, `ingredients(paths)` → `kit(paths)`, `ingredients` → `compartments`, `ingredientFolder` → `compartment`, `Basket.name()`/`title()` → `SourceKit.blockName()`/`blockTitle()`, `Collection.placeholders()` → `productSheet()`, recipe read before the shelf is cleared (DESIGN "Process"); the rest of DESIGN.
-- [ ] Settings in two files, as in SPEC: `learning-material/_loimoi.yml` for the course, `_collection.yml` per collection (marks a collection, may be empty); no merge along the path; a setting in the wrong file is an error; link pages find collections by `_collection.yml`; `about.yml` → `_about.yml`. DESIGN, code, examples, courses, `tests/invalid/`.
+- [ ] Code names as in DESIGN "Model of the source material": `BuildingBlockTree` → `SourceMaterial`, `Basket` → `SourceKit`, `ingredients(paths)` → `kit(paths)`, `ingredients` → `compartments`, `ingredientFolder` → `compartment`, `Basket.name()`/`title()` → `SourceKit.blockName()`/`blockTitle()`, `Collection.placeholders()` → `productSheet()`, recipe read before the shelf is cleared (DESIGN "Process").
+- [ ] Settings in two files, as in SPEC: `learning-material/_loimoi.yml` for the course, `_collection.yml` per collection (marks a collection, may be empty); no merge along the path; a setting in the wrong file is an error; link pages find collections by `_collection.yml`; `about.yml` → `_about.yml`. Code, examples, courses, `tests/invalid/`.
 - [ ] Link pages handled differently, maybe as a program of its own with an entry in the Makefile (e.g. `make links`), instead of on every render of a collection: today each render builds the products of all collections, and an error in one collection stops the render of another. SPEC, DESIGN (Process, Link pages), code.
-- [ ] `c/` named "shelf" (SPEC): setting `output` → `shelf`, DESIGN, code (`output`, `outputFolder()` → `shelfFolder()`), examples, courses.
+- [ ] `c/` named "shelf", as in SPEC and DESIGN: setting `output` → `shelf`, code (`output`, `outputFolder()` → `shelfFolder()`), examples, courses.
 
 ## Later
 
@@ -29,7 +28,6 @@
 - [ ] Check for files kept identical on purpose (e.g. `src/` code across building blocks), error if they diverge; as in Informatik (`skripte/duplikate.txt`, pre-commit hook).
 - [ ] Jupyter notebook along with the slides, as in numPDE: from `folien/projekt/notebook.qmd` the scaffold (`<slug>-folien.zip`, filled in live in class) and the final state (`<slug>-folien-loesung-<hash>.zip`), linked on the slide "Material"; see ANALYSIS.
 - [ ] Render the public examples on GitHub (workflow: pre-render, `quarto render`, tests) and publish them on GitHub Pages.
-- [ ] SPEC introduction: sharpen the core idea (two axes, topic and form, decoupled by loi-moi).
 
 ## Done
 
@@ -56,3 +54,5 @@
 - [x] Products name building blocks, not ingredient folders: key `blocks` in `products` with short paths (`10-convergence/10-sequences`, numbers kept); the ingredient folder from the new setting `ingredient-folder`, default from `ingredient-folders` in `conventions.yml` by recipe and collection folder name (r-topics slides set `ingredient-folder: slides`); default products, r-topics, Mathe B's `lernpfad/aufgaben` and the SPEC example with the short paths.
 - [x] A Quarto project without a recipe in a public example: r-topics `learning-material/handout/` (`_quarto.yml`, `index.qmd`); the snapshot of the link pages covers that they skip it.
 - [x] `isSetup` twice (`qmd-document.ts`, `processing-steps/exercise.ts`): the helpers of `exercise.ts` became methods (`QmdNode`: `isText`, `isDiv`, `isExercise`, `hasClass`, `isExecutable`, `isSetup` as type checks, `false` by default, no `instanceof Qmd…` left outside `qmd-node.ts`; `QmdDiv.withChildren`; `QmdText.headings`, `blankLines`), `tidy` a method of `QmdDocument`; `exercise.ts` removed; unused `QmdDocument.parse` removed.
+- [x] Classes: merge `CollectionConfiguration` into `Collection`, rename `ProductConfiguration` to `Product`. Superseded by the new DESIGN: lean `Collection`, entries as plain data, `NamingConventions` fills the `ProductSheet` (code: see "Code names as in DESIGN").
+- [x] SPEC introduction: sharpen the core idea. Section "The overall procedure" (recipe, source kit, product sheet), terms reworked, collections "organized by kind of product".
