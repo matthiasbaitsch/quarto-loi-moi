@@ -21,7 +21,7 @@ The Fibonacci numbers are $F_1 = F_2 = 1$ and $F_{n+2} = F_{n+1} + F_n$. Their r
 
 ## Part 2: In Python
 
-Download the [work files](sheet-01-aufgaben.zip), unzip them into your project folder and open the notebook.
+Download the [work files](sequences-aufgaben.zip), unzip them into your project folder and open the notebook.
 
 How to set up Python is explained on the [course page](https://matthiasbaitsch.github.io/quarto-loi-moi/index.html).
 

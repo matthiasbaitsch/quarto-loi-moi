@@ -2,6 +2,6 @@ options:
   work-files: folder
 name: "${title-slug}"
 folder-name: "blatt-${nn}"
-base-name: "sheet-${nn}"
+base-name: "${name}"
 building-blocks: ../building-blocks
 link-format: pdf

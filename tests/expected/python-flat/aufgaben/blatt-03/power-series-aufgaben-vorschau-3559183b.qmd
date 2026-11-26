@@ -27,7 +27,7 @@ With the ratio test, the series $\sum a_k x^k$ converges for $|x| < R = \lim |a_
 
 ## Part 2: In Python
 
-Download the [work files](sheet-03-aufgaben.zip), unzip them into your project folder and open the notebook.
+Download the [work files](power-series-aufgaben.zip), unzip them into your project folder and open the notebook.
 
 How to set up Python is explained on the [course page](https://matthiasbaitsch.github.io/quarto-loi-moi/index.html).
 
