@@ -1,7 +1,7 @@
 // Executable cells become code cells, everything else markdown
 
 import { stringify as stringifyYaml } from "jsr:@std/yaml@1";
-import { QmdCodeCell, QmdDiv, QmdNode } from "./qmd-node.ts";
+import { QmdNode } from "./qmd-node.ts";
 import { Yaml } from "./utilities.ts";
 
 interface Cell {
@@ -23,11 +23,11 @@ export function jupyterNotebook(header: Yaml, nodes: QmdNode[]): Record<string, 
   };
 
   const visit = (node: QmdNode) => {
-    if (node instanceof QmdCodeCell && node.executable) {
+    if (node.isExecutable()) {
       flush();
       language ||= node.language;
       cells.push({ ...cell("code", node.lines.slice(1, -1)), outputs: [], execution_count: null });
-    } else if (node instanceof QmdDiv) {
+    } else if (node.isDiv()) {
       node.children.forEach(visit); // a notebook has no divs
     } else {
       markdown.push(...node.text().split("\n"));

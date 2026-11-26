@@ -1,6 +1,6 @@
 import { stringify as stringifyYaml } from "jsr:@std/yaml@1";
 import { jupyterNotebook } from "./jupyter-notebook.ts";
-import { QmdCodeCell, QmdDiv, QmdNode } from "./qmd-node.ts";
+import { isBlank, QmdCodeCell, QmdNode, QmdText } from "./qmd-node.ts";
 import { parseBody, splitHeader } from "./qmd-parser.ts";
 import { Yaml } from "./utilities.ts";
 
@@ -11,11 +11,6 @@ export class QmdDocument {
   constructor(header: Yaml, nodes: QmdNode[]) {
     this.header = header;
     this.nodes = nodes;
-  }
-
-  static parse(text: string): QmdDocument {
-    const { header, body } = splitHeader(text);
-    return new QmdDocument(header, parseBody(body));
   }
 
   static read(...files: string[]): QmdDocument {
@@ -54,13 +49,19 @@ export class QmdDocument {
   // Setup cells at top level, as they go into every document; merged line by line
   validate(): void {
     this.nodes.forEach((node) => {
-      if (isSetup(node)) checkSingleLines(node);
-      if (node instanceof QmdDiv) {
+      if (node.isSetup()) checkSingleLines(node);
+      if (node.isDiv()) {
         node.forEach((inner) => {
-          if (isSetup(inner)) throw new Error(`Setup cell inside ${node.open}, it belongs at the top level`);
+          if (inner.isSetup()) throw new Error(`Setup cell inside ${node.open}, it belongs at the top level`);
         });
       }
     });
+  }
+
+  // Removing parts leaves blank lines behind: neighbouring texts joined, runs of blank lines reduced to one,
+  // no blank lines at the start, none before the end of a div
+  tidy(): QmdDocument {
+    return new QmdDocument(this.header, tidy(this.nodes));
   }
 
   appendNode(node: QmdNode): QmdDocument {
@@ -87,6 +88,40 @@ function checkSingleLines(cell: QmdCodeCell): void {
   }
 }
 
-function isSetup(node: QmdNode): node is QmdCodeCell {
-  return node instanceof QmdCodeCell && node.options.label === "setup";
+function tidy(nodes: QmdNode[]): QmdNode[] {
+  const joined: QmdNode[] = [];
+  for (const node of nodes) {
+    const last = joined.at(-1);
+    if (node.isText() && last?.isText()) {
+      joined[joined.length - 1] = new QmdText([...last.lines, ...node.lines]);
+    } else if (node.isDiv()) {
+      joined.push(node.withChildren(withoutTrailingBlankLines(tidy(node.children))));
+    } else {
+      joined.push(node);
+    }
+  }
+  const tidied = joined.map((node) => node.isText() ? new QmdText(singleBlankLines(node.lines)) : node);
+  return withoutLeadingBlankLines(tidied);
+}
+
+function singleBlankLines(lines: string[]): string[] {
+  return lines.filter((line, i) => !isBlank(line) || i === 0 || !isBlank(lines[i - 1]));
+}
+
+function withoutLeadingBlankLines(nodes: QmdNode[]): QmdNode[] {
+  const first = nodes[0];
+  if (!first?.isText()) return nodes;
+  const lines = [...first.lines];
+  while (lines.length > 0 && isBlank(lines[0])) lines.shift();
+  const rest = nodes.slice(1);
+  return lines.length === 0 ? rest : [new QmdText(lines), ...rest];
+}
+
+function withoutTrailingBlankLines(nodes: QmdNode[]): QmdNode[] {
+  const last = nodes.at(-1);
+  if (!last?.isText()) return nodes;
+  const lines = [...last.lines];
+  while (lines.length > 0 && isBlank(lines.at(-1)!)) lines.pop();
+  const rest = nodes.slice(0, -1);
+  return lines.length === 0 ? rest : [...rest, new QmdText(lines)];
 }

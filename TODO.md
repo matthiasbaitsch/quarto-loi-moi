@@ -2,7 +2,6 @@
 
 ## Next
 
-- [ ] `isSetup` twice: in `qmd-document.ts` (for `validate`) and in `processing-steps/exercise.ts` (sheet, `MergeSetupCells`); one copy in `qmd-node.ts`, which both use.
 - [ ] Classes: merge `CollectionConfiguration` into `Collection` (the split into data and logic is artificial, `Collection` only derives from it); rename `ProductConfiguration` to `Product` (it is the product, not configuration).
 - [ ] Course notes as a book (numMat `skript` first): one product per collection (recipe `series: false`), named after the collection folder; the book's chapters belong to the `Product`; default `index.qmd`, the building blocks with one part per `group-title`, the other `.qmd` files in name order, setting `chapters` to override; one chapter per building block with a heading from the recipe; chapter list written into a file Quarto reads via `metadata-files` (tested: arrays concatenated with `_quarto.yml`'s, `index.qmd` not duplicated); link page links to the book's `index.html`. Decide with it: series settings (`first-number`, `name`, `folder-name`, `base-name`, `products`) under a top-level `series:` in `loimoi.yml`, missing for a book instead of `series: false` (needs a deep merge along the path).
 - [ ] numPDE: groups by topic in folders, `about.yml`, `.lm-` markers, code from `notebook.qmd` into the exercises, `${notebook}` → `${work-files}`; compare `c/` with today's.
@@ -18,6 +17,8 @@
 - [ ] Version check for copied recipes, if needed.
 - [ ] Vendor the imports into the extension, so no network is needed.
 - [ ] Check for files kept identical on purpose (e.g. `src/` code across building blocks), error if they diverge; as in Informatik (`skripte/duplikate.txt`, pre-commit hook).
+- [ ] Jupyter notebook along with the slides, as in numPDE: from `folien/projekt/notebook.qmd` the scaffold (`<slug>-folien.zip`, filled in live in class) and the final state (`<slug>-folien-loesung-<hash>.zip`), linked on the slide "Material"; see ANALYSIS.
+- [ ] Render the public examples on GitHub (workflow: pre-render, `quarto render`, tests) and publish them on GitHub Pages.
 - [ ] SPEC introduction: sharpen the core idea (two axes, topic and form, decoupled by loi-moi).
 
 ## Done
@@ -44,3 +45,4 @@
 - [x] Current extension in the courses (`make update-extension` in numMat, numPDE, Mathe B); `loimoi.yml` with `name: "${title-slug}"`, numMat `folien` without `file-name`; pre-render of all four collections gives the same output paths as before.
 - [x] Products name building blocks, not ingredient folders: key `blocks` in `products` with short paths (`10-convergence/10-sequences`, numbers kept); the ingredient folder from the new setting `ingredient-folder`, default from `ingredient-folders` in `conventions.yml` by recipe and collection folder name (r-topics slides set `ingredient-folder: slides`); default products, r-topics, Mathe B's `lernpfad/aufgaben` and the SPEC example with the short paths.
 - [x] A Quarto project without a recipe in a public example: r-topics `learning-material/handout/` (`_quarto.yml`, `index.qmd`); the snapshot of the link pages covers that they skip it.
+- [x] `isSetup` twice (`qmd-document.ts`, `processing-steps/exercise.ts`): the helpers of `exercise.ts` became methods (`QmdNode`: `isText`, `isDiv`, `isExercise`, `hasClass`, `isExecutable`, `isSetup` as type checks, `false` by default, no `instanceof Qmd…` left outside `qmd-node.ts`; `QmdDiv.withChildren`; `QmdText.headings`, `blankLines`), `tidy` a method of `QmdDocument`; `exercise.ts` removed; unused `QmdDocument.parse` removed.

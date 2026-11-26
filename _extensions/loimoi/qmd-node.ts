@@ -15,6 +15,31 @@ export abstract class QmdNode {
   forEach(f: (node: QmdNode) => void): void {
     f(this);
   }
+
+  isText(): this is QmdText {
+    return false;
+  }
+
+  isDiv(): this is QmdDiv {
+    return false;
+  }
+
+  // An exercise is a div with an id `exr-…`
+  isExercise(): this is QmdDiv {
+    return false;
+  }
+
+  hasClass(_name: string): this is QmdDiv {
+    return false;
+  }
+
+  isExecutable(): this is QmdCodeCell {
+    return false;
+  }
+
+  isSetup(): this is QmdCodeCell {
+    return false;
+  }
 }
 
 export class QmdText extends QmdNode {
@@ -31,6 +56,20 @@ export class QmdText extends QmdNode {
 
   transformText(f: (line: string) => string): QmdNode {
     return new QmdText(this.lines.map(f));
+  }
+
+  override isText(): this is QmdText {
+    return true;
+  }
+
+  // Text in an exercise reduced to its headings, the title and subheadings; blank lines keep the remaining parts
+  // apart
+  headings(): QmdText {
+    return new QmdText(this.lines.filter((line) => line.startsWith("#") || isBlank(line)));
+  }
+
+  blankLines(): QmdText {
+    return new QmdText(this.lines.filter(isBlank));
   }
 }
 
@@ -59,6 +98,14 @@ export class QmdCodeCell extends QmdNode {
   transformText(_f: (line: string) => string): QmdNode {
     return this;
   }
+
+  override isExecutable(): this is QmdCodeCell {
+    return this.executable;
+  }
+
+  override isSetup(): this is QmdCodeCell {
+    return this.options.label === "setup";
+  }
 }
 
 export class QmdDiv extends QmdNode {
@@ -83,17 +130,35 @@ export class QmdDiv extends QmdNode {
 
   // Only the children: the opening line holds fixed things (exercise id, markers, Quarto classes)
   transformText(f: (line: string) => string): QmdNode {
-    const children = this.children.map((child) => child.transformText(f));
+    return this.withChildren(this.children.map((child) => child.transformText(f)));
+  }
+
+  withChildren(children: QmdNode[]): QmdDiv {
     return new QmdDiv(this.open, this.close, this.id, this.classes, children);
   }
 
   override map(f: (node: QmdNode) => QmdNode[]): QmdNode[] {
-    const children = this.children.flatMap((child) => child.map(f));
-    return f(new QmdDiv(this.open, this.close, this.id, this.classes, children));
+    return f(this.withChildren(this.children.flatMap((child) => child.map(f))));
   }
 
   override forEach(f: (node: QmdNode) => void): void {
     this.children.forEach((child) => child.forEach(f));
     f(this);
   }
+
+  override isDiv(): this is QmdDiv {
+    return true;
+  }
+
+  override isExercise(): this is QmdDiv {
+    return this.id.startsWith("exr-");
+  }
+
+  override hasClass(name: string): this is QmdDiv {
+    return this.classes.includes(name);
+  }
+}
+
+export function isBlank(line: string): boolean {
+  return line.trim() === "";
 }

@@ -15,7 +15,7 @@ export class ReplaceCode implements ProcessingStep {
 
   run(doc: QmdDocument): QmdDocument {
     return doc.map((node) => {
-      if (!(node instanceof QmdCodeCell) || !node.executable) return [node];
+      if (!node.isExecutable()) return [node];
       const replacements = this.replacements.filter((r) => r.applies(this.step, node.language));
       const lines = node.lines.map((line, i) =>
         i === 0 || i === node.lines.length - 1 || line.startsWith("#|")

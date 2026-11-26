@@ -1,20 +1,19 @@
 import { QmdDocument } from "../qmd-document.ts";
 import { QmdDiv, QmdNode, QmdText } from "../qmd-node.ts";
-import { blankLines, hasClass, headings, isExecutable, isExercise, tidy } from "./exercise.ts";
 import { ProcessingStep } from "./processing-step.ts";
 
 export class ExerciseScaffold implements ProcessingStep {
   run(doc: QmdDocument): QmdDocument {
-    return new QmdDocument(doc.header, tidy(scaffold(doc.nodes)));
+    return new QmdDocument(doc.header, scaffold(doc.nodes)).tidy();
   }
 }
 
 function scaffold(nodes: QmdNode[]): QmdNode[] {
   return nodes.flatMap((node): QmdNode[] => {
-    if (isExercise(node)) return exercise(node);
-    if (isExecutable(node)) return [node];
-    if (hasClass(node, "lm-scaffold")) return node.children;
-    if (node instanceof QmdText) return [blankLines(node)];
+    if (node.isExercise()) return exercise(node);
+    if (node.isExecutable()) return [node];
+    if (node.hasClass("lm-scaffold")) return node.children;
+    if (node.isText()) return [node.blankLines()];
     return [];
   });
 }
@@ -23,14 +22,14 @@ function scaffold(nodes: QmdNode[]): QmdNode[] {
 // e.g. one on paper
 function exercise(div: QmdDiv): QmdNode[] {
   const children = inExercise(div);
-  return children.some((node) => !(node instanceof QmdText)) ? [new QmdText([""]), ...children] : [];
+  return children.some((node) => !node.isText()) ? [new QmdText([""]), ...children] : [];
 }
 
 function inExercise(exercise: QmdDiv): QmdNode[] {
   return exercise.children.flatMap((node): QmdNode[] => {
-    if (node instanceof QmdText) return [headings(node)];
-    if (isExecutable(node)) return [node];
-    if (hasClass(node, "lm-scaffold")) return node.children;
+    if (node.isText()) return [node.headings()];
+    if (node.isExecutable()) return [node];
+    if (node.hasClass("lm-scaffold")) return node.children;
     return [];
   });
 }

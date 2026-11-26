@@ -35,11 +35,12 @@ classDiagram
   class BuildingBlockTree {
     rootFolder: string
     ingredients(paths: string[]) Basket
-    defaultPaths(folderName: string) string[][]
+    defaultBlocks(ingredientFolder: string) string[]
   }
   class Folder {
     rootFolder: string
     path: string
+    absolutePath(path: string) string
     name(options) string
     files(pattern, options) string[]
     folders(pattern, options) string[]
@@ -49,6 +50,8 @@ classDiagram
     groupTitle: string?
   }
   class Basket {
+    blocks: BuildingBlock[]
+    ingredients: Folder[]
     name(options) string
     title() string?
     groupTitle() string?
@@ -85,12 +88,12 @@ classDiagram
   class QmdDocument {
     header: Record
     nodes: QmdNode[]
-    parse(text: string)$ QmdDocument
     read(...files: string[])$ QmdDocument
     text() string
     ipynb() string
     write(file: string)
     validate()
+    tidy() QmdDocument
     appendNode(node: QmdNode) QmdDocument
     map(f: QmdNode → QmdNode[]) QmdDocument
     forEach(f: QmdNode → void)
@@ -101,9 +104,17 @@ classDiagram
     transformText(f: string → string) QmdNode
     map(f: QmdNode → QmdNode[]) QmdNode[]
     forEach(f: QmdNode → void)
+    isText() bool
+    isDiv() bool
+    isExercise() bool
+    hasClass(name: string) bool
+    isExecutable() bool
+    isSetup() bool
   }
   class QmdText {
     lines: string[]
+    headings() QmdText
+    blankLines() QmdText
   }
   class QmdDiv {
     open: string
@@ -111,6 +122,7 @@ classDiagram
     id: string
     classes: string[]
     children: QmdNode[]
+    withChildren(children: QmdNode[]) QmdDiv
   }
   class QmdCodeCell {
     lines: string[]
@@ -127,6 +139,9 @@ Remarks:
 - `map(f)`: each node replaced by `f(node)` (none, itself, or several); a `QmdDiv` maps its children first
 - `transformText(f)`: a new node with `f` applied to each line of text; a `QmdDiv` only to its children (its opening line holds fixed things); a `QmdCodeCell` unchanged, as its code may use `${…}` itself (shell, JavaScript)
 - `options()`: read from the `#|` lines when asked, so they always match the lines
+- `isText()` … `isSetup()`: type checks (`this is QmdText`, …), `false` in `QmdNode`, overridden where true; after a check TypeScript knows the subclass, so no `instanceof Qmd…` outside `qmd-node.ts`; an exercise is a div with an id `exr-…`, a setup cell has the label `setup`
+- `tidy()`: removing parts leaves blank lines behind: neighbouring texts joined, runs of blank lines reduced to one, none at the start, none before the end of a div
+- `headings()`: text in an exercise reduced to its headings, blank lines kept
 
 #### Processing steps
 
@@ -158,6 +173,7 @@ classDiagram
     values: Record
   }
   class AttachSrc {
+    heading: string
     files: string[]
   }
   class ReplaceCode {
@@ -171,6 +187,7 @@ classDiagram
     with: string
     read(file: string)$ CodeReplacement[]
     applies(step: string, language: string) boolean
+    apply(line: string) string
   }
 ```
 
@@ -189,7 +206,7 @@ The pre-render script runs the whole process:
 1. Clear the `c/` folder
 1. For each product:
     1. get its `Basket` from the building block tree
-    1. compute the placeholders (`Collection.placeholders()`): words, `n`, `nn`, `name`, `hash`, `product-title`, `group-title`, `full-title`, `site`; `hash` from `nn` and `name`; then `folder-name` from these, and `base-name` from all of them
+    1. compute the placeholders (`Collection.placeholders()`): words, `block-path`, `block-folder`, `title-slug`, `n`, `nn`, `name`, `hash`, `product-title`, `group-title`, `full-title`, `site`; `hash` from `nn` and `name`; then `folder-name` from these, and `base-name` from all of them
     1. run the recipe in the folder of the product, `c/${folder-name}/`
 1. Write the link pages for all collections of the learning material (`LinkPages`)
 
@@ -215,6 +232,7 @@ classDiagram
     output: string
     folderName: string
     baseName: string
+    linkFormat: string
     options: Record
     lang: string
     site: string
@@ -231,9 +249,11 @@ classDiagram
     fullTitle: string
     ingredients: string[]
     blockPlaceholders: Record
-    constructor(entry: Record, number: number, tree: BuildingBlockTree, nameTemplate: string)
+    constructor(entry: Record, number: number, tree: BuildingBlockTree, ingredientFolder: string, nameTemplate: string)
   }
 ```
+
+`ProductConfiguration.ingredients`: the paths of the ingredient folders, each entry of `blocks` joined with the ingredient folder (setting `ingredient-folder`, default from `ingredient-folders` in `conventions.yml` by recipe and collection folder name); without `products`, one product per building block from `BuildingBlockTree.defaultBlocks()`.
 
 `CollectionConfiguration`: the `loimoi.yml` files merged along the path, every default filled in; all checks of the settings here, so the methods of `Collection` need none. The allowed settings and their fixed defaults in `config/settings.yml` (not replaceable); the other defaults computed, some via `conventions.yml` or the Git remote.
 
@@ -265,12 +285,13 @@ classDiagram
     run(basket: Basket, placeholders: Record, folder: ProductFolder)
   }
   class QuartoFile {
-    title: string
-    subtitle: string
+    title: string?
+    subtitle: string?
     process: string[]
     format: string
     zip: boolean
     link: string?
+    replacements: CodeReplacement[]
   }
   class Archive {
     add: Record[]
@@ -314,7 +335,7 @@ classDiagram
 
 Remarks:
 
-- Collections: the folders in `learningMaterialFolder` with a `_quarto.yml`; a `Collection` for each
+- Collections: the folders in `learningMaterialFolder` with a `_quarto.yml` and either a recipe in `conventions.yml` or a `loimoi.yml` of their own; a `Collection` for each
 - Per product: the actions of the recipe with a `link` (label, with placeholders), the path from `file()` (`.qmd` becomes `.html`) in `c/${folder-name}/`
 - `Collection.renderFolder()`: `output-dir` from `_quarto.yml`, absolute (`outputFolder()` is `c/`, where loi-moi writes); `links.html` links relative to it, `links-site.html` uses `site` plus the part after `__output/`
 

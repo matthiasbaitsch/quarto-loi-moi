@@ -1,29 +1,28 @@
 import { QmdDocument } from "../qmd-document.ts";
-import { QmdCodeCell, QmdNode, QmdText } from "../qmd-node.ts";
-import { blankLines, hasClass, headings, isExecutable, isExercise, tidy, withChildren } from "./exercise.ts";
+import { QmdCodeCell, QmdNode } from "../qmd-node.ts";
 import { ProcessingStep } from "./processing-step.ts";
 
 export class ExerciseSolution implements ProcessingStep {
   run(doc: QmdDocument): QmdDocument {
-    return new QmdDocument(doc.header, tidy(solution(doc.nodes)));
+    return new QmdDocument(doc.header, solution(doc.nodes)).tidy();
   }
 }
 
 function solution(nodes: QmdNode[]): QmdNode[] {
   return nodes.flatMap((node): QmdNode[] => {
-    if (isExercise(node)) return [withChildren(node, inExercise(node.children))];
-    if (isExecutable(node)) return [hidden(node)];
-    if (hasClass(node, "lm-solution")) return [node];
-    if (node instanceof QmdText) return [blankLines(node)];
+    if (node.isExercise()) return [node.withChildren(inExercise(node.children))];
+    if (node.isExecutable()) return [hidden(node)];
+    if (node.hasClass("lm-solution")) return [node];
+    if (node.isText()) return [node.blankLines()];
     return [];
   });
 }
 
 function inExercise(nodes: QmdNode[]): QmdNode[] {
   return nodes.flatMap((node): QmdNode[] => {
-    if (node instanceof QmdText) return [headings(node)];
-    if (isExecutable(node)) return [hidden(node)];
-    if (hasClass(node, "lm-solution")) return [node];
+    if (node.isText()) return [node.headings()];
+    if (node.isExecutable()) return [hidden(node)];
+    if (node.hasClass("lm-solution")) return [node];
     return [];
   });
 }
