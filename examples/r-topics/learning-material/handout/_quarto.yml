@@ -1,0 +1,6 @@
+# A Quarto project without a recipe: not a collection, the link pages skip it
+project:
+  type: default
+  output-dir: ../../../../__output/r-topics/handout
+
+lang: en

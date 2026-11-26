@@ -2,8 +2,6 @@
 
 ## Next
 
-- [ ] Simplify `loimoi.yml` for slides, product list: collections not named `slides` need `recipe: slides` and the full product list (r-topics), e.g. selection of building blocks by subtree.
-- [ ] A Quarto project without a recipe in a public example (e.g. `learning-material/handout/` with only a `_quarto.yml`), so the snapshot covers that the link pages skip it.
 - [ ] `isSetup` twice: in `qmd-document.ts` (for `validate`) and in `processing-steps/exercise.ts` (sheet, `MergeSetupCells`); one copy in `qmd-node.ts`, which both use.
 - [ ] Classes: merge `CollectionConfiguration` into `Collection` (the split into data and logic is artificial, `Collection` only derives from it); rename `ProductConfiguration` to `Product` (it is the product, not configuration).
 - [ ] Course notes as a book (numMat `skript` first): one product per collection (recipe `series: false`), named after the collection folder; the book's chapters belong to the `Product`; default `index.qmd`, the building blocks with one part per `group-title`, the other `.qmd` files in name order, setting `chapters` to override; one chapter per building block with a heading from the recipe; chapter list written into a file Quarto reads via `metadata-files` (tested: arrays concatenated with `_quarto.yml`'s, `index.qmd` not duplicated); link page links to the book's `index.html`. Decide with it: series settings (`first-number`, `name`, `folder-name`, `base-name`, `products`) under a top-level `series:` in `loimoi.yml`, missing for a book instead of `series: false` (needs a deep merge along the path).
@@ -13,7 +11,7 @@
 
 ## Later
 
-- [ ] Selection of building blocks by subtree (e.g. `folien-r-alle` only the R building blocks of Mathe B).
+- [ ] Selection of building blocks by subtree, products in folder order, so no product list is needed (e.g. `folien-r-alle` only the R building blocks of Mathe B; r-topics `theory-slides` and `programming-slides`). Not needed yet: Mathe B, the only course with several subtrees, lists its products by hand.
 - [ ] Mathe B: solution sheet with executed code.
 - [ ] Recipes for slides, course notes, all slides, course slides; Informatik (C#).
 - [ ] Several collections in one render.
@@ -45,3 +43,4 @@
 - [x] Simplify `loimoi.yml` for slides, `name` and `product-title`: `name` now from `name: "${block-folder}"` (r-topics slides); `product-title` stays in `loimoi.yml` on purpose: with the layout by subject (r-topics, Mathe B) `about.yml` would repeat each title per subject.
 - [x] Current extension in the courses (`make update-extension` in numMat, numPDE, Mathe B); `loimoi.yml` with `name: "${title-slug}"`, numMat `folien` without `file-name`; pre-render of all four collections gives the same output paths as before.
 - [x] Products name building blocks, not ingredient folders: key `blocks` in `products` with short paths (`10-convergence/10-sequences`, numbers kept); the ingredient folder from the new setting `ingredient-folder`, default from `ingredient-folders` in `conventions.yml` by recipe and collection folder name (r-topics slides set `ingredient-folder: slides`); default products, r-topics, Mathe B's `lernpfad/aufgaben` and the SPEC example with the short paths.
+- [x] A Quarto project without a recipe in a public example: r-topics `learning-material/handout/` (`_quarto.yml`, `index.qmd`); the snapshot of the link pages covers that they skip it.
