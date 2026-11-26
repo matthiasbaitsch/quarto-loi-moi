@@ -19,24 +19,24 @@ Project structure of a fictional math course:
 
 ```
 source-material/                                     learning-material/
-├── 10-convergence/                  folder          ├── loimoi.yml
-│   ├── about.yml                                    ├── exercises/       collection
-│   ├── 10-sequences/                building block  │   ├── loimoi.yml
-│   │   ├── about.yml                                │   ├── _quarto.yml
-│   │   ├── exercises/               ingredient      │   └── …
+├── 10-convergence/                  folder          ├── _loimoi.yml
+│   ├── _about.yml                                   ├── exercises/       collection
+│   ├── 10-sequences/                building block  │   ├── _collection.yml
+│   │   ├── _about.yml                               │   ├── _quarto.yml
+│   │   ├── exercises/               compartment     │   └── …
 │   │   │   ├── 10-golden-ratio.qmd                  ├── slides/          collection
 │   │   │   ├── 20-fibonacci.qmd                     │   └── …
 │   │   │   ├── images/sequence.svg                  └── …
 │   │   │   └── src/
 │   │   │       ├── fibonacci.jl
 │   │   │       └── …
-│   │   ├── slides/                  ingredient
+│   │   ├── slides/                  compartment
 │   │   │   └── …
 │   │   └── …
 │   └── 20-series/                   building block
 │       └── …
 └── 20-functions/                    folder
-    ├── about.yml
+    ├── _about.yml
     ├── 10-power-series/             building block
     │   └── …
     └── …
@@ -81,7 +81,7 @@ How to make products in a collection from the source material
 
 Remarks:
 
-- The recipe says how to name things; the values come from k and the kit, unless specified in the collection
+- The recipe says how to name things; the values come from the product sheet
 
 ## Terms
 
@@ -100,6 +100,7 @@ Remarks:
 
 - **Learning material** (`learning-material/`): folder containing collections for one course
 - **Collection** (`exercises/`): folder containing products of one kind
+- **Shelf** (`c/`): folder in a collection where loi-moi puts the products
 - **Product** (`c/01-convergence-sequences/`): folder containing related `.qmd` files and supporting material
 - **Work files** (e.g. `…-exercises.zip`): supporting material students work with
 
@@ -108,7 +109,7 @@ Remarks:
 - **Source kit**: the parts for one product, from the matching compartment of each of its building blocks; provides default values for name and titles
 - **Recipe** (`exercises.yml`): sequence of actions that make a product from its source kit
 - **Action**: performs one specific task
-- **Placeholder** (`${n}`): value filled in per product, in recipes and in the parts
+- **Product sheet**: the values for one product (number, name, titles, …), from k, the source kit and the collection; used in recipes and parts as `${…}`
 
 ## Product types
 
@@ -127,18 +128,18 @@ flat                    by part                     by subject
 
 source-material/        source-material/            source-material/
 ├── _templates/         ├── 10-convergence/         ├── theory/
-├── 10-sequences/       │   ├── about.yml           │   ├── sequences/
-│   ├── about.yml       │   ├── 10-sequences/       │   │   ├── exercises/
-│   ├── exercises/      │   │   ├── about.yml       │   │   └── notes/
+├── 10-sequences/       │   ├── _about.yml          │   ├── sequences/
+│   ├── _about.yml      │   ├── 10-sequences/       │   │   ├── exercises/
+│   ├── exercises/      │   │   ├── _about.yml      │   │   └── notes/
 │   └── slides/         │   │   ├── exercises/      │   └── …
 ├── 20-series/          │   │   └── notes/          └── programming/
 └── …                   │   └── 20-series/              ├── sequences/
                         └── 20-functions/               │   ├── exercises/
-                            ├── about.yml               │   └── slides/
+                            ├── _about.yml              │   └── slides/
                             └── 10-power-series/        └── …
 ```
 
-Example for an `about.yml` file
+Example for an `_about.yml` file
 
 ```yml
 group-title: "Convergence"
@@ -147,39 +148,44 @@ block-title: "Sequences"
 
 Remarks:
 
-- Titles in `about.yml` (merged along path, optional)
+- Titles in `_about.yml` (merged along path, optional)
 - Building blocks identified by their path in the source material, with numbers (e.g. `10-convergence/10-sequences`)
 - Leading numbers stripped in names derived from it (e.g. `${block-path}`: `convergence-sequences`)
 - Compartment names in English or German, e.g. `exercises/` or `aufgaben/`
 - Folders and files starting with `_` or `.` ignored, also Quarto's `…_files` folders
-- Folders of an ingredient (e.g. `images/`, `data/`) copied into the folder of the product (a zipped notebook contains only the notebook); error if two ingredients of the product have a file of the same name that differs. Special folders, not in work files: `src/` (code of the solution, copied) and `zip/<name>/` (extra download, becomes `<name>.zip`)
+- Folders of a compartment (e.g. `images/`, `data/`) copied into the folder of the product (a zipped notebook contains only the notebook); error if two compartments of the product have a file of the same name that differs. Special folders, not in work files: `src/` (code of the solution, copied) and `zip/<name>/` (extra download, becomes `<name>.zip`)
 
 ## Learning material
 
 Examples for folder layout
 
 ```         
-by convention               with configuration
-
-learning-material/          learning-material/
-├── exercises/              ├── loimoi.yml
-│   └── c/                  ├── exercises/
-├── slides/                 │   ├── loimoi.yml
-│   └── c/                  │   └── c/
-├── notes/                  ├── theory-slides/
-│   └── c/                  │   ├── loimoi.yml
-├── slides-all/             │   └── c/
-│   └── c/                  └── …
+learning-material/
+├── _loimoi.yml             settings for the course (optional)
+├── exercises/              collection, by convention
+│   ├── _collection.yml     empty
+│   ├── _quarto.yml
+│   └── c/                  shelf
+├── theory-slides/          collection, with configuration
+│   ├── _collection.yml
+│   ├── _quarto.yml
+│   └── c/
+├── handout/                Quarto project, not a collection
+│   └── _quarto.yml
 └── …
 ```
 
-Example for general section of a `loimoi.yml` file
+Example for `learning-material/_loimoi.yml`
 
 ```yml
-output: c                                           # folder for the products
-first-number: 1                                     # number of the first product
 site: https://teacher.github.io/calculus            # defaults to the Git remote
+name: "${title-slug}"                               # for all collections
+```
 
+Example for `learning-material/exercises/_collection.yml`
+
+```yml
+first-number: 1                                     # number of the first product
 products:                                           # one entry per product
   - blocks: [10-convergence/10-sequences]           # name and titles from the building block
   - blocks: [10-convergence/20-series]
@@ -187,16 +193,15 @@ products:                                           # one entry per product
     name: functions-power-series-continuity         # name and titles set
     product-title: Power series and continuity
     group-title: Functions
-
-...
 ```
 
 Remarks:
 
-- Material processed by loi-moi into folder `c/` (in `.gitignore`)
-- Configuration in `loimoi.yml` (optional, merged along path)
+- Products put on the shelf `c/` (in `.gitignore`)
+- A collection is a folder with a `_collection.yml`, which may be empty
+- Settings for the course in `_loimoi.yml`, for a collection in `_collection.yml`; some may be in both, then the collection's value applies (see the appendix)
 - Sensible defaults for all settings
-- `.qmd` files of an ingredient combined in name order, ingredients of a product in the given order
+- `.qmd` files of a compartment combined in name order, compartments of a product in the given order
 - Product `name` used in file names; `product-title` and `group-title` used in titles
 
 ### Quarto configuration
@@ -225,7 +230,7 @@ loi-moi uses the collection's Quarto configuration as Quarto resolves it (with `
 
 ### Link pages
 
-On every render of a collection, loi-moi writes two pages with the links to the products of all collections of the learning material (folders with a `_quarto.yml` and either a recipe in `conventions.yml` or a `loimoi.yml` of their own; other Quarto projects are skipped), not published, in `.gitignore`:
+On every render of a collection, loi-moi writes two pages with the links to the products of all collections of the learning material (folders with a `_collection.yml`), not published, in `.gitignore`:
 
 - `links.html`: links to the local output, to check
 - `links-site.html`: links to the published site
@@ -234,7 +239,7 @@ On every render of a collection, loi-moi writes two pages with the links to the 
 
 A recipe is a YAML file with the sequence of actions that make a product from its source kit.
 
-The recipe is selected in `loimoi.yml`, otherwise by convention:
+The recipe is selected in `_collection.yml`, otherwise by convention:
 
 ```yml
 recipe: exercises
@@ -269,8 +274,8 @@ actions:
 Remarks:
 
 - Own files (`conventions.yml`, `recipes/`, `words/`, `code-replacements.yml`) in `_loimoi/`, the first one found upward from the collection folder
-- Recipe and ingredient folder of each collection from `conventions.yml` (e.g. `aufgaben/` uses the recipe `exercises` and the ingredient folders `aufgaben/`); own conventions in `_loimoi/conventions.yml`
-- Source material folder set with `source-material` in `loimoi.yml`, otherwise found upward from the collection folder, named after one of the names in `conventions.yml` (`source-material/` or `bausteine/`); error if there is none, or several in the same folder
+- Recipe and compartment of each collection from `conventions.yml` (e.g. `aufgaben/` uses the recipe `exercises` and the compartments `aufgaben/`); own conventions in `_loimoi/conventions.yml`
+- Source material folder set with `source-material` in `_loimoi.yml`, otherwise found upward from the collection folder, named after one of the names in `conventions.yml` (`source-material/` or `bausteine/`); error if there is none, or several in the same folder
 - Predefined recipes come with loi-moi; own recipes in `_loimoi/recipes/` override them by name
 - A recipe might declare options
 - Use options with care (readability, maintenance)
@@ -315,7 +320,7 @@ learning-material/exercises/c/
 │   ├── 01-convergence-sequences-exercises.zip                       work files
 │   ├── 01-convergence-sequences-exercises-solution-2094a057.qmd     reference solution
 │   ├── 01-convergence-sequences-exercises-preview-2094a057.qmd      preview for the teacher
-│   └── images/sequence.svg                                          folders of the ingredients
+│   └── images/sequence.svg                                          folders of the compartments
 ├── 02-convergence-series/                                           product
 │   └── …
 └── …
@@ -408,30 +413,32 @@ E.g. `01-convergence-sequences.qmd`; for slides rendered as PDF, `link-format: p
 
 - `quarto render` in a collection folder makes and renders that collection.
 - loi-moi runs before every render, also for a single file or a preview, so nothing is stale.
-- `c/` is cleared first.
+- The shelf is cleared first.
 - An error stops processing with a message naming the file.
 
 ## Appendix
 
-### Settings in `loimoi.yml`
+### Settings
 
-| Setting | Meaning | Default |
-|---|---|---|
-| `output` | folder for the products | `c` |
-| `first-number` | number of the first product | `1` |
-| `lang` | language of the words in file names and titles (`en`, `de`) | Quarto's `lang`, otherwise from the collection's name via `conventions.yml` (`aufgaben`: `de`), otherwise `en` |
-| `site` | URL of the published site | from the Git remote |
-| `source-material` | path to the source material folder, relative to the learning material folder | found upward from the collection folder |
-| `products` | one entry per product: `blocks` (paths of building blocks, relative to the source material folder), optional `name`, `product-title`, `group-title` | one product per building block that has the ingredient folder, in folder order |
-| `ingredient-folder` | folder of the ingredients in each building block (e.g. `slides`) | from `ingredient-folders` in `conventions.yml`, by recipe and collection folder name (`aufgaben` with recipe `exercises`: `aufgaben`); error if there is none |
-| `folder-name` | name of the product folder, with placeholders (e.g. `blatt-${nn}`) | `${nn}-${name}` |
-| `base-name` | base name of the product's files, with placeholders (e.g. `aufgabenblatt-${nn}`); the recipe adds its suffix (e.g. `-${exercises}`) | `${folder-name}` |
-| `name` | default name of the products, with placeholders (e.g. `${block-folder}`, `${title-slug}`) | `${block-path}` |
-| `link-format` | extension of the linked files on the link pages (`html`, `pdf`), e.g. `pdf` for slides rendered with Typst | `html` |
-| `recipe` | recipe that makes the products | from `conventions.yml` |
-| `options` | options of the recipe | see the recipe |
+In: `course` for `learning-material/_loimoi.yml`, `collection` for `_collection.yml`, `both` where the collection's value overrides the course's.
 
-Other keys are an error, as is a setting with an invalid value or a missing recipe; checked when `loimoi.yml` is read.
+| Setting | In | Meaning | Default |
+|---|---|---|---|
+| `site` | course | URL of the published site | from the Git remote |
+| `source-material` | course | path to the source material folder, relative to the learning material folder | found upward from the collection folder |
+| `lang` | both | language of the words in file names and titles (`en`, `de`) | Quarto's `lang`, otherwise from the collection's name via `conventions.yml` (`aufgaben`: `de`), otherwise `en` |
+| `name` | both | default name of the products, with placeholders (e.g. `${block-folder}`, `${title-slug}`) | `${block-path}` |
+| `folder-name` | both | name of the product folder, with placeholders (e.g. `blatt-${nn}`) | `${nn}-${name}` |
+| `base-name` | both | base name of the product's files, with placeholders (e.g. `aufgabenblatt-${nn}`); the recipe adds its suffix (e.g. `-${exercises}`) | `${folder-name}` |
+| `link-format` | both | extension of the linked files on the link pages (`html`, `pdf`), e.g. `pdf` for slides rendered with Typst | `html` |
+| `shelf` | both | folder for the products | `c` |
+| `recipe` | collection | recipe that makes the products | from `conventions.yml` |
+| `options` | collection | options of the recipe | see the recipe |
+| `compartment` | collection | compartment used in each building block (e.g. `slides`) | from `compartments` in `conventions.yml`, by recipe and collection folder name (`aufgaben` with recipe `exercises`: `aufgaben`); error if there is none |
+| `products` | collection | one entry per product: `blocks` (paths of building blocks, relative to the source material folder), optional `name`, `product-title`, `group-title` | one product per building block that has the compartment, in folder order |
+| `first-number` | collection | number of the first product | `1` |
+
+Other keys are an error, as is a setting in the wrong file, a setting with an invalid value or a missing recipe; checked when the files are read.
 
 ### Actions
 
@@ -443,11 +450,11 @@ Keys of every action:
 | `when` | option values for which the action runs, e.g. `{work-files: folder}` | always |
 | `provides` | placeholder filled with the URL of the file, e.g. `work-files` | – |
 
-`quarto-file`: combines the `.qmd` files of the ingredients, runs the processing steps and writes a Quarto file or a Jupyter notebook; the folders of the ingredients are copied next to it.
+`quarto-file`: combines the `.qmd` files of the compartments, runs the processing steps and writes a Quarto file or a Jupyter notebook; the folders of the compartments are copied next to it.
 
 | Key | Meaning | Default |
 |---|---|---|
-| `title`, `subtitle` | title and subtitle in the header, with placeholders | from the ingredients |
+| `title`, `subtitle` | title and subtitle in the header, with placeholders | from the parts |
 | `process` | processing steps, in this order | none |
 | `format` | `qmd` or `ipynb` | `qmd` |
 | `zip` | file zipped, the original deleted | `false` |
@@ -461,7 +468,7 @@ Keys of every action:
 
 Entries of `add`:
 
-- `path`: relative to the ingredients of the product, taken from every ingredient folder that has it
+- `path`: relative to the compartments of the product, taken from every compartment that has it
 - `/path`: relative to the source material folder, for files shared by all products (e.g. `/_templates/…`)
 - `path: new-name`: copied under a new name
 
@@ -506,22 +513,22 @@ Configurable globally:
 |---|---|---|---|
 | `${exercise-sheet}`, `${exercises}`, … | words in names, titles and text added by steps | `words/<lang>.yml`, overridable in `_loimoi/words/` | `Aufgabenblatt`, `aufgaben` |
 
-Configurable in `loimoi.yml`:
+Configurable in `_loimoi.yml` or `_collection.yml`:
 
 | Placeholder | Usage | Default | Example |
 |---|---|---|---|
 | `${site}` | links to the published site in the text | from the Git remote | `https://teacher.github.io/calculus` |
-| `${group-title}` | titles | `group-title` in `about.yml` | `Convergence` |
-| `${product-title}` | titles | `block-title` in `about.yml` | `Sequences` |
+| `${group-title}` | titles | `group-title` in `_about.yml` | `Convergence` |
+| `${product-title}` | titles | `block-title` in `_about.yml` | `Sequences` |
 | `${name}` | part of names | `${block-path}` | `convergence-sequences` |
 | `${folder-name}` | product folder | `${nn}-${name}` | `01-convergence-sequences` |
 | `${base-name}` | file names, recipe adds suffix | `${folder-name}` | `01-convergence-sequences` |
 
 Remarks:
 
-- `${product-title}` is required: `product-title` in the product or `block-title` in `about.yml`.
+- `${product-title}` is required: `product-title` in the product or `block-title` in `_about.yml`.
 - `${group-title}` is optional.
-- `name` at the top of `loimoi.yml` is the default for all products, with placeholders (e.g. `${block-folder}`, `${title-slug}`); `name` in a product sets its name.
+- The setting `name` is the default for all products, with placeholders (e.g. `${block-folder}`, `${title-slug}`); `name` in a product sets its name.
 
 Derived:
 

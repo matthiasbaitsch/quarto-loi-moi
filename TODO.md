@@ -3,10 +3,19 @@
 ## Next
 
 - [ ] Classes: merge `CollectionConfiguration` into `Collection` (the split into data and logic is artificial, `Collection` only derives from it); rename `ProductConfiguration` to `Product` (it is the product, not configuration).
-- [ ] Course notes as a book (numMat `skript` first): one product per collection (recipe `series: false`), named after the collection folder; the book's chapters belong to the `Product`; default `index.qmd`, the building blocks with one part per `group-title`, the other `.qmd` files in name order, setting `chapters` to override; one chapter per building block with a heading from the recipe; chapter list written into a file Quarto reads via `metadata-files` (tested: arrays concatenated with `_quarto.yml`'s, `index.qmd` not duplicated); link page links to the book's `index.html`. Decide with it: series settings (`first-number`, `name`, `folder-name`, `base-name`, `products`) under a top-level `series:` in `loimoi.yml`, missing for a book instead of `series: false` (needs a deep merge along the path).
-- [ ] numPDE: groups by topic in folders, `about.yml`, `.lm-` markers, code from `notebook.qmd` into the exercises, `${notebook}` → `${work-files}`; compare `c/` with today's.
+- [ ] Course notes as a book (numMat `skript` first): one product per collection (recipe `series: false`), named after the collection folder; the book's chapters belong to the `Product`; default `index.qmd`, the building blocks with one part per `group-title`, the other `.qmd` files in name order, setting `chapters` to override; one chapter per building block with a heading from the recipe; chapter list written into a file Quarto reads via `metadata-files` (tested: arrays concatenated with `_quarto.yml`'s, `index.qmd` not duplicated); link page links to the book's `index.html`. Decide with it: series settings (`first-number`, `name`, `folder-name`, `base-name`, `products`) under a top-level `series:` in `_collection.yml`, missing for a book instead of `series: false`.
+- [ ] numPDE: groups by topic in folders, `_about.yml`, `.lm-` markers, code from `notebook.qmd` into the exercises, `${notebook}` → `${work-files}`; compare `c/` with today's.
 - [ ] Mathe B, solutions: headings inside exercises now shown (old: only title and solution).
 - [ ] Mathe B: move from `examples/mathe-b` into the real `lernpfad/aufgaben`; commit loi-moi and the `loimoi` branches of the submodules.
+
+- [ ] Recipes as one list `actions` (entries `quarto-file:` or `archive:`), run in the order of the recipe, as in SPEC: `Recipe.read`, predefined recipes, recipes of the examples and courses.
+- [ ] All own files (`recipes/`, `words/`, `code-replacements.yml`, not only `conventions.yml`) from the first `_loimoi/` found upward from the collection folder, as in SPEC (`utilities.ts`).
+- [ ] The collection's Quarto configuration resolved by `quarto inspect` (`metadata-files`; about 0.7 s): `output-dir` from there (now read from `_quarto.yml` only), `lang` defaults to Quarto's `lang`, as in SPEC.
+
+- [ ] "Ingredient" renamed to "compartment", as in SPEC and DESIGN: setting `ingredient-folder` → `compartment`, `ingredient-folders` in `conventions.yml` → `compartments`; code, examples, courses.
+- [ ] Code names as in DESIGN "Model of the source material": `BuildingBlockTree` → `SourceMaterial`, `Basket` → `SourceKit`, `ingredients(paths)` → `kit(paths)`, `ingredients` → `compartments`, `ingredientFolder` → `compartment`, `Basket.name()`/`title()` → `SourceKit.blockName()`/`blockTitle()`, `Collection.placeholders()` → `productSheet()`, recipe read before the shelf is cleared (DESIGN "Process"); the rest of DESIGN.
+- [ ] Settings in two files, as in SPEC: `learning-material/_loimoi.yml` for the course, `_collection.yml` per collection (marks a collection, may be empty); no merge along the path; a setting in the wrong file is an error; link pages find collections by `_collection.yml`; `about.yml` → `_about.yml`. DESIGN, code, examples, courses, `tests/invalid/`.
+- [ ] `c/` named "shelf" (SPEC): setting `output` → `shelf`, DESIGN, code (`output`, `outputFolder()` → `shelfFolder()`), examples, courses.
 
 ## Later
 

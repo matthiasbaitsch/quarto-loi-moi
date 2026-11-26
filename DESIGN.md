@@ -4,16 +4,16 @@ How loi-moi does what SPEC describes.
 
 ## Overview
 
-Running `quarto render` in a collection folder triggers execution of loi-moi's `pre-render` script (named in the
-collection's `_quarto.yml`, run in the collection folder) which
+The `pre-render` script runs in a collection folder inside `learning-material` and puts the products on the shelf for Quarto. The script
 
-1. collects required information, most importantly
-    1. a representation of the `building-blocks` tree
-    1. the configuration from `loimoi.yml`
-    1. the list of products
-    1. the recipe
-1. clears `c/`
-1. runs the recipe's actions for each product
+1. gets the recipe from the collection
+1. collects a kit for each product of the collection
+1. for each kit, gets the product sheet from the naming conventions and passes both to the recipe
+
+In order to simplify things, some tools are employed:
+
+- a source material object provides the kits
+- a naming conventions object knows how things are named (name patterns, words in the collection's language), fills the product sheet
 
 Remarks:
 
@@ -21,21 +21,21 @@ Remarks:
 
 ## Tools
 
-### Model of the building block source tree
+### Model of the source material
 
-Provide simple access to ingredients.
+The source material object provides the source kits.
 
 ```mermaid
 classDiagram
   direction LR
-  BuildingBlockTree "1" --> "*" BuildingBlock
-  BuildingBlockTree ..> Basket : creates
-  Basket "1" --> "*" BuildingBlock
+  SourceMaterial "1" --> "*" BuildingBlock
+  SourceMaterial ..> SourceKit : creates
+  SourceKit "1" --> "*" BuildingBlock
   Folder <|-- BuildingBlock
-  class BuildingBlockTree {
+  class SourceMaterial {
     rootFolder: string
-    ingredients(paths: string[]) Basket
-    defaultBlocks(ingredientFolder: string) string[]
+    kit(paths: string[]) SourceKit
+    defaultBlocks(compartment: string) string[]
   }
   class Folder {
     rootFolder: string
@@ -49,11 +49,11 @@ classDiagram
     title: string?
     groupTitle: string?
   }
-  class Basket {
+  class SourceKit {
     blocks: BuildingBlock[]
-    ingredients: Folder[]
-    name(options) string
-    title() string?
+    compartments: Folder[]
+    blockName(options) string
+    blockTitle() string?
     groupTitle() string?
     isEmpty() bool
     document() QmdDocument
@@ -64,16 +64,14 @@ classDiagram
 
 Remarks:
 
-- `Basket`: the ingredients for one product; `name()`, `title()`, `groupTitle()` are the defaults for the product,
-  from the first building block; `document()` reads the `.qmd` files of all ingredients together and validates them once, for all actions of the product
-- `rootFolder`: absolute path to building block tree; `Folder` needs it to read from disk and to return paths
-  relative to it
+- `SourceKit`: the compartments for one product; `blockName()`, `blockTitle()`, `groupTitle()` are those of the first building block, the collection uses them as defaults for the product sheet; `document()` reads the `.qmd` files of all compartments together and validates them once, for all actions of the product
+- `rootFolder`: absolute path to the source material folder; `Folder` needs it to read from disk and to return paths relative to it
 - `name(options)`: derived from file system path, leading numbers stripped, options `full`, `sep`
 - `files(pattern, options)`, `folders(pattern, options)`: paths relative to `rootFolder`, option `absolute`
 
 ### Quarto document processing
 
-Make processing of Quarto files simple
+Makes processing Quarto files simple.
 
 #### Model of Quarto document
 
@@ -193,74 +191,62 @@ classDiagram
 
 Remarks:
 
-- `ReplacePlaceholders` also replaces in the header
+- `ReplacePlaceholders`: fills in the values of the product sheet (`values`), also in the header
 - `AttachSrc` puts the files of `src/` into an appendix of the document, as code blocks (not executed)
 - `Pipeline`: steps added by their name are created with what they need from its context (`StepContext`: the files of `src/`, the heading of the appendix)
 - `QuartoFileAction` adds a `ReplaceCode` after each step of `process`; the replacements from `code-replacements.yml`, read in `Collection.recipe()` and passed via `Recipe.read` to each `QuartoFileAction`
 
 ## Process
 
-The pre-render script runs the whole process:
+The `pre-render` script, as in the Overview:
 
-1. Create `Collection` from the collection folder, which makes the building block tree
-1. Clear the `c/` folder
-1. For each product:
-    1. get its `Basket` from the building block tree
-    1. compute the placeholders (`Collection.placeholders()`): words, `block-path`, `block-folder`, `title-slug`, `n`, `nn`, `name`, `hash`, `product-title`, `group-title`, `full-title`, `site`; `hash` from `nn` and `name`; then `folder-name` from these, and `base-name` from all of them
-    1. run the recipe in the folder of the product, `c/${folder-name}/`
-1. Write the link pages for all collections of the learning material (`LinkPages`)
+1. `collection = new Collection(folder)`: reads and checks the settings
+1. `recipe = collection.recipe()`
+1. clear the shelf (`collection.shelfFolder()`)
+1. for each kit and product sheet of `products(collection)`: `recipe.run(kit, sheet)`, in the folder of the product on the shelf
+1. write the link pages for all collections of the learning material (`LinkPages`), which use `products(collection)` too
 
-In detail.
+`products(collection)`, in `utilities.ts`, returns a kit and a product sheet for each entry. It makes the source material and the naming conventions; the entries are `collection.entries`, or, without `products`, one per block of `sourceMaterial.defaultBlocks(collection.compartment)`. Error messages name the collection, as the link pages call it for all collections.
 
-### Configuration of one collection
+### Collection and naming conventions
 
 ```mermaid
 classDiagram
-  direction LR
-  Collection "1" --> "1" CollectionConfiguration
-  CollectionConfiguration "1" --> "*" ProductConfiguration
+  direction TD
+  NamingConventions ..> ProductSheet : fills
   class Collection {
-    configuration: CollectionConfiguration
-    constructor(collectionFolder: string)
-    outputFolder() string
+    folder: string
+    settings: Record
+    compartment: string
+    entries: Record[]?
+    constructor(folder: string)
+    sourceMaterialFolder() string
+    shelfFolder() string
     renderFolder() string
     recipe() Recipe
-    words() Record
-    placeholders(product: ProductConfiguration) Record
   }
-  class CollectionConfiguration {
-    output: string
+  class NamingConventions {
+    words: Record
+    name: string
     folderName: string
     baseName: string
-    linkFormat: string
-    options: Record
-    lang: string
     site: string
-    tree: BuildingBlockTree
-    recipe: string
-    products: ProductConfiguration[]
-    constructor(collectionFolder: string)
+    productSheet(k, kit, entry) ProductSheet
   }
-  class ProductConfiguration {
-    number: number
-    name: string
-    title: string
-    groupTitle: string?
-    fullTitle: string
-    ingredients: string[]
-    blockPlaceholders: Record
-    constructor(entry: Record, number: number, tree: BuildingBlockTree, ingredientFolder: string, nameTemplate: string)
+  class ProductSheet {
+    <<type>>
+    Record of string
   }
 ```
 
-`ProductConfiguration.ingredients`: the paths of the ingredient folders, each entry of `blocks` joined with the ingredient folder (setting `ingredient-folder`, default from `ingredient-folders` in `conventions.yml` by recipe and collection folder name); without `products`, one product per building block from `BuildingBlockTree.defaultBlocks()`.
+Remarks:
 
-`CollectionConfiguration`: the `loimoi.yml` files merged along the path, every default filled in; all checks of the settings here, so the methods of `Collection` need none. The allowed settings and their fixed defaults in `config/settings.yml` (not replaceable); the other defaults computed, some via `conventions.yml` or the Git remote.
+- `Collection`: what the teacher configured, nothing else: the collection folder with its settings, every value final: `_collection.yml` over `learning-material/_loimoi.yml`, then the defaults (`config/settings.yml`; `conventions.yml` by collection folder name; the resolved Quarto configuration for `lang` and `output-dir`; the Git remote for `site`). All checks are here; an unknown setting is an error.
+- `entries`: the entries of `products` as plain data (blocks, optional `name`, `product-title`, `group-title`); missing without `products`.
+- `NamingConventions`: the words in the collection's language and the name patterns. `productSheet` fills in this order: `n`, `nn`, words, `block-path`, `block-folder`, `product-title` and `group-title` (from the entry, otherwise from the kit), `full-title`, `title-slug`, `name`, `hash` (from `nn` and `name`), `folder-name`, `base-name`, `site`.
+- `ProductSheet`: a `Record`; the recipe passes it to `ReplacePlaceholders`.
 
-YAML configuration (e.g. `recipes/exercises.yml`) in `_extensions/loimoi/config/`; a file with the same path in `learning-material/_loimoi/` replaces it (`configFile()` in `utilities.ts`). Exception: `conventions.yml`, the first
-`_loimoi/conventions.yml` upward from the working directory (`conventions()`).
-
-`resolve(names, folder)` in `utilities.ts`: upward from `folder`, the first folder containing one of `names` (e.g. the names of `building-blocks` listed under `names` in `conventions.yml`); error if none or several in the same folder.
+Configuration files: built in, in `_extensions/loimoi/config/`; own ones in the first `_loimoi/` upward from the collection folder replace them.
 
 ### Recipe and Action classes
 
@@ -275,14 +261,14 @@ classDiagram
     folder: string
     actions: Action[]
     read(file: string, options: Record, folder: string, replacements: CodeReplacement[])$ Recipe
-    run(basket: Basket, placeholders: Record)
+    run(kit: SourceKit, sheet: ProductSheet)
   }
   class Action {
     <<abstract>>
     name: string
     provides: string?
-    file(placeholders: Record) string
-    run(basket: Basket, placeholders: Record, folder: ProductFolder)
+    file(sheet: ProductSheet) string
+    run(kit: SourceKit, sheet: ProductSheet, folder: ProductFolder)
   }
   class QuartoFileAction {
     title: string?
@@ -309,15 +295,10 @@ classDiagram
 
 Remarks:
 
-- `QuartoFileAction` copies the folders of the ingredients next to the written file (not into a zip; special folders
-  `src/` and `zip/<name>/` → `<name>.zip`, both not into work files), without names starting with `_` or `.` and
-  `…_files` (`studentFiles()` in `utilities.ts`); an `ArchiveAction` copies folders in `add` the same way
-- `QuartoFileAction` copies the files referenced in the document (e.g. `images/a.svg` to
-  `c/01-convergence-sequences/images/a.svg`)
-- `ProductFolder`: all writing into the folder of the product; error if a file of the same name differs (possible
-  when a product has several building blocks); `ArchiveAction` zips a folder other actions may have filled
-- `Recipe.run`: creates the `ProductFolder` (`folder` plus `${folder-name}`), adds the placeholders from `provides`
-  (`file()` of the action), runs the actions in order in that folder
+- `QuartoFileAction` copies the folders of the compartments next to the written file (not into a zip; special folders `src/` and `zip/<name>/` → `<name>.zip`, both not into work files), without names starting with `_` or `.` and `…_files` (`studentFiles()` in `utilities.ts`); an `ArchiveAction` copies folders in `add` the same way
+- `QuartoFileAction` copies the files referenced in the document (e.g. `images/a.svg` to `c/01-convergence-sequences/images/a.svg`)
+- `ProductFolder`: all writing into the folder of the product; error if a file of the same name differs (possible when a product has several building blocks); `ArchiveAction` zips a folder other actions may have filled
+- `Recipe.run`: creates the `ProductFolder` (`folder` plus `${folder-name}`), adds the values from `provides` to the product sheet (`file()` of the action), runs the actions in order in that folder
 
 ### Link pages
 
@@ -335,31 +316,24 @@ classDiagram
 
 Remarks:
 
-- Collections: the folders in `learningMaterialFolder` with a `_quarto.yml` and either a recipe in `conventions.yml` or a `loimoi.yml` of their own; a `Collection` for each
-- Per product: the actions of the recipe with a `link` (label, with placeholders), the path from `file()` (`.qmd` becomes `.html`) in `c/${folder-name}/`
-- `Collection.renderFolder()`: `output-dir` from `_quarto.yml`, absolute (`outputFolder()` is `c/`, where loi-moi writes); `links.html` links relative to it, `links-site.html` uses `site` plus the part after `__output/`
+- Collections: the folders in `learningMaterialFolder` with a `_collection.yml`; a `Collection` for each, its products from `products(collection)`
+- Per product: the actions of the recipe with a `link` (label, filled from the product sheet), the path from `file()` (`.qmd` becomes `.html`) in `c/${folder-name}/`
+- `Collection.renderFolder()`: `output-dir` from the resolved Quarto configuration, absolute (`shelfFolder()` is `c/`, where loi-moi writes); `links.html` links relative to it, `links-site.html` uses `site` plus the part after `__output/`
 
 ## Decisions
 
-- **Pandoc finds the structure, loi-moi cuts the original text.** Cells stay exactly as written; `pandoc.write`
-  would turn ` ```{julia} ` into a plain code block.
+- **Pandoc finds the structure, loi-moi cuts the original text.** Cells stay exactly as written; `pandoc.write` would turn ` ```{julia} ` into a plain code block.
 - **Everything before Quarto, no filter.** A filter runs per document, loi-moi needs the whole collection.
-- **Names from folders, not from `about.yml`.** Renaming a folder is deliberate, retyping a title is not.
-- **No project type.** A Quarto project has one type, collections need different ones (`book` for course notes);
-  so `_quarto.yml` names the pre-render script, shared settings via `metadata-files`. Quarto requires an extension
-  to contribute something: loi-moi contributes the metadata `loimoi: true`.
-- **Code runs on copies.** The folders of the ingredients are copied into the folder of the product in `c/`, so code reading `data/…` runs there
-  as in the work files; no folder name fixed, no working directory changed per language (as in the prototype).
+- **Names from folders, not from `_about.yml`.** Renaming a folder is deliberate, retyping a title is not.
+- **No project type.** A Quarto project has one type, collections need different ones (`book` for course notes); so `_quarto.yml` names the pre-render script, shared settings via `metadata-files`. Quarto requires an extension to contribute something: loi-moi contributes the metadata `loimoi: true`.
+- **Code runs on copies.** The folders of the compartments are copied into the folder of the product on the shelf, so code reading `data/…` runs there as in the work files; no folder name fixed, no working directory changed per language (as in the prototype).
 - **Steps only change content.** How a file is written (`format`, `zip`) is a setting of `QuartoFileAction`, not a step.
-- **Jupyter notebooks written as JSON, not with `quarto convert`.** `quarto convert` needs a Jupyter kernel for
-  the language installed on the machine (Julia and R run with other engines in Quarto) and has no option to set
-  it; without one, code cells end up as text.
+- **Jupyter notebooks written as JSON, not with `quarto convert`.** `quarto convert` needs a Jupyter kernel for the language installed on the machine (Julia and R run with other engines in Quarto) and has no option to set it; without one, code cells end up as text.
 
 ## Development
 
 - One file per class, named after the class (`qmd-document.ts`); free functions in `utilities.ts`
-- Names for paths: `…Folder`, `…File` absolute (`outputFolder`); `path`, `…Path` relative to a base folder named in
-  the class or a comment (`Folder.path`); `…Name` only the last part (`collectionFolderName`); always "folder", not "dir"
+- Names for paths: `…Folder`, `…File` absolute (`shelfFolder`); `path`, `…Path` relative to a base folder named in the class or a comment (`Folder.path`); `…Name` only the last part (`collectionFolderName`); always "folder", not "dir"
 - Tests: the pre-render output of each example compared with `tests/expected/<example>/` (zips by content), the examples covering all functionality, each aspect in one example only; invalid input in `tests/invalid/`; few unit tests
 - `deno task test`, `deno task check`, `deno task update-expected`, `make examples`
 - Simple; comments sparingly, only where the code doesn't say it; no `continue`/`break`; no environment variables
