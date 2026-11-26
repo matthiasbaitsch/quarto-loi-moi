@@ -63,20 +63,21 @@ export class CollectionConfiguration {
     if (recipe === undefined) throw new Error(`No recipe for collection ${name} in conventions.yml`);
     this.recipe = recipe;
 
+    const folders = (rules["ingredient-folders"] ?? {}) as Record<string, Record<string, string>>;
+    const ingredientFolder = (yaml["ingredient-folder"] as string | null) ?? folders[recipe]?.[name];
+    if (ingredientFolder === undefined) {
+      throw new Error(`No ingredient folder for collection ${name}: set ingredient-folder in loimoi.yml`);
+    }
+
     let entries: Yaml[];
     if (yaml.products !== null) {
       entries = yaml.products as Yaml[];
     } else {
-      const folders = (rules["ingredient-folders"] ?? {}) as Record<string, Record<string, string>>;
-      const ingredientFolder = folders[recipe]?.[name];
-      if (ingredientFolder === undefined) {
-        throw new Error(`No ingredient folder for collection ${name} in conventions.yml`);
-      }
-      entries = this.tree.defaultPaths(ingredientFolder).map((ingredients) => ({ ingredients }));
+      entries = this.tree.defaultBlocks(ingredientFolder).map((block) => ({ blocks: [block] }));
     }
     const firstNumber = yaml["first-number"] as number;
     this.products = entries.map((entry, i) =>
-      new ProductConfiguration(entry, firstNumber + i, this.tree, yaml.name as string)
+      new ProductConfiguration(entry, firstNumber + i, this.tree, ingredientFolder, yaml.name as string)
     );
   }
 }

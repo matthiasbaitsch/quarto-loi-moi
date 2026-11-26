@@ -2,7 +2,6 @@
 
 ## Next
 
-- [ ] Products name building blocks, not ingredient folders: key `blocks` in `products` with short paths (`10-convergence/10-sequences`, numbers kept), the ingredient folder added from the conventions; the same short paths everywhere (default products, tests, SPEC example).
 - [ ] Simplify `loimoi.yml` for slides, product list: collections not named `slides` need `recipe: slides` and the full product list (r-topics), e.g. selection of building blocks by subtree.
 - [ ] A Quarto project without a recipe in a public example (e.g. `learning-material/handout/` with only a `_quarto.yml`), so the snapshot covers that the link pages skip it.
 - [ ] `isSetup` twice: in `qmd-document.ts` (for `validate`) and in `processing-steps/exercise.ts` (sheet, `MergeSetupCells`); one copy in `qmd-node.ts`, which both use.
@@ -45,3 +44,4 @@
 - [x] Names of products configurable with placeholders: `nn-name` replaced by `folder-name` (setting, default `${nn}-${name}`); `${hash}` from `${nn}-${name}`, independent of `folder-name` and `base-name`; `product-naming` replaced by the setting `name` (default for all products, default `${block-path}`) with the new placeholders `${block-path}`, `${block-folder}`, `${title-slug}`; r-topics slides use `name: "${block-folder}"`, python-flat and the courses `name: "${title-slug}"`. Placeholder tables in SPEC split into configurable globally, configurable in `loimoi.yml` and derived.
 - [x] Simplify `loimoi.yml` for slides, `name` and `product-title`: `name` now from `name: "${block-folder}"` (r-topics slides); `product-title` stays in `loimoi.yml` on purpose: with the layout by subject (r-topics, Mathe B) `about.yml` would repeat each title per subject.
 - [x] Current extension in the courses (`make update-extension` in numMat, numPDE, Mathe B); `loimoi.yml` with `name: "${title-slug}"`, numMat `folien` without `file-name`; pre-render of all four collections gives the same output paths as before.
+- [x] Products name building blocks, not ingredient folders: key `blocks` in `products` with short paths (`10-convergence/10-sequences`, numbers kept); the ingredient folder from the new setting `ingredient-folder`, default from `ingredient-folders` in `conventions.yml` by recipe and collection folder name (r-topics slides set `ingredient-folder: slides`); default products, r-topics, Mathe B's `lernpfad/aufgaben` and the SPEC example with the short paths.

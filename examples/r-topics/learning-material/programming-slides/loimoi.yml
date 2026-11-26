@@ -1,12 +1,13 @@
 # A collection named other than slides: the recipe from here, the products listed
 recipe: slides
+ingredient-folder: slides
 name: "${block-folder}"
 products:
-  - ingredients: [programming/sequences/slides]
+  - blocks: [programming/sequences]
     product-title: Sequences
-  - ingredients: [programming/series/slides]
+  - blocks: [programming/series]
     product-title: Series
-  - ingredients: [programming/power-series/slides]
+  - blocks: [programming/power-series]
     product-title: Power series
-  - ingredients: [programming/continuity/slides]
+  - blocks: [programming/continuity]
     product-title: Continuity

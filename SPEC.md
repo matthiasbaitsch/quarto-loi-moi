@@ -157,9 +157,9 @@ first-number: 1                                     # number of the first produc
 site: https://teacher.github.io/calculus            # defaults to github remote
 
 products:                                           # one entry per product
-  - ingredients: [convergence/sequences/exercises]  # name and titles from the building block
-  - ingredients: [convergence/series/exercises]
-  - ingredients: [functions/power-series/exercises, functions/continuity/exercises]
+  - blocks: [10-convergence/10-sequences]           # name and titles from the building block
+  - blocks: [10-convergence/20-series]
+  - blocks: [20-functions/10-power-series, 20-functions/20-continuity]
     name: functions-power-series-continuity         # name and titles set
     product-title: Power series and continuity
     group-title: Functions
@@ -371,7 +371,8 @@ E.g. `01-convergence-sequences.qmd`; for slides rendered as PDF, `link-format: p
 | `lang` | language of the words in file names and titles (`en`, `de`) | from the collection's name via `conventions.yml` (`aufgaben`: `de`), otherwise `en` |
 | `site` | URL of the published site | from the Git remote |
 | `building-blocks` | path to the building blocks folder, relative to the learning material folder | found upward from the collection folder |
-| `products` | one entry per product: `ingredients`, optional `name`, `product-title`, `group-title` | one product per building block with the ingredient folder from `conventions.yml`, in folder order |
+| `products` | one entry per product: `blocks` (paths of building blocks, relative to the building blocks folder), optional `name`, `product-title`, `group-title` | one product per building block that has the ingredient folder, in folder order |
+| `ingredient-folder` | folder of the ingredients in each building block (e.g. `slides`) | from `ingredient-folders` in `conventions.yml`, by recipe and collection folder name (`aufgaben` with recipe `exercises`: `aufgaben`); error if there is none |
 | `folder-name` | name of the product folder, with placeholders (e.g. `blatt-${nn}`) | `${nn}-${name}` |
 | `base-name` | base name of the product's files, with placeholders (e.g. `aufgabenblatt-${nn}`); the recipe adds its suffix (e.g. `-${exercises}`) | `${folder-name}` |
 | `name` | default name of the products, with placeholders (e.g. `${block-folder}`, `${title-slug}`) | `${block-path}` |

@@ -1,13 +1,13 @@
 # Each exercise sheet combines the paper exercises of a topic with its programming exercises.
 name: "${block-folder}"
 products:
-  - ingredients: [theory/sequences/exercises, programming/sequences/exercises]
+  - blocks: [theory/sequences, programming/sequences]
     product-title: Sequences
-  - ingredients: [theory/series/exercises, programming/series/exercises]
+  - blocks: [theory/series, programming/series]
     product-title: Series
-  - ingredients: [theory/power-series/exercises, programming/power-series/exercises]
+  - blocks: [theory/power-series, programming/power-series]
     product-title: Power series
-  - ingredients: [theory/continuity/exercises, programming/continuity/exercises]
+  - blocks: [theory/continuity, programming/continuity]
     product-title: Continuity
 
 recipe: exercises

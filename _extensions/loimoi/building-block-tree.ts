@@ -17,12 +17,13 @@ export class BuildingBlockTree {
     return new Basket(blocks, ingredients);
   }
 
-  defaultPaths(folderName: string): string[][] {
+  // The building blocks with an ingredient folder `ingredientFolder`, in folder order
+  defaultBlocks(ingredientFolder: string): string[] {
     const hidden = /\/[_.][^/]*$/; // last part of the path starts with `_` or `.`
-    const paths: string[] = [];
+    const blocks: string[] = [];
     for (const folder of walkSync(this.rootFolder, { includeFiles: false, skip: [hidden] })) {
-      if (folder.name === folderName) paths.push(relative(this.rootFolder, folder.path));
+      if (folder.name === ingredientFolder) blocks.push(relative(this.rootFolder, dirname(folder.path)));
     }
-    return paths.sort().map((path) => [path]);
+    return blocks.sort();
   }
 }
