@@ -1,16 +1,12 @@
 # A collection named other than slides: the recipe from here, the products listed
 recipe: slides
-file-name: "${nn-name}"
+name: "${block-folder}"
 products:
   - ingredients: [theory/sequences/slides]
-    name: sequences
     product-title: Sequences
   - ingredients: [theory/series/slides]
-    name: series
     product-title: Series
   - ingredients: [theory/power-series/slides]
-    name: power-series
     product-title: Power series
   - ingredients: [theory/continuity/slides]
-    name: continuity
     product-title: Continuity

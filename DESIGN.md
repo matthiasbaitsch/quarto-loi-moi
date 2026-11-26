@@ -189,8 +189,8 @@ The pre-render script runs the whole process:
 1. Clear the `c/` folder
 1. For each product:
     1. get its `Basket` from the building block tree
-    1. compute the placeholders (`Collection.placeholders()`): words, `n`, `nn`, `nn-name`, `name`, `hash`, `product-title`, `group-title`, `full-title`, `site`, then `file-name` from these
-    1. run the recipe in the folder of the product, `c/${nn-name}/`
+    1. compute the placeholders (`Collection.placeholders()`): words, `n`, `nn`, `name`, `hash`, `product-title`, `group-title`, `full-title`, `site`; `hash` from `nn` and `name`; then `folder-name` from these, and `base-name` from all of them
+    1. run the recipe in the folder of the product, `c/${folder-name}/`
 1. Write the link pages for all collections of the learning material (`LinkPages`)
 
 In detail.
@@ -213,7 +213,8 @@ classDiagram
   }
   class CollectionConfiguration {
     output: string
-    fileName: string
+    folderName: string
+    baseName: string
     options: Record
     lang: string
     site: string
@@ -229,7 +230,8 @@ classDiagram
     groupTitle: string?
     fullTitle: string
     ingredients: string[]
-    constructor(entry: Record, number: number, tree: BuildingBlockTree)
+    blockPlaceholders: Record
+    constructor(entry: Record, number: number, tree: BuildingBlockTree, nameTemplate: string)
   }
 ```
 
@@ -293,7 +295,7 @@ Remarks:
   `c/01-convergence-sequences/images/a.svg`)
 - `ProductFolder`: all writing into the folder of the product; error if a file of the same name differs (possible
   when a product has several building blocks); `Archive` zips a folder other actions may have filled
-- `Recipe.run`: creates the `ProductFolder` (`folder` plus `${nn-name}`), adds the placeholders from `provides`
+- `Recipe.run`: creates the `ProductFolder` (`folder` plus `${folder-name}`), adds the placeholders from `provides`
   (`file()` of the action), runs the actions in order in that folder
 
 ### Link pages
@@ -313,7 +315,7 @@ classDiagram
 Remarks:
 
 - Collections: the folders in `learningMaterialFolder` with a `_quarto.yml`; a `Collection` for each
-- Per product: the actions of the recipe with a `link` (label, with placeholders), the path from `file()` (`.qmd` becomes `.html`) in `c/${nn-name}/`
+- Per product: the actions of the recipe with a `link` (label, with placeholders), the path from `file()` (`.qmd` becomes `.html`) in `c/${folder-name}/`
 - `Collection.renderFolder()`: `output-dir` from `_quarto.yml`, absolute (`outputFolder()` is `c/`, where loi-moi writes); `links.html` links relative to it, `links-site.html` uses `site` plus the part after `__output/`
 
 ## Decisions

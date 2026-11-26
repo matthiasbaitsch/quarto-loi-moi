@@ -1,6 +1,7 @@
 options:
   work-files: folder
-product-naming: titles
-file-name: "sheet-${nn}"
+name: "${title-slug}"
+folder-name: "blatt-${nn}"
+base-name: "sheet-${nn}"
 building-blocks: ../building-blocks
 link-format: pdf

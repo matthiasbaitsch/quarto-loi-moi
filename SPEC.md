@@ -173,9 +173,7 @@ Remarks:
 - Configuration in `loimoi.yml` (optional, merged along path)
 - Sensible defaults for all settings
 - `.qmd` files of an ingredient combined in name order, ingredients of a product in the given order
-- Product `name` used in file names; `product-title` and `group-title` used in titles; all default to the first
-  building block, the name from its path or, with `product-naming: titles`, as slug of `group-title` and
-  `product-title` (`Stabtragwerke`, `Stabendkräfte`: `stabtragwerke-stabendkraefte`)
+- Product `name` used in file names; `product-title` and `group-title` used in titles; all default to the first building block, the name from the setting `name` (default `${block-path}`, e.g. `${title-slug}`: `Stabtragwerke`, `Stabendkräfte` gives `stabtragwerke-stabendkraefte`)
 
 ### Quarto configuration
 
@@ -211,7 +209,7 @@ On every render of a collection, loi-moi writes two pages with the links to the 
 Grouped by collection and product (number and `${full-title}`); per product the files of the recipe with a `link`, e.g. in `exercises.yml`:
 
 ```yml
-  - name: "${nn-name}-${exercises}-${solution}-${hash}"
+  - name: "${base-name}-${exercises}-${solution}-${hash}"
     link: "${solution-label}"
 ```
 
@@ -236,15 +234,15 @@ options:
     default: a
 
 quarto-files:
-  - name: "${nn-name}-always"                    # for every value
+  - name: "${base-name}-always"                    # for every value
     process: [...]
 
   - when: {format: a}
-    name: "${nn-name}-only-a"
+    name: "${base-name}-only-a"
     process: [...]
 
   - when: {format: b}
-    name: "${nn-name}-only-b"
+    name: "${base-name}-only-b"
     process: [...]
 ```
 
@@ -256,7 +254,7 @@ Remarks:
 - Building blocks folder set with `building-blocks` in `loimoi.yml`, otherwise found upward from the collection folder, named after one of the names in `conventions.yml` (`building-blocks/` or `bausteine/`)
 - Predefined recipes come with loi-moi; own recipes in `learning-material/_loimoi/recipes/` override them by name
 - A recipe might declare options
-- `name` is relative to the folder of the product (`${nn-name}/`)
+- `name` is relative to the folder of the product (`${folder-name}/`)
 - Use options with care (readability, maintenance)
 
 ### Exercises
@@ -302,26 +300,26 @@ options:
     default: notebook
 
 quarto-files:
-  - name: "${file-name}"
+  - name: "${base-name}-${exercises}"
     title: "${exercise-sheet} ${n}"
     subtitle: "${full-title}"
     process: [exercise-sheet]
     link: "${exercise-sheet}"
 
-  - name: "${file-name}-${solution}-${hash}"
+  - name: "${base-name}-${exercises}-${solution}-${hash}"
     title: "${solutions-to-exercise-sheet} ${n}"
     subtitle: "${full-title}"
     process: [exercise-solution, attach-src, show-markers]
     link: "${solution-label}"
 
-  - name: "${file-name}-${preview}-${hash}"   # what the teacher writes, scaffold and solution marked
+  - name: "${base-name}-${exercises}-${preview}-${hash}"   # what the teacher writes, scaffold and solution marked
     title: "${exercise-sheet} ${n}"
     subtitle: "${full-title}"
     process: [attach-src, show-markers]
     link: "${preview-label}"
 
   - when: {work-files: notebook}                 # single Jupyter notebook
-    name: "${file-name}"
+    name: "${base-name}-${exercises}"
     title: "${exercise-sheet} ${n}"
     process: [exercise-scaffold]
     format: ipynb
@@ -329,13 +327,13 @@ quarto-files:
     provides: work-files
 
   - when: {work-files: folder}                   # folder, e.g. a project
-    name: "${file-name}/${name}-${exercises}"
+    name: "${base-name}-${exercises}/${name}-${exercises}"
     title: "${exercise-sheet} ${n}"
     process: [exercise-scaffold]
 
 archives:                                        # folder deleted after zip
   - when: {work-files: folder}
-    name: "${file-name}"
+    name: "${base-name}-${exercises}"
     provides: work-files
     add:                                         # see "Paths in add"
       - /_templates/exercises/_quarto.yml
@@ -348,12 +346,12 @@ The predefined recipe `slides.yml`, one slide set per product; format and subtit
 
 ```yml
 quarto-files:
-  - name: "${file-name}"
+  - name: "${base-name}"
     title: "${full-title}"
     link: "${slides-label}"
 ```
 
-With `file-name: "${nn-name}"` in `loimoi.yml`, e.g. `01-convergence-sequences.qmd`; for slides rendered as PDF, `link-format: pdf`.
+E.g. `01-convergence-sequences.qmd`; for slides rendered as PDF, `link-format: pdf`.
 
 ## Usage
 
@@ -374,8 +372,9 @@ With `file-name: "${nn-name}"` in `loimoi.yml`, e.g. `01-convergence-sequences.q
 | `site` | URL of the published site | from the Git remote |
 | `building-blocks` | path to the building blocks folder, relative to the learning material folder | found upward from the collection folder |
 | `products` | one entry per product: `ingredients`, optional `name`, `product-title`, `group-title` | one product per building block with the ingredient folder from `conventions.yml`, in folder order |
-| `file-name` | base name of the product's files, with placeholders (e.g. `aufgabenblatt-${nn}`) | `${nn-name}-${exercises}` |
-| `product-naming` | default product names from the path of the first building block (`path`) or from the titles (`titles`) | `path` |
+| `folder-name` | name of the product folder, with placeholders (e.g. `blatt-${nn}`) | `${nn}-${name}` |
+| `base-name` | base name of the product's files, with placeholders (e.g. `aufgabenblatt-${nn}`); the recipe adds its suffix (e.g. `-${exercises}`) | `${folder-name}` |
+| `name` | default name of the products, with placeholders (e.g. `${block-folder}`, `${title-slug}`) | `${block-path}` |
 | `link-format` | extension of the linked files on the link pages (`html`, `pdf`), e.g. `pdf` for slides rendered with Typst | `html` |
 | `recipe` | recipe that makes the products | from `conventions.yml` |
 | `options` | options of the recipe | see the recipe |
@@ -434,19 +433,44 @@ Code in `src/` growing from sheet to sheet: each building block has the code as 
 
 ### Placeholders
 
-Filled in per product when the recipe runs, in the header and the text of the building blocks; not in the opening lines of divs (fixed: exercise ids, markers, Quarto classes) and not in code cells, whose code may use `${…}` itself (shell, JavaScript):
+Filled in per product when the recipe runs: in recipes (names, titles, links) and in the header and text of the building blocks; not in the opening lines of divs (fixed: exercise ids, markers, Quarto classes) and not in code cells, whose code may use `${…}` itself (shell, JavaScript).
 
-| Placeholder | Value | Example |
-|---|---|---|
-| `${n}` | number of the product | `1` |
-| `${name}` | identifies the product in file names; `name` of the product, default: path of the first building block, leading numbers stripped, `/` as `-` | `convergence-sequences` |
-| `${nn}` | `${n}` with two digits | `01` |
-| `${nn-name}` | `${nn}-${name}` | `01-convergence-sequences` |
-| `${hash}` | first 8 hex digits of `sha1("87362-" + nn-name)`, for names that cannot be guessed | `2094a057` |
-| `${group-title}` | `group-title` of the product, default: `group-title` of the first building block | `Convergence` |
-| `${product-title}` | `product-title` of the product, default: `block-title` of the first building block | `Sequences` |
-| `${full-title}` | `${group-title}: ${product-title}`, or only `${product-title}` if the product has no group title | `Convergence: Sequences` |
-| `${file-name}` | `file-name` from `loimoi.yml`, its placeholders replaced | `01-convergence-sequences-exercises` |
-| `${site}` | URL of the published site | `https://teacher.github.io/calculus` |
-| `${work-files}` | URL of the file of the action with `provides: work-files` | `…/01-convergence-sequences/01-convergence-sequences-exercises.zip` |
-| `${exercise-sheet}`, `${exercises}`, … | words in the language of the collection (`collection-languages` in `conventions.yml`, `aufgaben` German, otherwise English), from `words/<language>.yml` | `Aufgabenblatt`, `aufgaben` |
+Configurable globally:
+
+| Placeholder | Usage | Default | Example |
+|---|---|---|---|
+| `${exercise-sheet}`, `${exercises}`, … | words in names, titles and text added by steps | `words/<lang>.yml`, overridable in `_loimoi/` | `Aufgabenblatt`, `aufgaben` |
+
+Configurable in `loimoi.yml`:
+
+| Placeholder | Usage | Default | Example |
+|---|---|---|---|
+| `${site}` | links to the published site in the text | from the Git remote | `https://teacher.github.io/calculus` |
+| `${group-title}` | titles | from the building block | `Convergence` |
+| `${product-title}` | titles | from the building block | `Sequences` |
+| `${name}` | part of names | `${block-path}` | `convergence-sequences` |
+| `${folder-name}` | product folder | `${nn}-${name}` | `01-convergence-sequences` |
+| `${base-name}` | file names, recipe adds suffix | `${folder-name}` | `01-convergence-sequences` |
+
+Remarks:
+
+- `${product-title}` is required, in the product or in the building block.
+- `${group-title}` is optional.
+- `name` at the top of `loimoi.yml` is the default for all products, with placeholders (e.g. `${block-folder}`, `${title-slug}`); `name` in a product sets its name.
+
+Derived:
+
+| Placeholder | Usage | Value | Example |
+|---|---|---|---|
+| `${n}` | titles | number of the product | `1` |
+| `${nn}` | names | `${n}` with two digits | `01` |
+| `${full-title}` | titles, link pages | `${group-title}: ${product-title}` | `Convergence: Sequences` |
+| `${block-path}` | `name` | path of the first building block, leading numbers stripped, `/` as `-` | `convergence-sequences` |
+| `${block-folder}` | `name` | last folder of that path, leading number stripped | `sequences` |
+| `${title-slug}` | `name` | slug of `${full-title}` | `convergence-sequences` |
+| `${hash}` | names students can't guess | from `${nn}-${name}` | `2094a057` |
+| `${work-files}` | download link in the sheet | URL of the file of the action with `provides: work-files` | `…/01-convergence-sequences/01-convergence-sequences-exercises.zip` |
+
+Remarks:
+
+- Without `${group-title}`, `${full-title}` is only `${product-title}`.

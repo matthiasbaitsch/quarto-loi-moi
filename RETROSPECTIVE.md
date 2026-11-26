@@ -43,3 +43,18 @@ In `AttachSrc`, the user proposed `QmdDocument.appendNode` for `new QmdDocument(
 
 - **Existing classes treated as fixed.** Claude solved the task inside the file being edited and avoided extending the interface of another class like `QmdDocument`, as that felt like a bigger change; the same pattern as with the cache: the smallest diff instead of the right place.
 - **Generic even when looking.** Asked about the line, Claude found the pattern and proposed `withNodes`/`withHeader`, mechanics one level up; the user named the actual operation: `appendNode`.
+
+## Naming products and files (2026-11-26)
+
+Result: `file-name` became `base-name` (the recipe adds its suffix), `nn-name` became the configurable `folder-name`, `product-naming` became the rule `name` with the placeholders `${block-path}`, `${block-folder}`, `${title-slug}`; `${hash}` from `${nn}-${name}`; the placeholders in SPEC split into configurable globally, configurable in `loimoi.yml` and derived. Every conceptual step came from the user; it was hard to get Claude to work on the conceptual level instead of the implementation level.
+
+### What went wrong
+
+- **Answers at the level of the code.** Asked about names and configuration, Claude answered with lines, existing options and the cheapest change: a `file-name` default per recipe instead of one base name for all products of a series; a third keyword `product-naming: folder` because `Folder.name` already had the option, instead of rules with placeholders.
+- **Names after construction, not meaning.** `nn-name` was kept and renamed without asking what it is; the user pointed out that names describe content or usage.
+- **Classification by mechanics.** The placeholder table was first sorted by level (language, collection, product, recipe); the classification that matters for the user, configurable or derived, came from the user, and the table went through about ten small rounds.
+- **Consequences checked after recommending.** Removing `product-naming` was recommended before looking at the courses (all four use `titles`); the hash was tied to `folder-name` without thinking; `about.yml` files were proposed before checking that they would duplicate every title in the layout by subject.
+
+### Lesson
+
+For questions about configuration and naming, first describe the model: which things exist (product: number, titles, name, folder, files), where their values come from (building block, rule in `loimoi.yml`, product entry), what the user configures; then derive the implementation. Check the consequences (courses, layouts, stability of names) before recommending.
