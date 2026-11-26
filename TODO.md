@@ -15,6 +15,7 @@
 - [ ] "Ingredient" renamed to "compartment", as in SPEC and DESIGN: setting `ingredient-folder` → `compartment`, `ingredient-folders` in `conventions.yml` → `compartments`; code, examples, courses.
 - [ ] Code names as in DESIGN "Model of the source material": `BuildingBlockTree` → `SourceMaterial`, `Basket` → `SourceKit`, `ingredients(paths)` → `kit(paths)`, `ingredients` → `compartments`, `ingredientFolder` → `compartment`, `Basket.name()`/`title()` → `SourceKit.blockName()`/`blockTitle()`, `Collection.placeholders()` → `productSheet()`, recipe read before the shelf is cleared (DESIGN "Process"); the rest of DESIGN.
 - [ ] Settings in two files, as in SPEC: `learning-material/_loimoi.yml` for the course, `_collection.yml` per collection (marks a collection, may be empty); no merge along the path; a setting in the wrong file is an error; link pages find collections by `_collection.yml`; `about.yml` → `_about.yml`. DESIGN, code, examples, courses, `tests/invalid/`.
+- [ ] Link pages handled differently, maybe as a program of its own with an entry in the Makefile (e.g. `make links`), instead of on every render of a collection: today each render builds the products of all collections, and an error in one collection stops the render of another. SPEC, DESIGN (Process, Link pages), code.
 - [ ] `c/` named "shelf" (SPEC): setting `output` → `shelf`, DESIGN, code (`output`, `outputFolder()` → `shelfFolder()`), examples, courses.
 
 ## Later
