@@ -1,6 +1,6 @@
 import { Action, Placeholders } from "./actions/action.ts";
-import { Archive } from "./actions/archive.ts";
-import { QuartoFile } from "./actions/quarto-file.ts";
+import { ArchiveAction } from "./actions/archive-action.ts";
+import { QuartoFileAction } from "./actions/quarto-file-action.ts";
 import { Basket } from "./basket.ts";
 import { CodeReplacement } from "./code-replacement.ts";
 import { ProductFolder } from "./product-folder.ts";
@@ -37,8 +37,8 @@ export class Recipe {
     const quartoFiles = ((yaml["quarto-files"] ?? []) as Yaml[]).filter(matches);
     const archives = ((yaml.archives ?? []) as Yaml[]).filter(matches);
     const actions = [
-      ...quartoFiles.map((entry) => new QuartoFile(entry, replacements)),
-      ...archives.map((entry) => new Archive(entry)),
+      ...quartoFiles.map((entry) => new QuartoFileAction(entry, replacements)),
+      ...archives.map((entry) => new ArchiveAction(entry)),
     ];
     return new Recipe(actions, folder);
   }

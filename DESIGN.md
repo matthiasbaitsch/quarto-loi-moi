@@ -196,7 +196,7 @@ Remarks:
 - `ReplacePlaceholders` also replaces in the header
 - `AttachSrc` puts the files of `src/` into an appendix of the document, as code blocks (not executed)
 - `Pipeline`: steps added by their name are created with what they need from its context (`StepContext`: the files of `src/`, the heading of the appendix)
-- `QuartoFile` adds a `ReplaceCode` after each step of `process`; the replacements from `code-replacements.yml`, read in `Collection.recipe()` and passed via `Recipe.read` to each `QuartoFile`
+- `QuartoFileAction` adds a `ReplaceCode` after each step of `process`; the replacements from `code-replacements.yml`, read in `Collection.recipe()` and passed via `Recipe.read` to each `QuartoFileAction`
 
 ## Process
 
@@ -268,8 +268,8 @@ YAML configuration (e.g. `recipes/exercises.yml`) in `_extensions/loimoi/config/
 classDiagram
   direction TD
   Recipe "1" --> "*" Action
-  Action <|-- QuartoFile
-  Action <|-- Archive
+  Action <|-- QuartoFileAction
+  Action <|-- ArchiveAction
   Action ..> ProductFolder : writes into
   class Recipe {
     folder: string
@@ -284,7 +284,7 @@ classDiagram
     file(placeholders: Record) string
     run(basket: Basket, placeholders: Record, folder: ProductFolder)
   }
-  class QuartoFile {
+  class QuartoFileAction {
     title: string?
     subtitle: string?
     process: string[]
@@ -293,7 +293,7 @@ classDiagram
     link: string?
     replacements: CodeReplacement[]
   }
-  class Archive {
+  class ArchiveAction {
     add: Record[]
   }
   class ProductFolder {
@@ -309,13 +309,13 @@ classDiagram
 
 Remarks:
 
-- `QuartoFile` copies the folders of the ingredients next to the written file (not into a zip; special folders
+- `QuartoFileAction` copies the folders of the ingredients next to the written file (not into a zip; special folders
   `src/` and `zip/<name>/` → `<name>.zip`, both not into work files), without names starting with `_` or `.` and
-  `…_files` (`studentFiles()` in `utilities.ts`); an `Archive` copies folders in `add` the same way
-- `QuartoFile` copies the files referenced in the document (e.g. `images/a.svg` to
+  `…_files` (`studentFiles()` in `utilities.ts`); an `ArchiveAction` copies folders in `add` the same way
+- `QuartoFileAction` copies the files referenced in the document (e.g. `images/a.svg` to
   `c/01-convergence-sequences/images/a.svg`)
 - `ProductFolder`: all writing into the folder of the product; error if a file of the same name differs (possible
-  when a product has several building blocks); `Archive` zips a folder other actions may have filled
+  when a product has several building blocks); `ArchiveAction` zips a folder other actions may have filled
 - `Recipe.run`: creates the `ProductFolder` (`folder` plus `${folder-name}`), adds the placeholders from `provides`
   (`file()` of the action), runs the actions in order in that folder
 
@@ -350,7 +350,7 @@ Remarks:
   to contribute something: loi-moi contributes the metadata `loimoi: true`.
 - **Code runs on copies.** The folders of the ingredients are copied into the folder of the product in `c/`, so code reading `data/…` runs there
   as in the work files; no folder name fixed, no working directory changed per language (as in the prototype).
-- **Steps only change content.** How a file is written (`format`, `zip`) is a setting of `QuartoFile`, not a step.
+- **Steps only change content.** How a file is written (`format`, `zip`) is a setting of `QuartoFileAction`, not a step.
 - **Jupyter notebooks written as JSON, not with `quarto convert`.** `quarto convert` needs a Jupyter kernel for
   the language installed on the machine (Julia and R run with other engines in Quarto) and has no option to set
   it; without one, code cells end up as text.

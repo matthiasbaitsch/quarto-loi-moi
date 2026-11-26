@@ -11,7 +11,7 @@ import { QmdDocument } from "../qmd-document.ts";
 import { replacePlaceholders, studentFiles, Yaml } from "../utilities.ts";
 import { Action, Placeholders } from "./action.ts";
 
-export class QuartoFile extends Action {
+export class QuartoFileAction extends Action {
   readonly title?: string;
   readonly subtitle?: string;
   readonly process: string[];

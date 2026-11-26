@@ -8,7 +8,7 @@ import { Action, Placeholders } from "./action.ts";
 // An entry of `add`: a path, or a path with a new name
 type Entry = string | Record<string, string>;
 
-export class Archive extends Action {
+export class ArchiveAction extends Action {
   readonly add: Entry[];
 
   constructor(settings: Yaml) {

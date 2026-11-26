@@ -1,6 +1,6 @@
 import { existsSync } from "jsr:@std/fs@1";
 import { join, relative } from "jsr:@std/path@1";
-import { QuartoFile } from "./actions/quarto-file.ts";
+import { QuartoFileAction } from "./actions/quarto-file-action.ts";
 import { Collection } from "./collection.ts";
 import { conventions, replacePlaceholders } from "./utilities.ts";
 
@@ -87,8 +87,8 @@ ${sections.join("\n\n")}
   private collection(name: string): CollectionLinks {
     const collectionFolder = join(this.learningMaterialFolder, name);
     const collection = new Collection(collectionFolder);
-    const linked = collection.recipe().actions.filter((action): action is QuartoFile =>
-      action instanceof QuartoFile && action.link !== undefined
+    const linked = collection.recipe().actions.filter((action): action is QuartoFileAction =>
+      action instanceof QuartoFileAction && action.link !== undefined
     );
     // `c/` as rendered by Quarto
     const renderedFolder = join(collection.renderFolder(), relative(collectionFolder, collection.outputFolder()));
